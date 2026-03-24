@@ -30,7 +30,7 @@ export function Hero() {
 
         {/* Right: Mockup placeholder (will be replaced with before/after slider) */}
         <div className="hidden md:flex items-center justify-center">
-          <div className="relative w-full max-w-sm aspect-square rounded-3xl bg-gradient-to-br from-[#FF5A36] to-[#e04e2d] opacity-20 flex items-center justify-center">
+          <div className="relative w-full max-w-sm aspect-square rounded-3xl bg-linear-to-br from-[#FF5A36] to-[#e04e2d] opacity-20 flex items-center justify-center">
             <span className="text-[#6b7280] text-sm font-500">
               Before/After Slider Coming
             </span>

@@ -3,7 +3,7 @@
 import { ReactNode } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { StepProgressBar } from "@/components/wizard/StepProgressBar"
-import { useWizard, WizardProvider } from "@/lib/hooks"
+import { useWizard } from "@/lib/hooks"
 
 interface WizardLayoutProps {
   children: ReactNode

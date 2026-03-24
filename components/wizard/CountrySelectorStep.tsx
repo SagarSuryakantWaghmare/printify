@@ -5,7 +5,7 @@ import { useWizard } from "@/lib/hooks"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Check } from "lucide-react"
-import { COUNTRIES, REGIONS, searchCountries, getCountriesByRegion, getPopularCountries } from "@/lib/data/countries"
+import { COUNTRIES, REGIONS } from "@/lib/data/countries"
 
 const REGIONS_WITH_ALL = ["All", ...REGIONS] as const
 

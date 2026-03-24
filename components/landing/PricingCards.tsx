@@ -114,7 +114,7 @@ export function PricingCards() {
             <div className="space-y-3 pt-2">
               {plan.features.map((feature, idx) => (
                 <div key={idx} className="flex items-start gap-3">
-                  <Check className="h-5 w-5 flex-shrink-0 text-[#1D9E75] mt-0.5" />
+                  <Check className="h-5 w-5 shrink-0 text-[#1D9E75] mt-0.5" />
                   <span className="text-sm text-[#6b7280]">{feature}</span>
                 </div>
               ))}

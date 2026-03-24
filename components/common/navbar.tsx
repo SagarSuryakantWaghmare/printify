@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { Show, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
@@ -46,12 +47,27 @@ export function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Button
-            asChild
-            className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl px-5"
-          >
-            <Link href="/app">Start Free</Link>
-          </Button>
+          <Show when="signed-out">
+            <SignInButton mode="modal" fallbackRedirectUrl="/app">
+              <Button className="bg-white text-[#FF5A36] border border-[#FF5A36] hover:bg-[#FFF5F0] rounded-xl px-5">
+                Sign In
+              </Button>
+            </SignInButton>
+            <SignUpButton mode="modal" fallbackRedirectUrl="/app">
+              <Button className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl px-5">
+                Get Started Free
+              </Button>
+            </SignUpButton>
+          </Show>
+          <Show when="signed-in">
+            <Button
+              asChild
+              className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl px-5"
+            >
+              <Link href="/app">Generate Photo</Link>
+            </Button>
+            <UserButton />
+          </Show>
         </div>
 
         {/* Mobile hamburger */}
@@ -99,14 +115,31 @@ export function Navbar() {
 
             <Separator />
 
-            <div className="px-6 py-4">
-              <Button
-                asChild
-                className="w-full bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl"
-                onClick={() => setOpen(false)}
-              >
-                <Link href="/app">Start Free</Link>
-              </Button>
+            <div className="px-6 py-4 space-y-3">
+              <Show when="signed-out">
+                <SignInButton mode="modal" fallbackRedirectUrl="/app">
+                  <Button className="w-full bg-white text-[#FF5A36] border border-[#FF5A36] hover:bg-[#FFF5F0] rounded-xl">
+                    Sign In
+                  </Button>
+                </SignInButton>
+                <SignUpButton mode="modal" fallbackRedirectUrl="/app">
+                  <Button className="w-full bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl">
+                    Get Started Free
+                  </Button>
+                </SignUpButton>
+              </Show>
+              <Show when="signed-in">
+                <Button
+                  asChild
+                  className="w-full bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl"
+                  onClick={() => setOpen(false)}
+                >
+                  <Link href="/app">Generate Photo</Link>
+                </Button>
+                <div className="flex items-center justify-center pt-2">
+                  <UserButton />
+                </div>
+              </Show>
             </div>
           </SheetContent>
         </Sheet>

@@ -30,7 +30,7 @@ export function StepProgressBar() {
           <div key={step.id} className="flex items-center flex-1">
             {/* Step circle */}
             <motion.div
-              className={`w-10 h-10 rounded-full flex items-center justify-center font-600 text-sm transition-all flex-shrink-0 ${
+              className={`w-10 h-10 rounded-full flex items-center justify-center font-600 text-sm transition-all shrink-0 ${
                 currentStepIndex > step.order
                   ? "bg-[#1D9E75] text-white"
                   : currentStepIndex === step.order

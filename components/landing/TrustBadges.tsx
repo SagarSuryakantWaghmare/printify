@@ -30,7 +30,7 @@ export function TrustBadges() {
             key={idx}
             className="flex items-center gap-3 rounded-2xl bg-[#F7F7F8] p-4 md:p-5"
           >
-            <Icon className="h-5 w-5 md:h-6 md:w-6 flex-shrink-0 text-[#1D9E75]" />
+            <Icon className="h-5 w-5 md:h-6 md:w-6 shrink-0 text-[#1D9E75]" />
             <div>
               <p className="text-sm font-600 text-[#1a1a1a]">{badge.label}</p>
               <p className="text-xs md:text-sm text-[#6b7280]">
