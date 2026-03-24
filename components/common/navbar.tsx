@@ -10,8 +10,8 @@ import { Menu, Grid2x2, X } from "lucide-react"
 const navLinks = [
   { label: "Home",         href: "/" },
   { label: "How it works", href: "/how-it-works" },
-  { label: "Sizes",        href: "/sizes" },
-  { label: "Pricing",      href: "/pricing" },
+  { label: "Pricing",      href: "/#pricing" },
+  { label: "Countries",    href: "/app" },
 ]
 
 export function Navbar() {
@@ -27,7 +27,7 @@ export function Navbar() {
             <Grid2x2 className="h-4 w-4 text-white" />
           </div>
           <span className="text-lg font-700 text-[#1a1a1a]">
-            Printify
+            PicID
           </span>
         </Link>
 
@@ -50,7 +50,7 @@ export function Navbar() {
             asChild
             className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl px-5"
           >
-            <Link href="/create">Try Free</Link>
+            <Link href="/app">Start Free</Link>
           </Button>
         </div>
 
@@ -71,7 +71,7 @@ export function Navbar() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF5A36]">
                   <Grid2x2 className="h-4 w-4 text-white" />
                 </div>
-                <span className="text-lg font-600">Printify</span>
+                <span className="text-lg font-600">PicID</span>
               </Link>
               <Button
                 variant="ghost"
@@ -105,7 +105,7 @@ export function Navbar() {
                 className="w-full bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl"
                 onClick={() => setOpen(false)}
               >
-                <Link href="/create">Try Free — No Signup</Link>
+                <Link href="/app">Start Free</Link>
               </Button>
             </div>
           </SheetContent>
