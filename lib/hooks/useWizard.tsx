@@ -4,7 +4,7 @@ import { createContext, useContext, useState, ReactNode } from "react"
 
 export type WizardStep = "country" | "capture" | "processing" | "preview"
 
-interface WizardContextType {
+export interface WizardContextType {
   currentStep: WizardStep
   selectedCountry: string | null
   photoData: {
