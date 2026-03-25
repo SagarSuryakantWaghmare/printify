@@ -5,19 +5,21 @@ import Image from "next/image"
 import { useWizard } from "@/lib/hooks"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { CheckCircle2, Camera, Upload } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { CheckCircle2, Camera, Upload, Sun, UserRound, Ban, Smile } from "lucide-react"
 
 const TIPS = [
-  { emoji: "💡", text: "Good lighting" },
-  { emoji: "👤", text: "Center your face" },
-  { emoji: "🚫", text: "No glasses or hat" },
-  { emoji: "😊", text: "Natural expression" },
+  { icon: Sun, text: "Use bright, even lighting" },
+  { icon: UserRound, text: "Keep face centered" },
+  { icon: Ban, text: "No cap or tinted glasses" },
+  { icon: Smile, text: "Neutral expression" },
 ]
 
 export function PhotoCaptureStep() {
-  const { setPhotoData, nextStep, selectedCountry } = useWizard()
+  const { setPhotoData, nextStep } = useWizard()
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
   const [faceDetected, setFaceDetected] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileUpload = (file: File) => {
@@ -49,31 +51,59 @@ export function PhotoCaptureStep() {
 
   return (
     <div className="space-y-8">
-      <div className="space-y-2">
+      <motion.div
+        className="space-y-2"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+      >
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-700 text-[#1a1a1a]">
           Capture Your Photo
         </h1>
         <p className="text-base md:text-lg text-[#6b7280]">
-          For {selectedCountry || "your country"}
+          Indian passport-size format
         </p>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
         {/* Camera/Upload Area - Left/Main */}
         <div className="md:col-span-2 space-y-6">
-          {!uploadedImage ? (
-            <>
+          <AnimatePresence mode="wait">
+            {!uploadedImage ? (
+              <motion.div
+                key="upload-ui"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
+              >
               {/* Desktop: Drag and drop area */}
               <div
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={handleDrop}
-                className="hidden md:flex flex-col items-center justify-center h-96 rounded-3xl border-2 border-dashed border-[#FF5A36] bg-[#fff5f0] cursor-pointer hover:bg-[#ffeae0] transition-colors"
+                onDragOver={(e) => {
+                  e.preventDefault()
+                  setIsDragging(true)
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                  setIsDragging(false)
+                  handleDrop(e)
+                }}
+                onClick={() => fileInputRef.current?.click()}
+                className={`relative hidden md:flex flex-col items-center justify-center h-96 rounded-3xl border-2 border-dashed cursor-pointer transition-all ${
+                  isDragging
+                    ? "border-[#FF5A36] bg-[#ffe7df]"
+                    : "border-[#FF5A36] bg-[#fff5f0] hover:bg-[#ffeae0]"
+                }`}
               >
+                <div className="pointer-events-none absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_top_right,rgba(255,90,54,0.16),transparent_45%)]" />
                 <Camera className="w-16 h-16 text-[#FF5A36] mb-4" />
                 <p className="text-lg font-600 text-[#1a1a1a] mb-2">
                   Drag photo here
                 </p>
                 <p className="text-sm text-[#6b7280]">or click to upload</p>
+                <p className="mt-2 text-xs font-600 text-[#9ca3af]">
+                  JPG, PNG up to 10MB
+                </p>
                 <input
                   type="file"
                   accept="image/*"
@@ -84,12 +114,15 @@ export function PhotoCaptureStep() {
                   className="hidden"
                   ref={fileInputRef}
                 />
-                <button
-                  onClick={() => fileInputRef.current?.click()}
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    fileInputRef.current?.click()
+                  }}
                   className="mt-6 px-6 py-3 rounded-xl bg-[#FF5A36] text-white font-600 hover:bg-[#e04e2d] transition-colors"
                 >
                   Select Photo
-                </button>
+                </Button>
               </div>
 
               {/* Mobile: Simple upload */}
@@ -99,6 +132,9 @@ export function PhotoCaptureStep() {
                     <Camera className="w-12 h-12 text-[#6b7280] mx-auto mb-2" />
                     <p className="text-sm text-[#6b7280]">
                       Upload your photo below
+                    </p>
+                    <p className="mt-1 text-xs font-600 text-[#9ca3af]">
+                      JPG, PNG up to 10MB
                     </p>
                   </div>
                 </div>
@@ -132,9 +168,16 @@ export function PhotoCaptureStep() {
                 className="hidden"
                 ref={fileInputRef}
               />
-            </>
-          ) : (
-            <div className="space-y-4">
+              </motion.div>
+            ) : (
+              <motion.div
+                key="preview-ui"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
+                className="space-y-4"
+              >
               <div className="relative rounded-3xl overflow-hidden bg-[#F7F7F8] aspect-square md:aspect-auto md:h-96">
                 <Image
                   src={uploadedImage}
@@ -144,15 +187,25 @@ export function PhotoCaptureStep() {
                   sizes="(max-width: 768px) 100vw, 100vw"
                 />
 
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-black/20 to-transparent" />
+
                 {/* Face detected indicator */}
                 {faceDetected && (
-                  <div className="absolute top-4 right-4 flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-lg">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="absolute top-4 right-4 flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-lg"
+                  >
                     <CheckCircle2 className="w-5 h-5 text-[#1D9E75]" />
                     <span className="text-sm font-600 text-[#1D9E75]">
                       Face detected
                     </span>
-                  </div>
+                  </motion.div>
                 )}
+              </div>
+
+              <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 text-sm text-[#4b5563]">
+                Great start. Our AI will now remove background, optimize lighting, and format this photo for official standards.
               </div>
 
               <Button
@@ -165,8 +218,9 @@ export function PhotoCaptureStep() {
               >
                 Change Photo
               </Button>
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Tips panel - Right */}
@@ -181,7 +235,9 @@ export function PhotoCaptureStep() {
                   key={idx}
                   className="shrink-0 w-24 rounded-xl bg-[#F7F7F8] p-3 text-center"
                 >
-                  <div className="text-3xl mb-2">{tip.emoji}</div>
+                  <div className="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white text-[#6b7280]">
+                    <tip.icon className="h-4 w-4" />
+                  </div>
                   <p className="text-xs font-600 text-[#1a1a1a] leading-tight">
                     {tip.text}
                   </p>
@@ -197,7 +253,9 @@ export function PhotoCaptureStep() {
                 key={idx}
                 className="flex items-start gap-3 p-4 rounded-xl bg-[#F7F7F8]"
               >
-                <span className="text-2xl shrink-0">{tip.emoji}</span>
+                <div className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-white text-[#6b7280]">
+                  <tip.icon className="h-4 w-4" />
+                </div>
                 <p className="text-sm font-600 text-[#1a1a1a]">{tip.text}</p>
               </div>
             ))}

@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react"
 import { motion } from "framer-motion"
+import { Aperture, Sparkles } from "lucide-react"
 
 export function BeforeAfterSlider() {
   const [position, setPosition] = useState(50)
@@ -24,7 +25,7 @@ export function BeforeAfterSlider() {
   }
 
   return (
-    <div className="w-full h-full rounded-3xl overflow-hidden bg-[#F7F7F8]">
+    <div className="w-full h-full rounded-3xl overflow-hidden border border-[#e6e7ea] bg-white shadow-[0_20px_34px_rgba(17,24,39,0.08)]">
       <div
         ref={containerRef}
         className="relative w-full aspect-square md:aspect-video cursor-col-resize select-none"
@@ -36,24 +37,30 @@ export function BeforeAfterSlider() {
       >
         {/* Before image */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="w-full h-full bg-linear-to-br from-blue-200 to-blue-100 flex items-center justify-center">
-            <div className="text-center space-y-2">
-              <p className="text-sm font-600 text-blue-900">BEFORE</p>
-              <p className="text-xs text-blue-700">Your original photo</p>
+          <div className="w-full h-full bg-linear-to-br from-[#dbeafe] via-[#e0ecff] to-[#f3f7ff] flex items-center justify-center">
+            <div className="text-center space-y-3">
+              <div className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/80 border border-[#c4d3ef] text-[#39517a]">
+                <Aperture className="h-4 w-4" />
+              </div>
+              <p className="text-sm font-700 tracking-wide text-[#243b64]">ORIGINAL</p>
+              <p className="text-xs text-[#4f6489]">Unprocessed camera image</p>
             </div>
           </div>
         </div>
 
         {/* After image */}
         <motion.div
-          className="absolute inset-0 overflow-hidden bg-linear-to-br from-green-200 to-green-100"
+          className="absolute inset-0 overflow-hidden bg-linear-to-br from-[#ecfff6] via-[#ddf8ec] to-[#f3fffa]"
           style={{ width: `${position}%` }}
           animate={{ width: `${position}%` }}
         >
           <div className="w-full h-full flex items-center justify-center">
-            <div className="text-center space-y-2">
-              <p className="text-sm font-600 text-green-900">AFTER</p>
-              <p className="text-xs text-green-700">AI-enhanced photo</p>
+            <div className="text-center space-y-3">
+              <div className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/80 border border-[#b8e5cf] text-[#1c7c57]">
+                <Sparkles className="h-4 w-4" />
+              </div>
+              <p className="text-sm font-700 tracking-wide text-[#166344]">AI ENHANCED</p>
+              <p className="text-xs text-[#2f7f5d]">Compliance-ready output</p>
             </div>
           </div>
         </motion.div>
@@ -79,6 +86,11 @@ export function BeforeAfterSlider() {
             </div>
           </div>
         </motion.div>
+      </div>
+
+      <div className="flex items-center justify-between border-t border-[#eceef2] bg-[#fafbfc] px-4 py-3 text-xs sm:text-sm">
+        <p className="font-600 text-[#4b5563]">Drag to compare before and after</p>
+        <p className="font-700 text-[#111827]">Live compliance preview</p>
       </div>
     </div>
   )

@@ -2,64 +2,60 @@
 
 import { Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 
 export function PricingCards() {
   const plans = [
     {
-      name: "Free",
-      price: "₹0",
-      description: "Perfect to get started",
-      cta: "Download Compressed",
+      name: "Digital Only",
+      description: "Create and preview your passport photo",
+      cta: "Create Free",
       features: [
-        "Download compressed photos",
-        "Standard crop",
-        "Email delivery",
-        "1 format (JPG)",
+        "Indian passport size preview",
+        "AI background cleanup",
+        "Basic digital download",
+        "Single JPG export",
       ],
       popular: false,
     },
     {
-      name: "Pro",
-      price: "₹49",
-      description: "Most popular choice",
-      cta: "Get HD Photos",
+      name: "8 Prints Pack",
+      description: "Best for immediate document needs",
+      cta: "Choose 8 Prints",
       features: [
-        "HD quality download",
-        "All formats (JPG, PNG, PDF)",
-        "Precise crop to country spec",
-        "Instant delivery",
-        "Print-ready files",
+        "8 Indian passport-size photos",
+        "Ultra-gloss photo paper",
+        "Precision cutting layout",
+        "High-resolution print file",
+        "Fast processing turnaround",
       ],
-      popular: true,
+      recommended: true,
     },
     {
-      name: "Student Pack",
-      price: "₹199/mo",
-      description: "Unlimited for students",
-      cta: "Subscribe Now",
+      name: "12 Prints Pack",
+      description: "Value pack for multiple submissions",
+      cta: "Choose 12 Prints",
       features: [
-        "Unlimited passport photos",
-        "All countries supported",
-        "HD + print formats",
-        "Priority support",
-        "Document templates included",
+        "12 Indian passport-size photos",
+        "Ultra-gloss photo paper",
+        "Precision cutting layout",
+        "High-resolution print file",
+        "Best value per photo",
       ],
-      popular: false,
+      recommended: false,
     },
   ]
 
   return (
     <section
-      id="pricing"
-      className="py-16 md:py-24 space-y-12 md:space-y-16"
+      id="print-packs"
+      className="space-y-12 md:space-y-16"
     >
       <div className="text-center space-y-2">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-700 text-[#1a1a1a]">
-          Simple, Transparent Pricing
+        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-700 tracking-tight text-[#111827]">
+          Select Your Photo Pack
         </h2>
         <p className="text-base md:text-lg text-[#6b7280] max-w-2xl mx-auto">
-          Choose the plan that fits your needs
+          First make your passport photo, then choose the output format you need.
         </p>
       </div>
 
@@ -68,42 +64,27 @@ export function PricingCards() {
           <div
             key={plan.name}
             className={`relative rounded-3xl border-2 p-8 md:p-10 space-y-6 transition-all ${
-              plan.popular
-                ? "border-[#FF5A36] bg-white shadow-lg scale-105 md:scale-100 md:ring-2 md:ring-[#FF5A36] md:ring-offset-4"
-                : "border-[#E5E5E5] bg-white hover:border-[#FF5A36]"
+              plan.recommended
+                ? "border-[#FF5A36] bg-white shadow-[0_24px_42px_rgba(255,90,54,0.16)] scale-105 md:scale-100 md:ring-2 md:ring-[#FF5A36] md:ring-offset-4"
+                : "border-[#E5E5E5] bg-white hover:border-[#FF5A36] hover:shadow-[0_16px_28px_rgba(17,24,39,0.08)]"
             }`}
           >
-            {plan.popular && (
+            {plan.recommended && (
               <div className="absolute top-0 left-6 -translate-y-1/2">
-                <Badge
-                  className="bg-[#FF5A36] text-white px-3 py-1 text-xs font-600 rounded-full"
-                >
-                  Most Popular
-                </Badge>
+                <span className="inline-flex rounded-full bg-[#FF5A36] px-3 py-1 text-xs font-600 text-white">
+                  Recommended
+                </span>
               </div>
             )}
 
             <div className="space-y-2">
-              <h3 className="text-2xl font-700 text-[#1a1a1a]">{plan.name}</h3>
+              <h3 className="font-display text-2xl font-700 text-[#111827]">{plan.name}</h3>
               <p className="text-sm text-[#6b7280]">{plan.description}</p>
-            </div>
-
-            <div className="space-y-1">
-              <div className="text-4xl md:text-5xl font-700 text-[#1a1a1a]">
-                {plan.price}
-              </div>
-              {plan.price !== "₹0" && (
-                <p className="text-sm text-[#6b7280]">
-                  {plan.price.includes("/mo")
-                    ? "per month, cancel anytime"
-                    : "one-time"}
-                </p>
-              )}
             </div>
 
             <Button
               className={`w-full rounded-xl px-6 py-6 text-base font-600 h-auto transition-all ${
-                plan.popular
+                plan.recommended
                   ? "bg-[#FF5A36] text-white hover:bg-[#e04e2d]"
                   : "bg-[#F7F7F8] text-[#1a1a1a] hover:bg-[#E5E5E5]"
               }`}

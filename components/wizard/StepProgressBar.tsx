@@ -7,10 +7,9 @@ export function StepProgressBar() {
   const { currentStep } = useWizard()
 
   const steps = [
-    { id: "country", label: "Country", order: 1 },
-    { id: "capture", label: "Capture", order: 2 },
-    { id: "processing", label: "Processing", order: 3 },
-    { id: "preview", label: "Preview", order: 4 },
+    { id: "capture", label: "Photo", order: 1 },
+    { id: "processing", label: "Processing", order: 2 },
+    { id: "preview", label: "Preview", order: 3 },
   ]
 
   const currentStepIndex = steps.findIndex((s) => s.id === currentStep) + 1
@@ -20,7 +19,7 @@ export function StepProgressBar() {
       {/* Mobile: Text pill only */}
       <div className="md:hidden text-center py-4">
         <span className="inline-block px-4 py-2 rounded-full bg-[#F7F7F8] text-sm font-600 text-[#1a1a1a]">
-          Step {currentStepIndex} of 4
+          Step {currentStepIndex} of 3
         </span>
       </div>
 

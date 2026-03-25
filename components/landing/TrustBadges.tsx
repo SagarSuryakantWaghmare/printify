@@ -6,18 +6,18 @@ export function TrustBadges() {
   const badges = [
     {
       icon: CheckCircle2,
-      label: "Approved by UIDAI",
-      description: "Meets government photo standards",
+      label: "Indian Passport Spec Ready",
+      description: "Aligned for standard Indian passport photo dimension and framing.",
     },
     {
       icon: Award,
-      label: "ISO Certified Process",
-      description: "Professional quality assured",
+      label: "Ultra-Gloss Print Quality",
+      description: "Designed for crisp photo paper output with strong clarity and tone.",
     },
     {
       icon: Users,
-      label: "50K+ Happy Users",
-      description: "Trusted by Indian students",
+      label: "Premium Finish Workflow",
+      description: "8 or 12 print packs with precision-cut guidance for cleaner final photos.",
     },
   ]
 
@@ -28,11 +28,13 @@ export function TrustBadges() {
         return (
           <div
             key={idx}
-            className="flex items-center gap-3 rounded-2xl bg-[#F7F7F8] p-4 md:p-5"
+            className="flex items-center gap-3 rounded-2xl border border-[#e6e7ea] bg-white p-4 md:p-5 shadow-[0_8px_20px_rgba(17,24,39,0.04)]"
           >
-            <Icon className="h-5 w-5 md:h-6 md:w-6 shrink-0 text-[#1D9E75]" />
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#eef7f3]">
+              <Icon className="h-5 w-5 md:h-6 md:w-6 shrink-0 text-[#1D9E75]" />
+            </div>
             <div>
-              <p className="text-sm font-600 text-[#1a1a1a]">{badge.label}</p>
+              <p className="text-sm font-700 text-[#111827]">{badge.label}</p>
               <p className="text-xs md:text-sm text-[#6b7280]">
                 {badge.description}
               </p>

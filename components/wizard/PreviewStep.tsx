@@ -1,10 +1,11 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import { useWizard } from "@/lib/hooks"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { Check, Download, ShoppingCart } from "lucide-react"
+import { Check, Download, LayoutGrid } from "lucide-react"
 
 const VALIDATION_POINTS = [
   "Face centered",
@@ -16,7 +17,9 @@ const VALIDATION_POINTS = [
 ]
 
 export function PreviewStep() {
-  const { photoData, selectedCountry, reset } = useWizard()
+  const { photoData, reset } = useWizard()
+  const [selectedPack, setSelectedPack] = useState<8 | 12>(8)
+  const imageForSheet = photoData.original
 
   return (
     <div className="space-y-8">
@@ -25,7 +28,7 @@ export function PreviewStep() {
           Your Photo is Ready!
         </h1>
         <p className="text-base md:text-lg text-[#6b7280]">
-          Approved for {selectedCountry}
+          Indian passport-size approved layout
         </p>
       </div>
 
@@ -98,28 +101,78 @@ export function PreviewStep() {
         </div>
       </div>
 
+      <div className="space-y-4 rounded-3xl border border-[#E5E7EB] bg-white p-5 md:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-700 text-[#111827]">Select Print Quantity</p>
+            <p className="text-xs md:text-sm text-[#6b7280]">Choose 8 or 12 photos and preview the arranged print sheet.</p>
+          </div>
+          <div className="inline-flex rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-1">
+            <button
+              onClick={() => setSelectedPack(8)}
+              className={`rounded-lg px-4 py-2 text-sm font-700 transition-colors ${
+                selectedPack === 8 ? "bg-white text-[#111827] shadow-sm" : "text-[#6b7280]"
+              }`}
+            >
+              8 Photos
+            </button>
+            <button
+              onClick={() => setSelectedPack(12)}
+              className={`rounded-lg px-4 py-2 text-sm font-700 transition-colors ${
+                selectedPack === 12 ? "bg-white text-[#111827] shadow-sm" : "text-[#6b7280]"
+              }`}
+            >
+              12 Photos
+            </button>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-[#E8EAEE] bg-[#FBFCFD] p-4 md:p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="inline-flex items-center gap-2 text-xs font-700 uppercase tracking-wider text-[#6b7280]">
+              <LayoutGrid className="h-4 w-4" />
+              Print Sheet Preview
+            </p>
+            <p className="text-xs font-700 text-[#1D9E75]">{selectedPack} photos arranged</p>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2 md:gap-3">
+            {Array.from({ length: selectedPack }).map((_, idx) => (
+              <div key={idx} className="relative aspect-4/5 overflow-hidden rounded-lg border border-[#DFE3E8] bg-white">
+                {imageForSheet ? (
+                  <Image
+                    src={imageForSheet}
+                    alt={`Print ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 25vw, 10vw"
+                  />
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Action buttons */}
       <div className="space-y-3">
         <Button className="w-full bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl py-6 text-base font-600 h-auto">
           <Download className="w-5 h-5 mr-2" />
-          Download Free (Compressed)
+          Download Digital Photo
         </Button>
 
         <Button variant="outline" className="w-full border border-[#E5E5E5] text-[#1a1a1a] rounded-xl py-6 text-base font-600 h-auto hover:bg-[#F7F7F8]">
-          📸 Download HD — ₹49
+          <Download className="w-5 h-5 mr-2" />
+          Download {selectedPack} Photo Print Sheet
         </Button>
 
-        <Button variant="outline" className="w-full border border-[#E5E5E5] text-[#1a1a1a] rounded-xl py-6 text-base font-600 h-auto hover:bg-[#F7F7F8]">
-          <ShoppingCart className="w-5 h-5 mr-2" />
-          Order Prints — ₹99
-        </Button>
-
-        <button
+        <Button
           onClick={reset}
-          className="w-full text-[#6b7280] hover:text-[#1a1a1a] font-600 py-3 transition-colors"
+          variant="ghost"
+          className="w-full text-[#6b7280] hover:text-[#1a1a1a] font-600 py-3"
         >
           Create Another Photo
-        </button>
+        </Button>
       </div>
     </div>
   )

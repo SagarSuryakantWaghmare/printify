@@ -37,7 +37,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
       </div>
 
       {/* Mobile: Fixed bottom navigation button */}
-      {currentStep !== "country" && (
+      {currentStep !== "capture" && (
         <div className="fixed bottom-0 left-0 right-0 md:hidden border-t border-[#E5E5E5] bg-white p-4">
           <button
             onClick={prevStep}
@@ -49,7 +49,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
       )}
 
       {/* Tablet+: Side-by-side navigation */}
-      {currentStep !== "country" && (
+      {currentStep !== "capture" && (
         <div className="hidden md:flex justify-between items-center px-4 sm:px-6 md:px-8 max-w-7xl mx-auto py-8 gap-4">
           <button
             onClick={prevStep}

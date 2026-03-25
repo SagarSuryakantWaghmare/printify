@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode } from "react"
 
-export type WizardStep = "country" | "capture" | "processing" | "preview"
+export type WizardStep = "capture" | "processing" | "preview"
 
 export interface WizardContextType {
   currentStep: WizardStep
@@ -21,11 +21,11 @@ export interface WizardContextType {
 
 const WizardContext = createContext<WizardContextType | undefined>(undefined)
 
-const steps: WizardStep[] = ["country", "capture", "processing", "preview"]
+const steps: WizardStep[] = ["capture", "processing", "preview"]
 
 export function WizardProvider({ children }: { children: ReactNode }) {
-  const [currentStep, setCurrentStep] = useState<WizardStep>("country")
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
+  const [currentStep, setCurrentStep] = useState<WizardStep>("capture")
+  const [selectedCountry, setSelectedCountry] = useState<string | null>("india")
   const [photoData, setPhotoDataState] = useState<{ original: string | null; processed: string | null }>({ original: null, processed: null })
 
   const goToStep = (step: WizardStep) => setCurrentStep(step)
@@ -61,8 +61,8 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   }
 
   const reset = () => {
-    setCurrentStep("country")
-    setSelectedCountry(null)
+    setCurrentStep("capture")
+    setSelectedCountry("india")
     setPhotoDataState({ original: null, processed: null })
   }
 

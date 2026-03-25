@@ -4,22 +4,41 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { useWizard } from "@/lib/hooks"
 import { motion } from "framer-motion"
-import { CheckCircle2, Loader } from "lucide-react"
+import { CheckCircle2 } from "lucide-react"
 
 const PROCESSING_STEPS = [
-  "Detecting face",
-  "Removing background",
-  "Enhancing quality",
-  "Cropping to spec",
-  "Validating standards",
+  {
+    label: "Detecting face",
+    detail: "Aligning eye-line and framing for compliant composition.",
+  },
+  {
+    label: "Removing background",
+    detail: "Separating subject edges for a clean, neutral backdrop.",
+  },
+  {
+    label: "Enhancing quality",
+    detail: "Balancing exposure and sharpness for print-ready output.",
+  },
+  {
+    label: "Cropping to spec",
+    detail: "Applying Indian passport dimensions and safe margins.",
+  },
+  {
+    label: "Validating standards",
+    detail: "Running final compliance checks before export.",
+  },
 ]
+
+const STEP_TIMINGS_MS = [900, 1250, 1000, 1150, 900]
 
 function ProcessingStepItem({
   step,
+  detail,
   index,
   currentStep,
 }: {
   step: string
+  detail: string
   index: number
   currentStep: number
 }) {
@@ -43,13 +62,18 @@ function ProcessingStepItem({
             <CheckCircle2 className="w-5 h-5 text-white" />
           </motion.div>
         ) : isActive ? (
-          <motion.div
-            className="w-6 h-6 rounded-full bg-[#FF5A36] flex items-center justify-center"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity }}
-          >
-            <Loader className="w-4 h-4 text-white" />
-          </motion.div>
+          <div className="relative w-6 h-6 flex items-center justify-center">
+            <motion.div
+              className="absolute inset-0 rounded-full border border-[#FF5A36]/50"
+              animate={{ scale: [1, 1.4], opacity: [0.7, 0] }}
+              transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut" }}
+            />
+            <motion.div
+              className="w-3 h-3 rounded-full bg-[#FF5A36]"
+              animate={{ scale: [1, 1.18, 1] }}
+              transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </div>
         ) : (
           <div className="w-6 h-6 rounded-full bg-[#E5E5E5] flex items-center justify-center">
             <span className="text-xs font-600 text-[#6b7280]">
@@ -70,7 +94,7 @@ function ProcessingStepItem({
           {step}
         </p>
         {isActive && (
-          <p className="text-sm text-[#6b7280] mt-1">Processing...</p>
+          <p className="text-sm text-[#6b7280] mt-1">{detail}</p>
         )}
         {isComplete && (
           <p className="text-sm text-[#1D9E75] mt-1">Complete</p>
@@ -83,24 +107,27 @@ function ProcessingStepItem({
 export function ProcessingStep() {
   const { photoData, nextStep } = useWizard()
   const [currentStep, setCurrentStep] = useState(0)
+  const activeStep = PROCESSING_STEPS[Math.min(currentStep, PROCESSING_STEPS.length - 1)]
 
   useEffect(() => {
     // Auto-advance through processing steps
     if (currentStep < PROCESSING_STEPS.length) {
       const timer = setTimeout(() => {
         setCurrentStep((prev) => prev + 1)
-      }, 1200)
+      }, STEP_TIMINGS_MS[currentStep])
       return () => clearTimeout(timer)
     } else {
       // When all steps complete, advance to next wizard step
       const timer = setTimeout(() => {
         nextStep()
-      }, 800)
+      }, 700)
       return () => clearTimeout(timer)
     }
   }, [currentStep, nextStep])
 
-  const progress = ((currentStep + 1) / PROCESSING_STEPS.length) * 100
+  const progress =
+    (Math.min(currentStep, PROCESSING_STEPS.length) / PROCESSING_STEPS.length) * 100
+  const remainingMs = STEP_TIMINGS_MS.slice(currentStep).reduce((sum, ms) => sum + ms, 0)
 
   return (
     <div className="space-y-12">
@@ -109,7 +136,9 @@ export function ProcessingStep() {
           Creating Your Perfect Photo
         </h1>
         <p className="text-base md:text-lg text-[#6b7280]">
-          AI is processing your image...
+          {currentStep < PROCESSING_STEPS.length
+            ? `${activeStep.label}...`
+            : "Finalizing your export..."}
         </p>
       </div>
 
@@ -117,7 +146,7 @@ export function ProcessingStep() {
         {/* Photo preview - Desktop only */}
         <div className="hidden md:flex items-center justify-center">
           {photoData.original && (
-            <div className="rounded-2xl overflow-hidden bg-[#F7F7F8] w-full max-w-xs aspect-square">
+            <div className="relative rounded-2xl overflow-hidden bg-[#F7F7F8] w-full max-w-xs aspect-square">
               <Image
                 src={photoData.original}
                 alt="Processing"
@@ -136,7 +165,8 @@ export function ProcessingStep() {
             {PROCESSING_STEPS.map((step, idx) => (
               <ProcessingStepItem
                 key={idx}
-                step={step}
+                step={step.label}
+                detail={step.detail}
                 index={idx}
                 currentStep={currentStep}
               />
@@ -145,15 +175,22 @@ export function ProcessingStep() {
 
           {/* Progress bar */}
           <div className="space-y-2 pt-4">
-            <div className="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
+            <div className="relative w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
               <motion.div
                 className="h-full bg-[#FF5A36]"
                 animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.45, ease: "easeOut" }}
               />
+              {currentStep < PROCESSING_STEPS.length && (
+                <motion.div
+                  className="absolute inset-y-0 w-14 bg-linear-to-r from-transparent via-white/60 to-transparent"
+                  animate={{ x: ["-40%", "120%"] }}
+                  transition={{ duration: 1.4, repeat: Infinity, ease: "linear" }}
+                />
+              )}
             </div>
             <p className="text-sm text-[#6b7280]">
-              ~{Math.ceil((PROCESSING_STEPS.length - currentStep) * 1.2)} sec remaining
+              ~{Math.max(1, Math.ceil(remainingMs / 1000))} sec remaining
             </p>
           </div>
         </div>

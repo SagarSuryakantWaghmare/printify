@@ -5,45 +5,24 @@ import Link from "next/link"
 import { Show, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Separator } from "@/components/ui/separator"
-import { Menu, Grid2x2, X } from "lucide-react"
-
-const navLinks = [
-  { label: "Home",         href: "/" },
-  { label: "How it works", href: "/how-it-works" },
-  { label: "Pricing",      href: "/#pricing" },
-  { label: "Countries",    href: "/app" },
-]
+import { Menu, Aperture, X } from "lucide-react"
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white">
+    <header className="sticky top-0 z-50 w-full border-b border-[#ececef] bg-white/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF5A36]">
-            <Grid2x2 className="h-4 w-4 text-white" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF5A36] shadow-[0_10px_22px_rgba(255,90,54,0.35)]">
+            <Aperture className="h-4 w-4 text-white" />
           </div>
-          <span className="text-lg font-700 text-[#1a1a1a]">
-            PicID
+          <span className="font-display text-lg font-700 tracking-tight text-[#111827]">
+            PrintfY
           </span>
         </Link>
-
-        {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-500 text-[#6b7280] transition-colors hover:text-[#1a1a1a]"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
@@ -54,15 +33,15 @@ export function Navbar() {
               </Button>
             </SignInButton>
             <SignUpButton mode="modal" fallbackRedirectUrl="/app">
-              <Button className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl px-5">
-                Get Started Free
+              <Button className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl px-5 shadow-[0_10px_22px_rgba(255,90,54,0.25)]">
+                Start Passport Photo
               </Button>
             </SignUpButton>
           </Show>
           <Show when="signed-in">
             <Button
               asChild
-              className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl px-5"
+              className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl px-5 shadow-[0_10px_22px_rgba(255,90,54,0.25)]"
             >
               <Link href="/app">Generate Photo</Link>
             </Button>
@@ -85,9 +64,9 @@ export function Navbar() {
                 onClick={() => setOpen(false)}
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF5A36]">
-                  <Grid2x2 className="h-4 w-4 text-white" />
+                  <Aperture className="h-4 w-4 text-white" />
                 </div>
-                <span className="text-lg font-600">PicID</span>
+                <span className="font-display text-lg font-600">PrintfY</span>
               </Link>
               <Button
                 variant="ghost"
@@ -98,23 +77,6 @@ export function Navbar() {
               </Button>
             </div>
 
-            <Separator />
-
-            <nav className="flex flex-col px-6 py-4 gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-3 text-sm font-500 text-[#6b7280] transition-colors hover:bg-[#f7f7f8] hover:text-[#1a1a1a]"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-
-            <Separator />
-
             <div className="px-6 py-4 space-y-3">
               <Show when="signed-out">
                 <SignInButton mode="modal" fallbackRedirectUrl="/app">
@@ -124,7 +86,7 @@ export function Navbar() {
                 </SignInButton>
                 <SignUpButton mode="modal" fallbackRedirectUrl="/app">
                   <Button className="w-full bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl">
-                    Get Started Free
+                    Start Passport Photo
                   </Button>
                 </SignUpButton>
               </Show>
