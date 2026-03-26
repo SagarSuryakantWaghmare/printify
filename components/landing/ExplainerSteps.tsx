@@ -1,6 +1,8 @@
 "use client"
 
 import { Camera, WandSparkles, DownloadCloud } from "lucide-react"
+import { motion } from "framer-motion"
+import type { Variants } from "framer-motion"
 
 export function ExplainerSteps() {
   const steps = [
@@ -21,35 +23,87 @@ export function ExplainerSteps() {
     },
   ]
 
+  const containerVariants: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  }
+
+  const cardVariants: Variants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { type: "spring", stiffness: 100, damping: 12 }
+    },
+  }
+
   return (
-    <section id="how-it-works" className="space-y-8 md:space-y-12">
-      <div className="text-center space-y-2">
-        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-700 tracking-tight text-[#111827]">
-          From Upload To Premium Prints In 3 Steps
+    <section id="how-it-works" className="relative py-16 space-y-12">
+      {/* Decorative background elements */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl h-64 bg-gradient-to-r from-[#FF5A36]/10 via-transparent to-[#1D9E75]/10 blur-3xl -z-10 pointer-events-none" />
+
+      <motion.div 
+        className="text-center space-y-4"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+      >
+        <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-slate-900">
+          From Upload To <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF5A36] to-[#ff8a73]">Premium Prints</span>
         </h2>
-        <p className="text-base md:text-lg text-[#6b7280] max-w-2xl mx-auto">
+        <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto font-medium">
           Built for Indian passport needs with a clean flow and zero manual editing work.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
+      <motion.div 
+        className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto relative cursor-default"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+      >
+        {/* Connecting Line for Desktop */}
+        <div className="hidden sm:block absolute top-[18%] left-[10%] right-[10%] h-[2px] bg-gradient-to-r from-transparent via-slate-200 to-transparent -z-10" />
+
         {steps.map((step, idx) => (
-          <div
+          <motion.div
             key={idx}
-            className="rounded-3xl bg-white border border-[#e6e7ea] p-6 md:p-8 text-left space-y-4 transition-all hover:-translate-y-1 hover:border-[#FF5A36] hover:shadow-[0_18px_30px_rgba(17,24,39,0.08)]"
+            variants={cardVariants}
+            whileHover={{ y: -8, scale: 1.02 }}
+            className="group relative rounded-3xl bg-white/60 backdrop-blur-xl border border-white/50 p-8 text-center sm:text-left space-y-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden transition-all hover:shadow-[0_20px_40px_rgba(255,90,54,0.08)] hover:border-[#FF5A36]/30"
           >
-            <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff2ed] text-[#FF5A36]">
-              <step.icon className="h-5 w-5" />
+            {/* Number watermark */}
+            <div className="absolute -bottom-4 -right-2 text-9xl font-black text-slate-50/50 group-hover:text-[#FF5A36]/5 transition-colors z-0 pointer-events-none">
+              {idx + 1}
             </div>
-            <h3 className="font-display text-lg md:text-xl font-600 text-[#111827]">
-              {step.label}
-            </h3>
-            <p className="text-sm md:text-base text-[#6b7280]">
-              {step.description}
-            </p>
-          </div>
+
+            <div className="relative z-10 flex flex-col items-center sm:items-start space-y-5">
+              <motion.div 
+                className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#fff2ed] to-white text-[#FF5A36] shadow-inner ring-1 ring-black/5"
+                whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <step.icon className="h-7 w-7" />
+              </motion.div>
+              
+              <div className="space-y-3">
+                <h3 className="font-display text-xl md:text-2xl font-bold text-slate-900 group-hover:text-[#FF5A36] transition-colors">
+                  {step.label}
+                </h3>
+                <p className="text-base text-slate-600 leading-relaxed">
+                  {step.description}
+                </p>
+              </div>
+            </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   )
 }

@@ -2,6 +2,8 @@
 
 import { Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion"
+import type { Variants } from "framer-motion"
 
 export function PricingCards() {
   const plans = [
@@ -45,64 +47,118 @@ export function PricingCards() {
     },
   ]
 
+  const containerVariants: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
+      },
+    },
+  }
+
+  const cardVariants: Variants = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: { type: "spring", stiffness: 100, damping: 15 }
+    },
+  }
+
   return (
     <section
       id="print-packs"
-      className="space-y-12 md:space-y-16"
+      className="relative py-16 space-y-16"
     >
-      <div className="text-center space-y-2">
-        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-700 tracking-tight text-[#111827]">
+      <div className="absolute inset-0 bg-slate-50/50 -z-10" />
+      
+      <motion.div 
+        className="text-center space-y-4"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+      >
+        <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-slate-900">
           Select Your Photo Pack
         </h2>
-        <p className="text-base md:text-lg text-[#6b7280] max-w-2xl mx-auto">
+        <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto font-medium">
           First make your passport photo, then choose the output format you need.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 max-w-7xl mx-auto px-4 sm:px-6"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+      >
         {plans.map((plan) => (
-          <div
+          <motion.div
             key={plan.name}
-            className={`relative rounded-3xl border-2 p-8 md:p-10 space-y-6 transition-all ${
+            variants={cardVariants}
+            whileHover={{ y: plan.recommended ? -12 : -8 }}
+            className={`relative rounded-[2.5rem] border p-8 md:p-10 flex flex-col transition-all duration-300 ${
               plan.recommended
-                ? "border-[#FF5A36] bg-white shadow-[0_24px_42px_rgba(255,90,54,0.16)] scale-105 md:scale-100 md:ring-2 md:ring-[#FF5A36] md:ring-offset-4"
-                : "border-[#E5E5E5] bg-white hover:border-[#FF5A36] hover:shadow-[0_16px_28px_rgba(17,24,39,0.08)]"
+                ? "border-[#FF5A36]/30 bg-white/90 backdrop-blur-xl shadow-[0_30px_60px_-15px_rgba(255,90,54,0.2)] md:scale-105 z-10"
+                : "border-slate-200/60 bg-white/70 backdrop-blur-lg hover:border-slate-300 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] z-0"
             }`}
           >
             {plan.recommended && (
-              <div className="absolute top-0 left-6 -translate-y-1/2">
-                <span className="inline-flex rounded-full bg-[#FF5A36] px-3 py-1 text-xs font-600 text-white">
-                  Recommended
-                </span>
+              <div className="absolute -top-5 left-1/2 -translate-x-1/2">
+                <motion.span 
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.8, type: "spring" }}
+                  className="inline-flex rounded-full bg-gradient-to-r from-[#FF5A36] to-[#fc7153] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-[#FF5A36]/30"
+                >
+                  Most Popular
+                </motion.span>
               </div>
             )}
+            
+            {/* Soft background glow for recommended card */}
+            {plan.recommended && (
+              <div className="absolute inset-0 bg-gradient-to-b from-[#FF5A36]/5 to-transparent rounded-[2.5rem] -z-10 pointer-events-none" />
+            )}
 
-            <div className="space-y-2">
-              <h3 className="font-display text-2xl font-700 text-[#111827]">{plan.name}</h3>
-              <p className="text-sm text-[#6b7280]">{plan.description}</p>
+            <div className="space-y-3 mb-8">
+              <h3 className={`font-display text-2xl font-bold ${plan.recommended ? "text-[#FF5A36]" : "text-slate-900"}`}>
+                {plan.name}
+              </h3>
+              <p className="text-base text-slate-500 font-medium">
+                {plan.description}
+              </p>
             </div>
 
             <Button
-              className={`w-full rounded-xl px-6 py-6 text-base font-600 h-auto transition-all ${
+              className={`w-full rounded-2xl px-6 py-7 text-lg font-bold transition-all duration-300 ${
                 plan.recommended
-                  ? "bg-[#FF5A36] text-white hover:bg-[#e04e2d]"
-                  : "bg-[#F7F7F8] text-[#1a1a1a] hover:bg-[#E5E5E5]"
+                  ? "bg-[#FF5A36] text-white hover:bg-[#e04e2d] hover:shadow-[0_8px_20px_rgba(255,90,54,0.3)] hover:scale-[1.02]"
+                  : "bg-slate-100 text-slate-800 hover:bg-slate-200 hover:scale-[1.02]"
               }`}
             >
               {plan.cta}
             </Button>
 
-            <div className="space-y-3 pt-2">
+            <div className="space-y-4 pt-10 mt-auto">
               {plan.features.map((feature, idx) => (
-                <div key={idx} className="flex items-start gap-3">
-                  <Check className="h-5 w-5 shrink-0 text-[#1D9E75] mt-0.5" />
-                  <span className="text-sm text-[#6b7280]">{feature}</span>
+                <div key={idx} className="flex items-start gap-4">
+                  <div className={`mt-1 inline-flex shrink-0 items-center justify-center rounded-full p-1 ${
+                    plan.recommended ? "bg-[#1D9E75]/10" : "bg-slate-100"
+                  }`}>
+                    <Check className={`h-3.5 w-3.5 ${plan.recommended ? "text-[#1D9E75]" : "text-slate-500"}`} strokeWidth={3} />
+                  </div>
+                  <span className="text-base text-slate-600 font-medium leading-tight">{feature}</span>
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   )
 }
