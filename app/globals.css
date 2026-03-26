@@ -15,6 +15,14 @@
   --radius: 0.75rem;
   --card: #ffffff;
   --card-foreground: #1a1a1a;
+
+  /* Glassmorphism tokens */
+  --glass: rgba(255, 255, 255, 0.6);
+  --glass-dark: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
+  --particle-primary: rgba(255, 90, 54, 0.7);
+  --particle-secondary: rgba(29, 158, 117, 0.55);
 }
 
 * {
@@ -28,9 +36,68 @@ body {
   font-family: var(--font-sans), sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  background-image: radial-gradient(circle at 10% -20%, rgba(255, 90, 54, 0.08), transparent 28%), radial-gradient(circle at 90% 0%, rgba(29, 158, 117, 0.07), transparent 30%);
+  background-image:
+    radial-gradient(circle at 10% -20%, rgba(255, 90, 54, 0.08), transparent 28%),
+    radial-gradient(circle at 90% 0%, rgba(29, 158, 117, 0.07), transparent 30%);
 }
 
 .font-display {
   font-family: var(--font-display), sans-serif;
+}
+
+/* Glass card utility */
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, #FF5A36 0%, #FF8C6B 50%, #1D9E75 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow utilities */
+.glow-primary {
+  box-shadow: 0 0 40px rgba(255, 90, 54, 0.25), 0 10px 22px rgba(255, 90, 54, 0.15);
+}
+
+.glow-success {
+  box-shadow: 0 0 30px rgba(29, 158, 117, 0.2), 0 8px 16px rgba(29, 158, 117, 0.1);
+}
+
+/* Three.js canvas container */
+.three-canvas-container {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Animated gradient border */
+@keyframes borderRotate {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-border {
+  background: linear-gradient(270deg, #FF5A36, #FF8C6B, #1D9E75, #FF5A36);
+  background-size: 400% 400%;
+  animation: borderRotate 4s ease infinite;
+}
+
+/* Pulse ring animation */
+@keyframes pulseRing {
+  0%   { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.pulse-ring {
+  animation: pulseRing 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
