@@ -2,28 +2,35 @@
 
 import { createContext, useContext, useState, ReactNode } from "react"
 
-export type WizardStep = "capture" | "processing" | "preview"
-export type PhotoSizePreset = "passport" | "stamp" | "custom"
+export type WizardStep = "capture" | "processing" | "crop" | "preview"
+export type PhotoSizePreset = "passport" | "professional" | "custom"
 export type PhotoCount = 6 | 8 | 12
+export type BgColor = "white" | "black" | "red"
 
 export interface PhotoSpec {
   preset: PhotoSizePreset
   customWidthMm: number
   customHeightMm: number
   count: PhotoCount
+  bgColor: BgColor
 }
 
 export interface WizardContextType {
   currentStep: WizardStep
-  selectedCountry: string | null
   photoData: {
     original: string | null
-    processed: string | null
+    transparent: string | null   // after BG removal
+    processed: string | null     // after crop + BG color applied
+    enhanced: string | null      // after AI enhancement
   }
   photoSpec: PhotoSpec
   goToStep: (step: WizardStep) => void
-  selectCountry: (country: string) => void
-  setPhotoData: (data: { original?: string | null; processed?: string | null }) => void
+  setPhotoData: (data: {
+    original?: string | null
+    transparent?: string | null
+    processed?: string | null
+    enhanced?: string | null
+  }) => void
   setPhotoSpec: (data: Partial<PhotoSpec>) => void
   nextStep: () => void
   prevStep: () => void
@@ -32,91 +39,59 @@ export interface WizardContextType {
 
 const WizardContext = createContext<WizardContextType | undefined>(undefined)
 
-const steps: WizardStep[] = ["capture", "processing", "preview"]
+const steps: WizardStep[] = ["capture", "processing", "crop", "preview"]
 
 export function WizardProvider({ children }: { children: ReactNode }) {
   const [currentStep, setCurrentStep] = useState<WizardStep>("capture")
-  const [selectedCountry, setSelectedCountry] = useState<string | null>("india")
-  const [photoData, setPhotoDataState] = useState<{ original: string | null; processed: string | null }>({ original: null, processed: null })
+  const [photoData, setPhotoDataState] = useState<WizardContextType["photoData"]>({
+    original: null, transparent: null, processed: null, enhanced: null,
+  })
   const [photoSpec, setPhotoSpecState] = useState<PhotoSpec>({
-    preset: "passport",
-    customWidthMm: 35,
-    customHeightMm: 45,
-    count: 6,
+    preset: "passport", customWidthMm: 35, customHeightMm: 45, count: 6, bgColor: "white",
   })
 
   const goToStep = (step: WizardStep) => setCurrentStep(step)
 
-  const selectCountry = (country: string) => {
-    setSelectedCountry(country)
-    const currentIndex = steps.indexOf(currentStep)
-    if (currentIndex < steps.length - 1) {
-      setCurrentStep(steps[currentIndex + 1])
-    }
-  }
-
-  const setPhotoData = (data: { original?: string | null; processed?: string | null }) => {
+  const setPhotoData = (data: Partial<WizardContextType["photoData"]>) => {
     setPhotoDataState((prev) => ({
-      original: data.original ?? prev.original,
-      processed: data.processed ?? prev.processed,
+      original: data.original !== undefined ? data.original : prev.original,
+      transparent: data.transparent !== undefined ? data.transparent : prev.transparent,
+      processed: data.processed !== undefined ? data.processed : prev.processed,
+      enhanced: data.enhanced !== undefined ? data.enhanced : prev.enhanced,
     }))
   }
 
-  const setPhotoSpec = (data: Partial<PhotoSpec>) => {
+  const setPhotoSpec = (data: Partial<PhotoSpec>) =>
     setPhotoSpecState((prev) => ({ ...prev, ...data }))
-  }
 
   const nextStep = () => {
-    const currentIndex = steps.indexOf(currentStep)
-    if (currentIndex < steps.length - 1) {
-      setCurrentStep(steps[currentIndex + 1])
-    }
+    const i = steps.indexOf(currentStep)
+    if (i < steps.length - 1) setCurrentStep(steps[i + 1])
   }
 
   const prevStep = () => {
-    const currentIndex = steps.indexOf(currentStep)
-    if (currentIndex > 0) {
-      setCurrentStep(steps[currentIndex - 1])
-    }
+    const i = steps.indexOf(currentStep)
+    if (i > 0) setCurrentStep(steps[i - 1])
   }
 
   const reset = () => {
     setCurrentStep("capture")
-    setSelectedCountry("india")
-    setPhotoDataState({ original: null, processed: null })
-    setPhotoSpecState({
-      preset: "passport",
-      customWidthMm: 35,
-      customHeightMm: 45,
-      count: 6,
-    })
+    setPhotoDataState({ original: null, transparent: null, processed: null, enhanced: null })
+    setPhotoSpecState({ preset: "passport", customWidthMm: 35, customHeightMm: 45, count: 6, bgColor: "white" })
   }
 
   return (
-    <WizardContext.Provider
-      value={{
-        currentStep,
-        selectedCountry,
-        photoData,
-        photoSpec,
-        goToStep,
-        selectCountry,
-        setPhotoData,
-        setPhotoSpec,
-        nextStep,
-        prevStep,
-        reset,
-      }}
-    >
+    <WizardContext.Provider value={{
+      currentStep, photoData, photoSpec,
+      goToStep, setPhotoData, setPhotoSpec, nextStep, prevStep, reset,
+    }}>
       {children}
     </WizardContext.Provider>
   )
 }
 
 export function useWizard(): WizardContextType {
-  const context = useContext(WizardContext)
-  if (context === undefined) {
-    throw new Error("useWizard must be used within a WizardProvider")
-  }
-  return context
+  const ctx = useContext(WizardContext)
+  if (!ctx) throw new Error("useWizard must be used within WizardProvider")
+  return ctx
 }
