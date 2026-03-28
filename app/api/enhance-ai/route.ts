@@ -11,7 +11,8 @@ import { NextRequest, NextResponse } from "next/server"
  * Add to .env: HF_API_TOKEN=hf_...
  */
 
-const HF_MODEL = "eugenesiow/super-image"
+// CompVis LDM super-resolution — 4× upscale, free on HF Inference API
+const HF_MODEL = "CompVis/ldm-super-resolution-4x-openimages"
 
 export async function POST(req: NextRequest) {
     try {
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
                     "Content-Type": "application/octet-stream",
                 },
                 body: imageBuffer,
-                signal: AbortSignal.timeout(60_000), // 60s timeout
+                signal: AbortSignal.timeout(90_000), // 90s — LDM model can be slow
             }
         )
 
@@ -61,11 +62,11 @@ export async function POST(req: NextRequest) {
                 })
             }
             const errText = await response.text()
-            console.error("HF enhance error:", errText)
+            console.error(`HF enhance error (${response.status}):`, errText)
             return NextResponse.json({
                 resultDataUrl: imageDataUrl,
                 fallback: true,
-                reason: `HF API error: ${response.status}`,
+                reason: `HF API error: ${response.status} — ${errText.slice(0, 120)}`,
             })
         }
 

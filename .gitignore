@@ -2,6 +2,10 @@
 
 # dependencies
 /node_modules
+
+# AI model files (271MB, download with: npm run setup-bg-models)
+/public/bg-removal
+
 /.pnp
 .pnp.*
 .yarn/*

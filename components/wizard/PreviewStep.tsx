@@ -18,6 +18,7 @@ import {
   type SheetPreset,
 } from "@/lib/sheet-export"
 import { applyBgAndCrop, compositeWithBg } from "@/lib/image-processing"
+import { enhanceClientSide } from "@/lib/enhance-client"
 
 const VALIDATION_POINTS = [
   "Face centred & visible",
@@ -46,28 +47,19 @@ export function PreviewStep() {
   const [isApplyingBg, setIsApplyingBg] = useState(false)
   const enhancedRef = useRef(false)
   const [isEnhancing, setIsEnhancing] = useState(false)
-  const [enhanceFailed, setEnhanceFailed] = useState(false)
 
-  // Auto-enhance on mount (HF super-resolution)
+  // Auto-enhance on mount — client-side canvas sharpen + contrast boost
   useEffect(() => {
     if (enhancedRef.current || !photoData.processed) return
     enhancedRef.current = true
     const run = async () => {
       setIsEnhancing(true)
       try {
-        const res = await fetch("/api/enhance-ai", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ imageDataUrl: photoData.processed }),
-        })
-        if (!res.ok) throw new Error("enhance-ai failed")
-        const json = await res.json()
-        if (!json.fallback && json.resultDataUrl) {
-          setPhotoData({ enhanced: json.resultDataUrl })
-        }
+        const enhanced = await enhanceClientSide(photoData.processed!)
+        setPhotoData({ enhanced })
       } catch (e) {
-        console.warn("AI enhance skipped:", e)
-        setEnhanceFailed(true)
+        console.warn("Client-side enhance failed:", e)
+        // Non-fatal — user still gets the processed photo
       } finally {
         setIsEnhancing(false)
       }
@@ -171,22 +163,17 @@ export function PreviewStep() {
         <p className="text-base text-[#6b7280]">{selectedSizeLabel} · {photoSpec.bgColor} background</p>
       </motion.div>
 
-      {/* AI enhance status */}
+      {/* Enhancement status */}
       {isEnhancing && (
         <div className="flex items-center gap-3 rounded-xl border border-[#E0E7FF] bg-[#EEF2FF] px-4 py-3 text-sm text-[#4338CA]">
           <RefreshCw className="h-4 w-4 animate-spin shrink-0" />
-          <span><strong>AI enhancing…</strong> Running super-resolution to sharpen and improve quality</span>
+          <span><strong>Sharpening photo…</strong> Applying smart enhance for crisp print quality</span>
         </div>
       )}
       {!isEnhancing && photoData.enhanced && (
         <div className="flex items-center gap-3 rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm text-[#166534]">
           <Sparkles className="h-4 w-4 shrink-0" />
-          <span><strong>AI enhancement applied!</strong> Super-resolution has sharpened and improved your photo.</span>
-        </div>
-      )}
-      {!isEnhancing && enhanceFailed && (
-        <div className="flex items-center gap-2 rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-3 text-sm text-[#6b7280]">
-          <span>ℹ️ Smart enhancement skipped (no HF token). Add <code className="text-[#374151]">HF_API_TOKEN</code> to .env for AI sharpening.</span>
+          <span><strong>Smart Enhance applied!</strong> Photo sharpened and contrast-boosted for print-ready quality.</span>
         </div>
       )}
 
@@ -374,6 +361,30 @@ export function PreviewStep() {
           className="w-full border border-[#E5E5E5] rounded-2xl py-6 text-base font-semibold h-auto hover:bg-[#F7F7F8]">
           {isNativeSharing ? "Preparing…" : "Share to My Devices"}
         </Button>
+
+        {/* Post-download nudges */}
+        <div className="rounded-2xl border border-[#E8EAEE] bg-[#FAFBFD] px-4 py-4 space-y-3">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#9ca3af]">What&apos;s next?</p>
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent("I just created my passport photo in seconds with PrintfY — free! Try it: https://printfy.app")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 rounded-xl border border-[#DCF8C6] bg-[#F3FFF0] px-4 py-3 text-sm font-semibold text-[#1a7a40] hover:bg-[#E8FFE0] transition-colors"
+          >
+            <span className="text-xl">💬</span>
+            <span>Share with a friend on WhatsApp</span>
+          </a>
+          <a
+            href="https://g.page/r/printfy/review"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 rounded-xl border border-[#E5E7EB] bg-white px-4 py-3 text-sm font-semibold text-[#4b5563] hover:bg-[#F7F7F8] transition-colors"
+          >
+            <span className="text-xl">⭐</span>
+            <span>Leave us a quick review — it helps a lot!</span>
+          </a>
+        </div>
+
         <Button onClick={reset} variant="ghost" className="w-full text-[#6b7280] hover:text-[#1a1a1a] font-semibold py-3">
           ↺ Create Another Photo
         </Button>

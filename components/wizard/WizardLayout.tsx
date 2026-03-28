@@ -1,6 +1,6 @@
 "use client"
 
-import { ReactNode } from "react"
+import { ReactNode, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { StepProgressBar } from "@/components/wizard/StepProgressBar"
 import { useWizard } from "@/lib/hooks"
@@ -11,6 +11,17 @@ interface WizardLayoutProps {
 
 export function WizardLayout({ children }: WizardLayoutProps) {
   const { currentStep, prevStep } = useWizard()
+
+  // Warn before accidental back-navigation / tab close mid-wizard
+  useEffect(() => {
+    if (currentStep === "capture") return
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.returnValue = ""
+    }
+    window.addEventListener("beforeunload", handler)
+    return () => window.removeEventListener("beforeunload", handler)
+  }, [currentStep])
 
   return (
     <div className="min-h-screen bg-white">

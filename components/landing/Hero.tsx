@@ -44,15 +44,15 @@ const FEATURES = [
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden py-12 sm:py-16 lg:py-24">
+    <section className="relative overflow-hidden w-full min-h-[calc(100vh-64px)] flex flex-col items-center justify-center pt-16 pb-24 lg:pt-24 lg:pb-32">
       {/* Three.js particle bg */}
       <ThreeBackground />
 
       {/* Radial gradient overlay */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_14%_0%,rgba(255,90,54,0.14),transparent_38%),radial-gradient(circle_at_85%_10%,rgba(29,158,117,0.09),transparent_36%)]" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(255,90,54,0.15),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(29,158,117,0.1),transparent_40%),radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.8),transparent_100%)]" />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center text-center space-y-8 lg:space-y-10">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 mt-[-2rem]">
+        <div className="flex flex-col items-center text-center space-y-10 lg:space-y-12">
           {/* Badge */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <Badge className="rounded-full border border-[#FFD5C8] bg-[#FFF1ED] px-4 py-1.5 text-xs font-semibold text-[#C84426] hover:bg-[#FFF1ED] shadow-sm">
@@ -61,32 +61,32 @@ export function Hero() {
           </motion.div>
 
           {/* Headline */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="space-y-4 max-w-4xl">
-            <h1 className="font-display text-4xl font-bold leading-tight tracking-tight text-slate-900 sm:text-5xl lg:text-7xl">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="space-y-6 max-w-5xl">
+            <h1 className="font-display text-5xl font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-6xl lg:text-[5.5rem] lg:leading-[1.05]">
               AI-Powered
-              <span className="block gradient-text">Passport Photos</span>
+              <span className="block gradient-text mt-2 mb-2 drop-shadow-sm">Passport Photos</span>
               in 60 Seconds
             </h1>
-            <p className="mx-auto max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl">
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-600 sm:text-xl lg:text-2xl pt-2">
               Upload one photo. Our AI removes the background, enhances quality, and crops to Indian passport spec (35×45 mm). Download a ready-to-print sheet with 6, 8, or 12 photos.
             </p>
           </motion.div>
 
           {/* CTA buttons */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="flex flex-col gap-3 sm:flex-row">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="flex flex-col gap-4 sm:flex-row mt-8">
             <Button
               asChild
-              className="h-14 rounded-2xl bg-[#FF5A36] px-8 text-base font-semibold text-white hover:bg-[#E24D2E] glow-primary transition-all duration-300 hover:scale-105"
+              className="h-14 sm:h-16 rounded-2xl bg-[#FF5A36] px-8 sm:px-10 text-base sm:text-lg font-bold text-white hover:bg-[#E24D2E] glow-primary transition-all duration-300 hover:scale-105"
             >
               <Link href="/app">
                 Start Free Now
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6" />
               </Link>
             </Button>
             <Button
               asChild
               variant="outline"
-              className="h-14 rounded-2xl border-slate-200 bg-white/80 backdrop-blur-sm px-8 text-base font-semibold text-slate-700 hover:bg-white hover:border-slate-300 transition-all duration-300"
+              className="h-14 sm:h-16 rounded-2xl border-slate-200 bg-white/80 backdrop-blur-sm px-8 sm:px-10 text-base sm:text-lg font-bold text-slate-700 hover:bg-white hover:border-slate-300 transition-all duration-300"
             >
               <Link href="#how-it-works">See How It Works</Link>
             </Button>
@@ -110,7 +110,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-4 grid w-full max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3"
+            className="mt-12 grid w-full max-w-5xl grid-cols-1 gap-5 sm:grid-cols-3"
           >
             {FEATURES.map((f) => (
               <motion.div

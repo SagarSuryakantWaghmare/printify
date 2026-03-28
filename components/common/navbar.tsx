@@ -15,7 +15,7 @@ export function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 shrink-0">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF5A36] shadow-[0_10px_22px_rgba(255,90,54,0.35)]">
             <Aperture className="h-4 w-4 text-white" />
           </div>
@@ -23,6 +23,23 @@ export function Navbar() {
             PrintfY
           </span>
         </Link>
+
+        {/* Desktop nav links */}
+        <nav className="hidden md:flex items-center gap-1">
+          {[
+            { label: "How It Works", href: "/#how-it-works" },
+            { label: "Sizes", href: "/#sizes" },
+            { label: "Pricing", href: "/#pricing" },
+          ].map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className="rounded-lg px-3 py-2 text-sm font-semibold text-[#4b5563] transition-colors hover:bg-[#F7F7F8] hover:text-[#111827]"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
@@ -78,6 +95,24 @@ export function Navbar() {
             </div>
 
             <div className="px-6 py-4 space-y-3">
+              {/* Mobile nav links */}
+              <nav className="space-y-1 pb-2 border-b border-[#F3F4F6]">
+                {[
+                  { label: "How It Works", href: "/#how-it-works" },
+                  { label: "Sizes", href: "/#sizes" },
+                  { label: "Pricing", href: "/#pricing" },
+                ].map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="block rounded-lg px-3 py-2.5 text-sm font-semibold text-[#4b5563] transition-colors hover:bg-[#F7F7F8] hover:text-[#111827]"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+
               <Show when="signed-out">
                 <SignInButton mode="modal" fallbackRedirectUrl="/app">
                   <Button className="w-full bg-white text-[#FF5A36] border border-[#FF5A36] hover:bg-[#FFF5F0] rounded-xl">

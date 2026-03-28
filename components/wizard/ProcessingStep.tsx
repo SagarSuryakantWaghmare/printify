@@ -42,6 +42,7 @@ export function ProcessingStep() {
   const [stage, setStage] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [modelProgress, setModelProgress] = useState(0) // 0-100 while model downloads
   const hasStarted = useRef(false)
 
   const runPipeline = async () => {
@@ -55,15 +56,24 @@ export function ProcessingStep() {
       await new Promise((r) => setTimeout(r, 700))
       setStage(1)
 
-      // Stage 1: BG removal via @imgly/background-removal (client-side WASM, free)
+      // Stage 1: BG removal via @imgly/background-removal (local model files, no CDN)
       const { removeBackground } = await import("@imgly/background-removal")
 
       const res = await fetch(photoData.original)
       const blob = await res.blob()
 
       const transparentBlob = await removeBackground(blob, {
-        publicPath: "https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/",
-        progress: () => { },
+        // Model files are served from public/bg-removal/ folder
+        publicPath: `${window.location.origin}/bg-removal/`,
+        // Use the smaller/faster fp16 model
+        model: "isnet_fp16",
+        progress: (key: string, current: number, total: number) => {
+          if (total > 0) {
+            const pct = Math.round((current / total) * 100)
+            setModelProgress(pct)
+            console.log(`BG model: ${key} ${pct}%`)
+          }
+        },
       })
 
       const transparentUrl = await new Promise<string>((resolve, reject) => {
@@ -90,7 +100,11 @@ export function ProcessingStep() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const progress = (Math.min(stage, STAGES.length) / STAGES.length) * 100
+  const stageProgress = (Math.min(stage, STAGES.length) / STAGES.length) * 100
+  // While model is downloading show model progress, otherwise show stage progress
+  const progress = stage === 1 && modelProgress > 0 && modelProgress < 100
+    ? modelProgress
+    : stageProgress
 
   if (error) {
     return (
@@ -161,14 +175,20 @@ export function ProcessingStep() {
           <div className="space-y-1.5">
             <div className="relative w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
               <motion.div className="h-full bg-gradient-to-r from-[#FF5A36] to-[#FF8C6B] rounded-full"
-                animate={{ width: `${progress}%` }} transition={{ duration: 0.5, ease: "easeOut" }} />
+                animate={{ width: `${progress}%` }} transition={{ duration: 0.4, ease: "easeOut" }} />
               {stage < STAGES.length && (
                 <motion.div className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-white/50 to-transparent"
                   animate={{ x: ["-100%", "200%"] }}
                   transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }} />
               )}
             </div>
-            <p className="text-sm text-[#6b7280]">{Math.round(progress)}% complete</p>
+            <p className="text-sm text-[#6b7280]">
+              {stage === 1 && modelProgress > 0 && modelProgress < 100
+                ? `Loading AI model… ${modelProgress}%`
+                : stage >= STAGES.length
+                  ? "Done!"
+                  : `Processing… ${Math.round(progress)}%`}
+            </p>
           </div>
 
           <div className="rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] px-4 py-3 text-sm text-[#166534]">
