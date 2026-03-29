@@ -1,13 +1,13 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import { useWizard } from "@/lib/hooks"
+import { useWizard, useHistory } from "@/lib/hooks"
 import type { BgColor } from "@/lib/hooks/useWizard"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import {
     RotateCcw, RotateCw, ZoomIn, ZoomOut,
-    RefreshCw, Check, Move,
+    RefreshCw, Check, Move, Undo2, Redo2, Lightbulb,
 } from "lucide-react"
 
 const BG_HEX: Record<BgColor, string> = {
@@ -31,13 +31,51 @@ export function CropStep() {
     const containerRef = useRef<HTMLDivElement>(null)
     const imgRef = useRef<HTMLImageElement | null>(null)
 
-    const [scale, setScale] = useState(1)
+    // Transform state with undo/redo
+    const transformHistory = useHistory({
+        scale: 1,
+        rotation: 0,
+        offset: { x: 0, y: 0 }
+    })
+
     const [baseScale, setBaseScale] = useState(1)
-    const [rotation, setRotation] = useState(0)
-    const [offset, setOffset] = useState({ x: 0, y: 0 })
     const [imageLoaded, setImageLoaded] = useState(false)
     const [isApplying, setIsApplying] = useState(false)
     const [canvasSize, setCanvasSize] = useState({ w: 600, h: 520 })
+    const [showGuides, setShowGuides] = useState(true)
+    const [guideType, setGuideType] = useState<"grid" | "thirds" | "center">("thirds")
+
+    // Shorthand for current transform state
+    const scale = transformHistory.state.scale
+    const rotation = transformHistory.state.rotation
+    const offset = transformHistory.state.offset
+
+    const setScale = useCallback((value: number | ((prev: number) => number)) => {
+        const newScale = typeof value === "function" ? value(scale) : value
+        transformHistory.setState({
+            scale: newScale,
+            rotation,
+            offset
+        })
+    }, [scale, rotation, offset, transformHistory])
+
+    const setRotation = useCallback((value: number | ((prev: number) => number)) => {
+        const newRotation = typeof value === "function" ? value(rotation) : value
+        transformHistory.setState({
+            scale,
+            rotation: newRotation,
+            offset
+        })
+    }, [scale, rotation, offset, transformHistory])
+
+    const setOffset = useCallback((value: { x: number; y: number } | ((prev: { x: number; y: number }) => { x: number; y: number })) => {
+        const newOffset = typeof value === "function" ? value(offset) : value
+        transformHistory.setState({
+            scale,
+            rotation,
+            offset: newOffset
+        })
+    }, [scale, rotation, offset, transformHistory])
 
     const frameAspect = getFrameAspect(
         photoSpec.preset,
@@ -115,15 +153,47 @@ export function CropStep() {
         // BL
         ctx.beginPath(); ctx.moveTo(fx + corner, fy + fh); ctx.lineTo(fx, fy + fh); ctx.lineTo(fx, fy + fh - corner); ctx.stroke()
 
-        // Rule-of-thirds lines
-        ctx.strokeStyle = "rgba(255,255,255,0.2)"
-        ctx.lineWidth = 0.8
-        ctx.setLineDash([5, 5])
-        ctx.beginPath(); ctx.moveTo(fx + fw / 3, fy); ctx.lineTo(fx + fw / 3, fy + fh); ctx.stroke()
-        ctx.beginPath(); ctx.moveTo(fx + fw * 2 / 3, fy); ctx.lineTo(fx + fw * 2 / 3, fy + fh); ctx.stroke()
-        ctx.beginPath(); ctx.moveTo(fx, fy + fh / 3); ctx.lineTo(fx + fw, fy + fh / 3); ctx.stroke()
-        ctx.beginPath(); ctx.moveTo(fx, fy + fh * 2 / 3); ctx.lineTo(fx + fw, fy + fh * 2 / 3); ctx.stroke()
-        ctx.setLineDash([])
+        // Composition guides (if enabled)
+        if (showGuides) {
+            ctx.strokeStyle = "rgba(255,255,255,0.25)"
+            ctx.lineWidth = 0.8
+
+            if (guideType === "thirds") {
+                // Rule-of-thirds lines
+                ctx.setLineDash([5, 5])
+                ctx.beginPath(); ctx.moveTo(fx + fw / 3, fy); ctx.lineTo(fx + fw / 3, fy + fh); ctx.stroke()
+                ctx.beginPath(); ctx.moveTo(fx + fw * 2 / 3, fy); ctx.lineTo(fx + fw * 2 / 3, fy + fh); ctx.stroke()
+                ctx.beginPath(); ctx.moveTo(fx, fy + fh / 3); ctx.lineTo(fx + fw, fy + fh / 3); ctx.stroke()
+                ctx.beginPath(); ctx.moveTo(fx, fy + fh * 2 / 3); ctx.lineTo(fx + fw, fy + fh * 2 / 3); ctx.stroke()
+                ctx.setLineDash([])
+            } else if (guideType === "grid") {
+                // Grid pattern (9x9)
+                ctx.setLineDash([3, 3])
+                const gridCellW = fw / 9
+                const gridCellH = fh / 9
+                for (let i = 1; i < 9; i++) {
+                    // Vertical lines
+                    ctx.beginPath(); ctx.moveTo(fx + gridCellW * i, fy); ctx.lineTo(fx + gridCellW * i, fy + fh); ctx.stroke()
+                    // Horizontal lines
+                    ctx.beginPath(); ctx.moveTo(fx, fy + gridCellH * i); ctx.lineTo(fx + fw, fy + gridCellH * i); ctx.stroke()
+                }
+                ctx.setLineDash([])
+            } else if (guideType === "center") {
+                // Center crosshair
+                ctx.lineWidth = 1
+                ctx.strokeStyle = "rgba(255,255,255,0.4)"
+                const centerX = fx + fw / 2
+                const centerY = fy + fh / 2
+                const crossSize = Math.min(fw, fh) * 0.08
+                ctx.setLineDash([4, 4])
+                ctx.beginPath(); ctx.moveTo(centerX - crossSize, centerY); ctx.lineTo(centerX + crossSize, centerY); ctx.stroke()
+                ctx.beginPath(); ctx.moveTo(centerX, centerY - crossSize); ctx.lineTo(centerX, centerY + crossSize); ctx.stroke()
+                ctx.setLineDash([])
+                // Small center dot
+                ctx.fillStyle = "rgba(255,255,255,0.6)"
+                ctx.beginPath(); ctx.arc(centerX, centerY, 2.5, 0, Math.PI * 2); ctx.fill()
+            }
+        }
 
         // Dimension label
         const label = photoSpec.preset === "professional"
@@ -137,7 +207,7 @@ export function CropStep() {
         ctx.font = "11px sans-serif"
         ctx.textAlign = "center"
         ctx.fillText(label, fx + fw / 2, fy + fh + 18)
-    }, [canvasSize, offset, rotation, scale, getFrame, frameAspect, photoSpec])
+    }, [canvasSize, offset, rotation, scale, getFrame, frameAspect, photoSpec, showGuides, guideType])
 
     // Load image + set initial scale
     useEffect(() => {
@@ -231,7 +301,7 @@ export function CropStep() {
     const onTouchEnd = () => { dragRef.current.active = false }
 
     // Export the crop
-    const applyCrop = async () => {
+    const applyCrop = useCallback(async () => {
         const img = imgRef.current
         if (!img) return
         setIsApplying(true)
@@ -268,9 +338,101 @@ export function CropStep() {
         } finally {
             setIsApplying(false)
         }
-    }
+    }, [canvasSize, frameAspect, offset, rotation, scale, photoSpec.bgColor, setPhotoData, nextStep, getFrame])
 
-    const reset = () => { setScale(baseScale); setRotation(0); setOffset({ x: 0, y: 0 }) }
+    // Keyboard shortcuts
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            const step = 15 // pixels to pan
+            const zoomFactor = 1.15
+
+            // Undo/Redo
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === "z" && !e.shiftKey) {
+                    e.preventDefault()
+                    transformHistory.undo()
+                    return
+                }
+                if ((e.key === "z" && e.shiftKey) || e.key === "y") {
+                    e.preventDefault()
+                    transformHistory.redo()
+                    return
+                }
+            }
+
+            switch (e.key) {
+                case "ArrowLeft":
+                    if (!e.shiftKey) {
+                        e.preventDefault()
+                        setOffset((p) => ({ ...p, x: p.x + step }))
+                    }
+                    break
+                case "ArrowRight":
+                    if (!e.shiftKey) {
+                        e.preventDefault()
+                        setOffset((p) => ({ ...p, x: p.x - step }))
+                    }
+                    break
+                case "ArrowUp":
+                case "w":
+                    e.preventDefault()
+                    setOffset((p) => ({ ...p, y: p.y + step }))
+                    break
+                case "ArrowDown":
+                case "s":
+                    e.preventDefault()
+                    setOffset((p) => ({ ...p, y: p.y - step }))
+                    break
+                case "+":
+                case "=":
+                case "[":
+                    e.preventDefault()
+                    setScale((s) => Math.max(0.2, Math.min(8, s * zoomFactor)))
+                    break
+                case "-":
+                case "_":
+                case "]":
+                    e.preventDefault()
+                    setScale((s) => Math.max(0.2, Math.min(8, s / zoomFactor)))
+                    break
+                case "r":
+                case "R":
+                    if (!e.ctrlKey && !e.metaKey) {
+                        e.preventDefault()
+                        reset()
+                    }
+                    break
+                case "Enter":
+                    e.preventDefault()
+                    applyCrop()
+                    break
+                // Rotation with Shift+Arrow keys
+                case "ArrowLeft":
+                    if (e.shiftKey) {
+                        e.preventDefault()
+                        setRotation((r) => (r - 5 + 360) % 360)
+                    }
+                    break
+                case "ArrowRight":
+                    if (e.shiftKey) {
+                        e.preventDefault()
+                        setRotation((r) => (r + 5) % 360)
+                    }
+                    break
+            }
+        }
+
+        window.addEventListener("keydown", handleKeyDown)
+        return () => window.removeEventListener("keydown", handleKeyDown)
+    }, [applyCrop, transformHistory])
+
+    const reset = () => {
+        transformHistory.setState({
+            scale: baseScale,
+            rotation: 0,
+            offset: { x: 0, y: 0 }
+        })
+    }
 
     return (
         <div className="space-y-5">
@@ -279,9 +441,9 @@ export function CropStep() {
                 <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#1a1a1a]">
                     Adjust & Crop
                 </h1>
-                <p className="text-sm text-[#6b7280]">
-                    <Move className="inline h-3.5 w-3.5 mr-1" />
-                    Drag to reposition · Scroll/pinch to zoom · Use buttons to rotate
+                <p className="text-sm text-[#6b7280] space-y-1">
+                    <div><Move className="inline h-3.5 w-3.5 mr-1" />Drag to reposition · Scroll/pinch to zoom · Use buttons to rotate</div>
+                    <div className="text-xs text-[#9ca3af]">Keyboard: Arrow keys pan · +/- zoom · R reset · Shift+Arrow rotate · Enter confirm</div>
                 </p>
             </motion.div>
 
@@ -362,6 +524,66 @@ export function CropStep() {
                         <RotateCw className="h-3.5 w-3.5" /> +5°
                     </button>
                     <span className="text-xs text-[#9ca3af] px-1">{rotation}°</span>
+                </div>
+
+                {/* Composition guides */}
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold text-[#6b7280]">Composition Guides</label>
+                        <button
+                            onClick={() => setShowGuides(!showGuides)}
+                            className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors ${showGuides ? "bg-[#FF5A36]" : "bg-[#E5E7EB]"}`}
+                        >
+                            <motion.div
+                                initial={false}
+                                animate={{ x: showGuides ? 20 : 2 }}
+                                className="h-5 w-5 rounded-full bg-white shadow-sm"
+                            />
+                        </button>
+                    </div>
+                    {showGuides && (
+                        <div className="grid grid-cols-3 gap-2">
+                            {[
+                                { value: "thirds", label: "Rule of Thirds", desc: "Balanced composition" },
+                                { value: "grid", label: "Grid", desc: "Precise alignment" },
+                                { value: "center", label: "Center", desc: "Centered focus" },
+                            ].map((guide) => (
+                                <button
+                                    key={guide.value}
+                                    onClick={() => setGuideType(guide.value as typeof guideType)}
+                                    className={`rounded-lg border-2 px-2 py-1.5 text-center transition-all ${
+                                        guideType === guide.value
+                                            ? "border-[#FF5A36] bg-[#FFF5F0]"
+                                            : "border-[#E5E7EB] hover:border-[#FF5A36]/40"
+                                    }`}
+                                >
+                                    <p className="text-xs font-semibold text-[#111827]">{guide.label}</p>
+                                    <p className="text-[10px] text-[#6b7280] mt-0.5">{guide.desc}</p>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Undo/Redo + Reset */}
+                <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                        onClick={() => transformHistory.undo()}
+                        disabled={!transformHistory.canUndo}
+                        className="flex items-center justify-center h-8 w-8 rounded-lg border border-[#E5E7EB] text-[#6b7280] hover:bg-[#F7F7F8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Undo (Ctrl+Z)"
+                    >
+                        <Undo2 className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                        onClick={() => transformHistory.redo()}
+                        disabled={!transformHistory.canRedo}
+                        className="flex items-center justify-center h-8 w-8 rounded-lg border border-[#E5E7EB] text-[#6b7280] hover:bg-[#F7F7F8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Redo (Ctrl+Y)"
+                    >
+                        <Redo2 className="h-3.5 w-3.5" />
+                    </button>
+                    
                     <button
                         onClick={reset}
                         className="ml-auto flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-sm font-semibold text-[#6b7280] hover:bg-[#F7F7F8] transition-colors"
@@ -372,8 +594,9 @@ export function CropStep() {
             </div>
 
             {/* Tip */}
-            <p className="text-xs text-[#9ca3af] px-1">
-                💡 Tip: Use the orange frame as your crop guide. Face should be centred and eyes level.
+            <p className="text-xs text-[#9ca3af] px-1 flex items-start gap-2">
+                <Lightbulb className="h-4 w-4 shrink-0 mt-0.5" />
+                Tip: Use the orange frame as your crop guide. Face should be centred and eyes level.
             </p>
 
             {/* Apply button */}

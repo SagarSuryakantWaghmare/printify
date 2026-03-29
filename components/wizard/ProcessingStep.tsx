@@ -4,8 +4,9 @@ import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { useWizard } from "@/lib/hooks"
 import { motion, AnimatePresence } from "framer-motion"
-import { CheckCircle2, AlertCircle, RefreshCw } from "lucide-react"
+import { CheckCircle2, AlertCircle, RefreshCw, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CheckIcon } from "@/components/ui/icons"
 
 const STAGES = [
   { label: "Analysing photo", detail: "Checking image quality and face position…" },
@@ -127,7 +128,10 @@ export function ProcessingStep() {
   return (
     <div className="space-y-10">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#1a1a1a]">Removing Background ✨</h1>
+        <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#1a1a1a] flex items-center gap-2">
+          Removing Background
+          <Sparkles className="h-8 w-8 text-[#FF5A36]" />
+        </h1>
         <p className="mt-1 text-base text-[#6b7280]">
           {stage < STAGES.length ? STAGES[Math.min(stage, STAGES.length - 1)].detail : "Done! Taking you to the crop editor…"}
         </p>
@@ -137,16 +141,23 @@ export function ProcessingStep() {
         {/* Live preview */}
         <div className="hidden md:flex items-center justify-center">
           <AnimatePresence mode="wait">
-            <motion.div key={previewUrl ?? "original"}
-              initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-              className="relative rounded-2xl overflow-hidden bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22%3E%3Crect width=%2210%22 height=%2210%22 fill=%22%23e5e7eb%22/%3E%3Crect x=%2210%22 y=%2210%22 width=%2210%22 height=%2210%22 fill=%22%23e5e7eb%22/%3E%3C/svg%3E')] w-full max-w-[200px] aspect-[35/45] border border-slate-200 shadow-sm"
-            >
-              {(previewUrl ?? photoData.original) && (
-                <Image src={previewUrl ?? photoData.original!} alt="Processing"
-                  fill className="object-cover" sizes="200px" />
-              )}
-            </motion.div>
+            {previewUrl ? (
+              <motion.div key="preview"
+                initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                className="relative rounded-2xl overflow-hidden bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22%3E%3Crect width=%2210%22 height=%2210%22 fill=%22%23e5e7eb%22/%3E%3Crect x=%2210%22 y=%2210%22 width=%2210%22 height=%2210%22 fill=%22%23e5e7eb%22/%3E%3C/svg%3E')] w-full max-w-[200px] aspect-[35/45] border border-slate-200 shadow-sm"
+              >
+                {(previewUrl ?? photoData.original) && (
+                  <Image src={previewUrl ?? photoData.original!} alt="Processing"
+                    fill className="object-cover" sizes="200px" />
+                )}
+              </motion.div>
+            ) : (
+              <motion.div key="skeleton"
+                className="relative rounded-2xl overflow-hidden w-full max-w-[200px] aspect-[35/45] border border-slate-200 shadow-sm bg-[#F3F4F6]">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
 
@@ -165,29 +176,45 @@ export function ProcessingStep() {
                       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                         className="text-sm text-[#6b7280] mt-0.5">{s.detail}</motion.p>
                     )}
-                    {state === "done" && <p className="text-sm text-[#1D9E75] mt-0.5">Complete ✓</p>}
+                    {state === "done" && (
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-sm text-[#1D9E75] font-semibold">Complete</p>
+                        <CheckIcon className="w-4 h-4 text-[#1D9E75]" />
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )
             })}
           </div>
 
-          <div className="space-y-1.5">
-            <div className="relative w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
-              <motion.div className="h-full bg-gradient-to-r from-[#FF5A36] to-[#FF8C6B] rounded-full"
-                animate={{ width: `${progress}%` }} transition={{ duration: 0.4, ease: "easeOut" }} />
-              {stage < STAGES.length && (
-                <motion.div className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-white/50 to-transparent"
-                  animate={{ x: ["-100%", "200%"] }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }} />
-              )}
+          <div className="space-y-2.5">
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-[#6b7280]">Processing</span>
+                <span className="text-sm font-semibold text-[#1a1a1a]">{Math.round(progress)}%</span>
+              </div>
+              <div className="relative w-full h-3 bg-[#E5E5E5] rounded-full overflow-hidden shadow-inner">
+                <motion.div 
+                  className="h-full bg-gradient-to-r from-[#FF5A36] via-[#FF8C6B] to-[#FF5A36] rounded-full shadow-lg"
+                  animate={{ width: `${progress}%` }} 
+                  transition={{ duration: 0.5, ease: "easeOut" }} 
+                />
+                {stage < STAGES.length && (
+                  <motion.div 
+                    className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-transparent via-white/60 to-transparent blur-sm"
+                    animate={{ x: ["-100%", "500%"] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }} 
+                  />
+                )}
+              </div>
             </div>
-            <p className="text-sm text-[#6b7280]">
+            <p className="text-xs text-[#6b7280]">
               {stage === 1 && modelProgress > 0 && modelProgress < 100
                 ? `Loading AI model… ${modelProgress}%`
                 : stage >= STAGES.length
-                  ? "Done!"
-                  : `Processing… ${Math.round(progress)}%`}
+                  ? "All done! Taking you to crop…"
+                  : `${STAGES[Math.min(stage, STAGES.length - 1)]?.label || "Processing"}`}
             </p>
           </div>
 

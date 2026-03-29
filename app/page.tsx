@@ -29,18 +29,8 @@ export default function Home() {
         <TrustBadges />
 
         {/* Before / After demo */}
-        <div className="space-y-8 mt-12">
-          <div className="text-center space-y-3">
-            <h2 className="font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-              See the <span className="gradient-text">AI Transformation</span>
-            </h2>
-            <p className="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg">
-              Drag the slider to compare the original photo with the AI-enhanced, background-removed result.
-            </p>
-          </div>
-          <div className="mx-auto max-w-4xl px-4 sm:px-0">
-            <BeforeAfterSlider />
-          </div>
+        <div className="mx-auto max-w-4xl px-4 sm:px-0">
+          <BeforeAfterSlider />
         </div>
 
         <LogoStrip />

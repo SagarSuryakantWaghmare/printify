@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, CheckCircle2, Sparkles, Layers, Printer } from "lucide-react"
+import { SparkleIcon } from "@/components/ui/icons"
 import dynamic from "next/dynamic"
 
 const ThreeBackground = dynamic(
@@ -55,8 +56,9 @@ export function Hero() {
         <div className="flex flex-col items-center text-center space-y-10 lg:space-y-12">
           {/* Badge */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <Badge className="rounded-full border border-[#FFD5C8] bg-[#FFF1ED] px-4 py-1.5 text-xs font-semibold text-[#C84426] hover:bg-[#FFF1ED] shadow-sm">
-              ✦ Free AI Passport Photo Generator for India
+            <Badge className="rounded-full border border-[#FFD5C8] bg-[#FFF1ED] px-4 py-1.5 text-xs font-semibold text-[#C84426] hover:bg-[#FFF1ED] shadow-sm flex items-center gap-1.5 w-fit">
+              <SparkleIcon className="w-4 h-4" fill="#C84426" />
+              Free AI Passport Photo Generator for India
             </Badge>
           </motion.div>
 

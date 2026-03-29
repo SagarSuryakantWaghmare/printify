@@ -3,6 +3,8 @@ import { Manrope, Sora } from "next/font/google"
 import { ClerkProvider } from "@clerk/nextjs"
 import "./globals.css"
 import { Navbar } from "@/components/common/navbar"
+import { ToastProvider } from "@/lib/hooks"
+import { ToastContainer } from "@/components/common/ToastContainer"
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -46,10 +48,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${manrope.variable} ${sora.variable} font-sans antialiased`}>
         <ClerkProvider>
-          <Navbar />
-          <main className="min-h-screen">
-            {children}
-          </main>
+          <ToastProvider>
+            <Navbar />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <ToastContainer />
+          </ToastProvider>
         </ClerkProvider>
       </body>
     </html>

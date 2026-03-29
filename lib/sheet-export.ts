@@ -389,3 +389,52 @@ export function buildPrintInstructionMessage(options: {
 
 // Backward-compatible alias for older imports.
 export const buildWhatsAppStudioMessage = buildPrintInstructionMessage
+
+/**
+ * Download sheet as JPG with custom file naming
+ */
+export async function downloadSheetAsJpgWithNaming(options: {
+  imageDataUrl: string
+  photoSpec: ExportPhotoSpec
+  sheetPreset: SheetPreset
+  quality?: ExportQuality
+  fileName?: string
+}) {
+  const { quality = "standard", fileName } = options
+  const qualityConfig = getQualityConfig(quality)
+  const canvas = await buildPrintSheetCanvas(options)
+  const dataUrl = canvas.toDataURL("image/jpeg", qualityConfig.jpgQuality)
+  const defaultFileName = `printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${qualityConfig.label.toLowerCase().replace(" ", "-")}.jpg`
+  triggerDownload(dataUrl, fileName || defaultFileName)
+}
+
+/**
+ * Download sheet as PDF with custom file naming
+ */
+export async function downloadSheetAsPdfWithNaming(options: {
+  imageDataUrl: string
+  photoSpec: ExportPhotoSpec
+  sheetPreset: SheetPreset
+  quality?: ExportQuality
+  fileName?: string
+}) {
+  const { quality = "standard", fileName } = options
+  const qualityConfig = getQualityConfig(quality)
+  const canvas = await buildPrintSheetCanvas(options)
+  const dataUrl = canvas.toDataURL("image/jpeg", qualityConfig.jpgQuality)
+
+  const { jsPDF } = await import("jspdf")
+
+  const orientation = canvas.width > canvas.height ? "landscape" : "portrait"
+  const pdf = new jsPDF({
+    orientation,
+    unit: "px",
+    format: [canvas.width, canvas.height],
+    compress: true,
+  })
+
+  pdf.addImage(dataUrl, "JPEG", 0, 0, canvas.width, canvas.height, undefined, "FAST")
+  
+  const defaultFileName = `printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${qualityConfig.label.toLowerCase().replace(" ", "-")}.pdf`
+  pdf.save(fileName || defaultFileName)
+}

@@ -3,14 +3,21 @@
 import { useState, useRef } from "react"
 import Image from "next/image"
 import { useWizard } from "@/lib/hooks"
+import { useToast } from "@/lib/hooks/useToast"
+import { useBatchQueue } from "@/lib/hooks/useBatchQueue"
+import { usePhotoHistory } from "@/lib/hooks/usePhotoHistory"
 import type { BgColor } from "@/lib/hooks/useWizard"
+import { RecentPhotosGrid } from "./RecentPhotosGrid"
+import type { RecentPhoto } from "@/lib/photo-history"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { motion, AnimatePresence } from "framer-motion"
-import { CheckCircle2, Camera, Upload, Sun, UserRound, Ban, Smile, Star, Briefcase } from "lucide-react"
+import { CheckCircle2, Camera, Sun, UserRound, Ban, Smile, Star, Files } from "lucide-react"
+import { BatchQueuePanel } from "@/components/wizard/BatchQueuePanel"
+import { PassportIcon, ProfessionalIcon, EditIcon, CheckIcon, ArrowRightIcon } from "@/components/ui/icons"
 
 const TIPS = [
   { icon: Sun, text: "Even, bright lighting" },
@@ -25,7 +32,7 @@ const PHOTO_TYPES = [
     label: "Passport",
     size: "35 × 45 mm",
     badge: "India Standard",
-    icon: "🪪",
+    icon: PassportIcon,
     desc: "Indian Passport / Visa / Aadhaar",
   },
   {
@@ -33,7 +40,7 @@ const PHOTO_TYPES = [
     label: "Professional",
     size: "51 × 51 mm",
     badge: null,
-    icon: "👔",
+    icon: ProfessionalIcon,
     desc: "LinkedIn / Resume / Corporate ID",
   },
   {
@@ -41,7 +48,7 @@ const PHOTO_TYPES = [
     label: "Custom",
     size: "Set manually",
     badge: null,
-    icon: "✏️",
+    icon: EditIcon,
     desc: "Any size you need",
   },
 ] as const
@@ -56,19 +63,100 @@ const COUNT_OPTIONS = [6, 8, 12] as const
 
 export function PhotoCaptureStep() {
   const { photoSpec, setPhotoSpec, setPhotoData, nextStep } = useWizard()
+  const { success, error } = useToast()
+  const batchQueue = useBatchQueue()
+  const photoHistory = usePhotoHistory()
+  
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
   const [faceDetected, setFaceDetected] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
+  const [uploadMode, setUploadMode] = useState<"single" | "batch">("single")
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const batchInputRef = useRef<HTMLInputElement>(null)
+
+  const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20 MB
+  const ALLOWED_FORMATS = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
+
+  const validateFile = (file: File): { valid: boolean; message?: string } => {
+    if (!ALLOWED_FORMATS.includes(file.type)) {
+      return {
+        valid: false,
+        message: "Please upload a JPG, PNG, or WebP image"
+      }
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1)
+      return {
+        valid: false,
+        message: `File size ${sizeMB}MB exceeds 20MB limit`
+      }
+    }
+
+    return { valid: true }
+  }
+
+  const handleBatchUpload = (files: FileList | null) => {
+    if (!files || files.length === 0) return
+
+    const validFiles: Array<{ fileName: string; photoData: string }> = []
+    let successCount = 0
+    let failureCount = 0
+
+    Array.from(files).forEach((file) => {
+      const validation = validateFile(file)
+      if (!validation.valid) {
+        failureCount++
+        error(`${file.name}: ${validation.message}`, 3000)
+        return
+      }
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const result = e.target?.result as string
+        validFiles.push({ fileName: file.name, photoData: result })
+        successCount++
+
+        // Add to batch queue when all files are read
+        if (successCount + failureCount === files.length && validFiles.length > 0) {
+          batchQueue.addItems(validFiles)
+          success(`Added ${validFiles.length} photo${validFiles.length > 1 ? "s" : ""} to queue`, 3000)
+        }
+      }
+      reader.onerror = () => {
+        failureCount++
+        error(`Failed to read ${file.name}`, 3000)
+      }
+      reader.readAsDataURL(file)
+    })
+  }
+
+  const handleLoadFromHistory = async (photo: RecentPhoto) => {
+    setUploadedImage(photo.originalData)
+    setFaceDetected(true)
+    success("Photo loaded from history!")
+  }
 
   const handleFileUpload = (file: File) => {
+    const validation = validateFile(file)
+    if (!validation.valid) {
+      error(validation.message || "Invalid file", 4000)
+      return
+    }
+
     const reader = new FileReader()
     reader.onload = (e) => {
       const result = e.target?.result as string
       setUploadedImage(result)
       setPhotoData({ original: result })
+      success("Photo uploaded successfully", 2000)
+      // Save to history
+      photoHistory.addPhoto(result, false)
       // Simulated face detection (real impl would use TensorFlow.js)
       setTimeout(() => setFaceDetected(true), 1200)
+    }
+    reader.onerror = () => {
+      error("Failed to read file. Please try again.", 4000)
     }
     reader.readAsDataURL(file)
   }
@@ -77,7 +165,7 @@ export function PhotoCaptureStep() {
     e.preventDefault()
     setIsDragging(false)
     const file = e.dataTransfer.files[0]
-    if (file?.type.startsWith("image/")) handleFileUpload(file)
+    if (file) handleFileUpload(file)
   }
 
   return (
@@ -99,7 +187,9 @@ export function PhotoCaptureStep() {
         <div className="space-y-2">
           <p className="text-sm font-semibold text-[#111827]">Photo type</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            {PHOTO_TYPES.map((type) => (
+            {PHOTO_TYPES.map((type) => {
+              const IconComponent = type.icon
+              return (
               <button
                 key={type.value}
                 onClick={() => setPhotoSpec({ preset: type.value })}
@@ -109,7 +199,9 @@ export function PhotoCaptureStep() {
                   }`}
               >
                 <div className="flex items-start gap-2">
-                  <span className="text-xl leading-none">{type.icon}</span>
+                  <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-[#FF5A36]/10 to-[#FF5A36]/5">
+                    <IconComponent className="h-5 w-5 text-[#FF5A36]" />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="font-semibold text-sm text-[#111827]">{type.label}</span>
@@ -127,7 +219,8 @@ export function PhotoCaptureStep() {
                   )}
                 </div>
               </button>
-            ))}
+            )
+            })}
           </div>
         </div>
 
@@ -192,8 +285,37 @@ export function PhotoCaptureStep() {
         </div>
       </div>
 
+      {/* Upload mode toggle */}
+      <div className="flex items-center gap-2 rounded-xl border border-[#E5E7EB] bg-[#F7F7F8] p-1 w-fit">
+        <button
+          onClick={() => setUploadMode("single")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+            uploadMode === "single"
+              ? "bg-white text-[#FF5A36] shadow-sm"
+              : "text-[#6b7280] hover:text-[#111827]"
+          }`}
+        >
+          <Camera className="h-4 w-4" />
+          Single
+        </button>
+        <button
+          onClick={() => setUploadMode("batch")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+            uploadMode === "batch"
+              ? "bg-white text-[#FF5A36] shadow-sm"
+              : "text-[#6b7280] hover:text-[#111827]"
+          }`}
+        >
+          <Files className="h-4 w-4" />
+          Batch
+        </button>
+      </div>
+
       {/* Upload + Tips */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+        {/* Single upload mode */}
+        {uploadMode === "single" && (
+        <>
         {/* Upload area */}
         <div className="md:col-span-2 space-y-4">
           <AnimatePresence mode="wait">
@@ -228,7 +350,7 @@ export function PhotoCaptureStep() {
 
                 {/* Mobile */}
                 <div className="md:hidden space-y-3">
-                  <div className="aspect-[3/4] max-h-64 rounded-3xl bg-[#F7F7F8] border border-[#E5E5E5] flex items-center justify-center">
+                  <div className="aspect-3/4 max-h-64 rounded-3xl bg-[#F7F7F8] border border-[#E5E5E5] flex items-center justify-center">
                     <div className="text-center">
                       <Camera className="w-12 h-12 text-[#9ca3af] mx-auto mb-2" />
                       <p className="text-sm text-[#6b7280]">Upload your photo</p>
@@ -246,10 +368,10 @@ export function PhotoCaptureStep() {
               <motion.div key="preview"
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
                 className="space-y-4">
-                <div className="relative rounded-3xl overflow-hidden bg-[#F7F7F8] aspect-[3/4] max-h-80">
+                <div className="relative rounded-3xl overflow-hidden bg-[#F7F7F8] aspect-3/4 max-h-80">
                   <Image src={uploadedImage} alt="Uploaded" fill className="object-cover object-top"
                     sizes="(max-width: 768px) 100vw, 50vw" />
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent" />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-linear-to-t from-black/20 to-transparent" />
                   {faceDetected && (
                     <motion.div initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }}
                       className="absolute top-3 right-3 flex items-center gap-1.5 bg-white rounded-full px-3 py-1.5 shadow-lg">
@@ -259,8 +381,11 @@ export function PhotoCaptureStep() {
                   )}
                 </div>
                 <p className="rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] p-3 text-sm text-[#4b5563]">
-                  ✓ Great! AI will remove background, apply <strong>{photoSpec.bgColor}</strong> colour, and crop to{" "}
-                  {photoSpec.preset === "professional" ? "professional square" : "passport 35×45 mm"} spec.
+                  <span className="inline-flex items-center gap-1">
+                    <CheckIcon className="w-4 h-4" />
+                    Great! AI will remove background, apply <strong>{photoSpec.bgColor}</strong> colour, and crop to{" "}
+                    {photoSpec.preset === "professional" ? "professional square" : "passport 35×45 mm"} spec.
+                  </span>
                 </p>
                 <Button onClick={() => { setUploadedImage(null); setFaceDetected(false) }}
                   variant="outline"
@@ -300,9 +425,66 @@ export function PhotoCaptureStep() {
             ))}
           </div>
         </div>
+        </>
+        )}
+
+        {/* Batch upload mode */}
+        {uploadMode === "batch" && (
+        <div className="md:col-span-3 space-y-4">
+          <div className="rounded-2xl border-2 border-dashed border-[#FF5A36] bg-[#FFF5F0] px-8 py-12 text-center">
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white mb-4">
+              <Files className="h-8 w-8 text-[#FF5A36]" />
+            </div>
+            <h3 className="text-lg font-semibold text-[#1a1a1a] mb-1">Upload Multiple Photos</h3>
+            <p className="text-sm text-[#6b7280] mb-4">Select multiple JPG, PNG, or WebP files to process them all at once</p>
+            <Button
+              onClick={() => batchInputRef.current?.click()}
+              className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl px-6 py-3 font-semibold"
+            >
+              <Files className="h-4 w-4 mr-2" />
+              Choose Photos
+            </Button>
+            <input
+              ref={batchInputRef}
+              type="file"
+              multiple
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => handleBatchUpload(e.target.files)}
+            />
+          </div>
+
+          {/* Batch queue panel inline */}
+          {batchQueue.items.length > 0 && (
+            <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
+              <BatchQueuePanel
+                items={batchQueue.items}
+                onRemove={batchQueue.removeItem}
+                onClearCompleted={batchQueue.clearCompleted}
+                onClearAll={batchQueue.clearAll}
+              />
+            </div>
+          )}
+        </div>
+        )}
       </div>
 
-      {/* CTA */}
+      {/* Recent photos */}
+      {photoHistory.photos.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl border border-[#E5E7EB] bg-white p-4 space-y-4"
+        >
+          <RecentPhotosGrid
+            photos={photoHistory.photos}
+            onSelectPhoto={handleLoadFromHistory}
+            onRemovePhoto={photoHistory.removePhoto}
+            onClearHistory={photoHistory.clearHistory}
+          />
+        </motion.div>
+      )}
+
       {uploadedImage && (
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
           <Button
@@ -310,7 +492,13 @@ export function PhotoCaptureStep() {
             disabled={!faceDetected}
             className="w-full bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-2xl py-6 text-base font-semibold h-auto shadow-[0_8px_24px_rgba(255,90,54,0.3)] hover:shadow-[0_12px_28px_rgba(255,90,54,0.4)] transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            {faceDetected ? "✦ Start AI Processing →" : "Detecting face…"}
+            {faceDetected ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="inline-block w-1.5 h-1.5 bg-white rounded-full"></span>
+                Start AI Processing
+                <ArrowRightIcon className="w-4 h-4" stroke="white" />
+              </span>
+            ) : "Detecting face…"}
           </Button>
         </motion.div>
       )}

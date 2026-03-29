@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Show, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -9,6 +10,12 @@ import { Menu, Aperture, X } from "lucide-react"
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+
+  // Hide the main navbar if we are in the app wizard, as it has its own header
+  if (pathname?.startsWith("/app")) {
+    return null
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#ececef] bg-white/85 backdrop-blur-xl">
@@ -23,23 +30,6 @@ export function Navbar() {
             PrintfY
           </span>
         </Link>
-
-        {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-1">
-          {[
-            { label: "How It Works", href: "/#how-it-works" },
-            { label: "Sizes", href: "/#sizes" },
-            { label: "Pricing", href: "/#pricing" },
-          ].map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-semibold text-[#4b5563] transition-colors hover:bg-[#F7F7F8] hover:text-[#111827]"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
@@ -95,24 +85,6 @@ export function Navbar() {
             </div>
 
             <div className="px-6 py-4 space-y-3">
-              {/* Mobile nav links */}
-              <nav className="space-y-1 pb-2 border-b border-[#F3F4F6]">
-                {[
-                  { label: "How It Works", href: "/#how-it-works" },
-                  { label: "Sizes", href: "/#sizes" },
-                  { label: "Pricing", href: "/#pricing" },
-                ].map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className="block rounded-lg px-3 py-2.5 text-sm font-semibold text-[#4b5563] transition-colors hover:bg-[#F7F7F8] hover:text-[#111827]"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-
               <Show when="signed-out">
                 <SignInButton mode="modal" fallbackRedirectUrl="/app">
                   <Button className="w-full bg-white text-[#FF5A36] border border-[#FF5A36] hover:bg-[#FFF5F0] rounded-xl">

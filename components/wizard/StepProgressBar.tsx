@@ -2,14 +2,14 @@
 
 import { motion } from "framer-motion"
 import { useWizard } from "@/lib/hooks"
-import { Aperture } from "lucide-react"
+import { Aperture, Sparkles, Scissors, Target, Check } from "lucide-react"
 import Link from "next/link"
 
 const STEPS = [
-  { key: "capture", label: "Upload", emoji: "📷" },
-  { key: "processing", label: "Remove BG", emoji: "✨" },
-  { key: "crop", label: "Crop", emoji: "✂️" },
-  { key: "preview", label: "Download", emoji: "🎯" },
+  { key: "capture", label: "Upload", icon: Aperture },
+  { key: "processing", label: "Remove BG", icon: Sparkles },
+  { key: "crop", label: "Crop", icon: Scissors },
+  { key: "preview", label: "Download", icon: Target },
 ] as const
 
 export function StepProgressBar() {
@@ -31,6 +31,7 @@ export function StepProgressBar() {
         {STEPS.map((step, idx) => {
           const isComplete = idx < currentIndex
           const isActive = idx === currentIndex
+          const StepIcon = step.icon
 
           return (
             <div key={step.key} className="flex items-center flex-1">
@@ -49,13 +50,14 @@ export function StepProgressBar() {
                     : isActive ? "bg-[#FF5A36] text-white shadow-[0_4px_12px_rgba(255,90,54,0.45)]"
                       : "bg-[#E5E5E5] text-[#9ca3af]"
                   }`}>
-                  {isComplete ? "✓" : idx + 1}
+                  {isComplete ? <Check className="h-3.5 w-3.5" /> : idx + 1}
                 </div>
-                <span className={`text-[10px] sm:text-xs font-semibold whitespace-nowrap transition-colors mt-0.5 ${isActive ? "text-[#FF5A36]"
+                <span className={`text-[10px] sm:text-xs font-semibold whitespace-nowrap transition-colors mt-0.5 flex items-center gap-1 ${isActive ? "text-[#FF5A36]"
                     : isComplete ? "text-[#1D9E75]"
                       : "text-[#9ca3af]"
                   }`}>
-                  <span className="hidden sm:inline">{step.emoji} </span>{step.label}
+                  <StepIcon className="h-3 w-3 hidden sm:flex" />
+                  {step.label}
                 </span>
               </div>
 
