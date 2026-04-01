@@ -448,10 +448,16 @@ export function CropStep() {
             </motion.div>
 
             {/* Canvas editor */}
-            <div ref={containerRef} className="w-full">
+            <motion.div 
+                ref={containerRef} 
+                className="w-full"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+            >
                 <canvas
                     ref={canvasRef}
-                    className={`w-full rounded-2xl border border-slate-200 shadow-md touch-none ${imageLoaded ? "cursor-move" : "cursor-wait"}`}
+                    className={`w-full rounded-2xl border border-slate-200 shadow-lg hover:shadow-xl touch-none transition-shadow duration-300 ${imageLoaded ? "cursor-move" : "cursor-wait"}`}
                     onMouseDown={onMouseDown}
                     onMouseMove={onMouseMove}
                     onMouseUp={onMouseUp}
@@ -461,10 +467,15 @@ export function CropStep() {
                     onTouchMove={onTouchMove}
                     onTouchEnd={onTouchEnd}
                 />
-            </div>
+            </motion.div>
 
             {/* Controls */}
-            <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 space-y-4">
+            <motion.div 
+                className="rounded-2xl border border-[#E5E7EB] bg-white p-4 space-y-4 shadow-sm"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+            >
                 {/* Zoom slider */}
                 <div className="space-y-1.5">
                     <div className="flex items-center justify-between text-xs font-semibold text-[#6b7280]">
@@ -474,7 +485,7 @@ export function CropStep() {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setScale((s) => Math.max(0.2, s * 0.92))}
-                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#E5E7EB] text-[#6b7280] hover:bg-[#F7F7F8] transition-colors"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#E5E7EB] text-[#6b7280] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 hover:text-[#FF5A36] transition-all active:scale-95"
                         >
                             <ZoomOut className="h-4 w-4" />
                         </button>
@@ -485,11 +496,11 @@ export function CropStep() {
                             step={0.01}
                             value={scale}
                             onChange={(e) => setScale(Number(e.target.value))}
-                            className="flex-1 h-2 appearance-none rounded-full bg-[#E5E7EB] accent-[#FF5A36] cursor-pointer"
+                            className="flex-1 h-2 appearance-none rounded-full bg-[#E5E7EB] accent-[#FF5A36] cursor-pointer [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#FF5A36] [&::-webkit-slider-thumb]:shadow-md"
                         />
                         <button
                             onClick={() => setScale((s) => Math.min(8, s * 1.08))}
-                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#E5E7EB] text-[#6b7280] hover:bg-[#F7F7F8] transition-colors"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#E5E7EB] text-[#6b7280] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 hover:text-[#FF5A36] transition-all active:scale-95"
                         >
                             <ZoomIn className="h-4 w-4" />
                         </button>
@@ -501,29 +512,29 @@ export function CropStep() {
                     <p className="text-xs font-semibold text-[#6b7280] mr-1">Rotate:</p>
                     <button
                         onClick={() => setRotation((r) => r - 1)}
-                        className="flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] transition-colors"
+                        className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] px-3 py-2 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 transition-all active:scale-95"
                     >
                         <RotateCcw className="h-3.5 w-3.5" /> −1°
                     </button>
                     <button
                         onClick={() => setRotation((r) => r + 1)}
-                        className="flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] transition-colors"
+                        className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] px-3 py-2 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 transition-all active:scale-95"
                     >
                         <RotateCw className="h-3.5 w-3.5" /> +1°
                     </button>
                     <button
                         onClick={() => setRotation((r) => r - 5)}
-                        className="flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] transition-colors"
+                        className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] px-3 py-2 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 transition-all active:scale-95"
                     >
                         <RotateCcw className="h-3.5 w-3.5" /> −5°
                     </button>
                     <button
                         onClick={() => setRotation((r) => r + 5)}
-                        className="flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] transition-colors"
+                        className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] px-3 py-2 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 transition-all active:scale-95"
                     >
                         <RotateCw className="h-3.5 w-3.5" /> +5°
                     </button>
-                    <span className="text-xs text-[#9ca3af] px-1">{rotation}°</span>
+                    <span className="text-xs text-[#9ca3af] px-1 tabular-nums font-mono">{rotation}°</span>
                 </div>
 
                 {/* Composition guides */}

@@ -4,25 +4,105 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* Color System */
   --background: #ffffff;
   --foreground: #1a1a1a;
   --primary: #FF5A36;
+  --primary-hover: #FF4522;
+  --primary-active: #E63E1D;
   --primary-foreground: #ffffff;
   --success: #1D9E75;
+  --success-hover: #178D67;
+  --success-foreground: #ffffff;
   --muted: #f7f7f8;
   --muted-foreground: #6b7280;
   --border: #e5e5e5;
-  --radius: 0.75rem;
+  --border-light: #f0f0f0;
   --card: #ffffff;
   --card-foreground: #1a1a1a;
+  --destructive: #EF4444;
+  --destructive-foreground: #ffffff;
 
-  /* Glassmorphism tokens */
-  --glass: rgba(255, 255, 255, 0.6);
+  /* Border Radius System */
+  --radius-sm: 0.5rem;
+  --radius: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-full: 9999px;
+
+  /* Spacing System (complementing Tailwind) */
+  --spacing-xs: 0.25rem;  /* 4px */
+  --spacing-sm: 0.5rem;   /* 8px */
+  --spacing-md: 1rem;     /* 16px */
+  --spacing-lg: 1.5rem;   /* 24px */
+  --spacing-xl: 2rem;     /* 32px */
+  --spacing-2xl: 3rem;    /* 48px */
+  --spacing-3xl: 4rem;    /* 64px */
+
+  /* Typography Scale */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  --font-size-5xl: 3rem;      /* 48px */
+  --font-size-6xl: 3.75rem;   /* 60px */
+
+  /* Font Weight */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Elevation System (Shadows) */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.15);
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+
+  /* Glassmorphism */
+  --glass: rgba(255, 255, 255, 0.7);
   --glass-dark: rgba(255, 255, 255, 0.12);
-  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.6);
   --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
+  --glass-blur: 16px;
+  
+  /* Particle Effects */
   --particle-primary: rgba(255, 90, 54, 0.7);
   --particle-secondary: rgba(29, 158, 117, 0.55);
+
+  /* Animation Timing */
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 700ms;
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Z-index Scale */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-fixed: 1200;
+  --z-modal-backdrop: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-tooltip: 1600;
 }
 
 * {
@@ -48,10 +128,17 @@ body {
 /* Glass card utility */
 .glass-card {
   background: var(--glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
+  transition: all var(--duration-base) var(--ease-out);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.12);
 }
 
 /* Gradient text utility */
@@ -100,4 +187,565 @@ body {
 
 .pulse-ring {
   animation: pulseRing 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Elevation Utilities */
+.elevation-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.elevation {
+  box-shadow: var(--shadow);
+}
+
+.elevation-md {
+  box-shadow: var(--shadow-md);
+}
+
+.elevation-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.elevation-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+.elevation-2xl {
+  box-shadow: var(--shadow-2xl);
+}
+
+/* Focus visible improvements */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Interactive element hover states */
+.interactive {
+  transition: all var(--duration-base) var(--ease-out);
+  cursor: pointer;
+}
+
+.interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.interactive:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow);
+}
+
+/* Button micro-interactions */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width var(--duration-slow) var(--ease-out), 
+              height var(--duration-slow) var(--ease-out);
+}
+
+.btn-ripple:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn var(--duration-slow) var(--ease-out);
+}
+
+/* Slide in from left */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-left {
+  animation: slideInLeft var(--duration-slow) var(--ease-out);
+}
+
+/* Slide in from right */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight var(--duration-slow) var(--ease-out);
+}
+
+/* Scale up animation */
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.scale-up {
+  animation: scaleUp var(--duration-base) var(--ease-out);
+}
+
+/* ===========================================
+   MOBILE OPTIMIZATION UTILITIES
+   =========================================== */
+
+/* Safe area insets for notched devices */
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.safe-left {
+  padding-left: env(safe-area-inset-left, 0);
+}
+
+.safe-right {
+  padding-right: env(safe-area-inset-right, 0);
+}
+
+.safe-x {
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+}
+
+.safe-y {
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Touch-friendly tap targets (minimum 44px) */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.touch-target-lg {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+/* Prevent text selection on interactive elements */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Smooth momentum scrolling for iOS */
+.scroll-smooth-touch {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile-optimized text sizing */
+.text-fluid-sm {
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+}
+
+.text-fluid-base {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+}
+
+.text-fluid-lg {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+}
+
+.text-fluid-xl {
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+}
+
+.text-fluid-2xl {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+}
+
+.text-fluid-3xl {
+  font-size: clamp(1.875rem, 6vw, 2.5rem);
+}
+
+.text-fluid-4xl {
+  font-size: clamp(2.25rem, 7vw, 3rem);
+}
+
+/* Container with responsive padding */
+.container-mobile {
+  width: 100%;
+  padding-left: max(1rem, env(safe-area-inset-left, 1rem));
+  padding-right: max(1rem, env(safe-area-inset-right, 1rem));
+}
+
+@media (min-width: 640px) {
+  .container-mobile {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-mobile {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Mobile card with optimized touch */
+.card-mobile {
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.card-mobile:active {
+  transform: scale(0.98);
+}
+
+@media (min-width: 640px) {
+  .card-mobile {
+    padding: 1.25rem;
+  }
+  
+  .card-mobile:active {
+    transform: none;
+  }
+  
+  .card-mobile:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* Mobile-first button styles */
+.btn-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.875rem 1.5rem;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all var(--duration-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-mobile:active {
+  transform: scale(0.98);
+}
+
+@media (min-width: 640px) {
+  .btn-mobile {
+    width: auto;
+    min-height: 44px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+  }
+  
+  .btn-mobile:active {
+    transform: none;
+  }
+}
+
+/* Bottom sheet styling */
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--card);
+  border-top-left-radius: var(--radius-xl);
+  border-top-right-radius: var(--radius-xl);
+  padding: 1rem;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0));
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  z-index: var(--z-modal);
+}
+
+.bottom-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--border);
+  border-radius: var(--radius-full);
+  margin: 0 auto 1rem;
+}
+
+/* ===========================================
+   TABLET OPTIMIZATION UTILITIES
+   =========================================== */
+
+/* Tablet-optimized grid */
+.grid-tablet {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .grid-tablet {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-tablet {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Two-column layout for tablet */
+.layout-tablet-2col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .layout-tablet-2col {
+    flex-direction: row;
+    gap: 2rem;
+  }
+  
+  .layout-tablet-2col > * {
+    flex: 1;
+  }
+}
+
+/* Sidebar + main layout */
+.layout-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .layout-sidebar {
+    flex-direction: row;
+    gap: 2rem;
+  }
+  
+  .layout-sidebar-aside {
+    width: 280px;
+    flex-shrink: 0;
+  }
+  
+  .layout-sidebar-main {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* ===========================================
+   RESPONSIVE IMAGE UTILITIES
+   =========================================== */
+
+/* Responsive aspect ratio containers */
+.aspect-photo {
+  aspect-ratio: 3 / 4;
+}
+
+.aspect-passport {
+  aspect-ratio: 35 / 45;
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-wide {
+  aspect-ratio: 16 / 9;
+}
+
+/* Image container with loading state */
+.img-container {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+.img-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 1.5s infinite;
+}
+
+.img-container.loaded::before {
+  display: none;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Responsive image with object-fit */
+.img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.img-contain {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Lazy loading blur placeholder */
+.img-blur-load {
+  filter: blur(20px);
+  transition: filter var(--duration-slow) var(--ease-out);
+}
+
+.img-blur-load.loaded {
+  filter: blur(0);
+}
+
+/* ===========================================
+   RESPONSIVE SPACING UTILITIES
+   =========================================== */
+
+/* Responsive section spacing */
+.section-spacing {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+@media (min-width: 640px) {
+  .section-spacing {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-spacing {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}
+
+/* Responsive gap utility */
+.gap-responsive {
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .gap-responsive {
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gap-responsive {
+    gap: 2rem;
+  }
+}
+
+/* ===========================================
+   PERFORMANCE OPTIMIZATIONS
+   =========================================== */
+
+/* GPU acceleration for animations */
+.gpu-accelerate {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* Content visibility for off-screen optimization */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .img-container::before,
+  .pulse-ring,
+  .animated-border {
+    animation: none;
+  }
 }

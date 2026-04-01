@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { useWizard } from "@/lib/hooks"
 import { motion, AnimatePresence } from "framer-motion"
-import { CheckCircle2, AlertCircle, RefreshCw, Sparkles } from "lucide-react"
+import { CheckCircle2, AlertCircle, RefreshCw, Sparkles, Lightbulb } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CheckIcon } from "@/components/ui/icons"
 
@@ -13,11 +13,21 @@ const STAGES = [
   { label: "Removing background", detail: "AI separating you from the background in your browser (private & free)…" },
 ]
 
+const TIPS = [
+  "Your photo is processed 100% locally - it never leaves your device!",
+  "AI background removal works best with clear face visibility",
+  "Good lighting in your original photo means better results",
+  "The final output will be cropped to Indian passport spec (35×45mm)",
+]
+
 function StageIcon({ state }: { state: "done" | "active" | "pending" }) {
   if (state === "done")
     return (
-      <motion.div initial={{ scale: 0.6 }} animate={{ scale: 1 }}
-        className="w-7 h-7 rounded-full bg-[#1D9E75] flex items-center justify-center">
+      <motion.div 
+        initial={{ scale: 0.6, opacity: 0 }} 
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 200, damping: 15 }}
+        className="w-7 h-7 rounded-full bg-[#1D9E75] flex items-center justify-center shadow-md shadow-[#1D9E75]/30">
         <CheckCircle2 className="w-4 h-4 text-white" />
       </motion.div>
     )
@@ -27,7 +37,7 @@ function StageIcon({ state }: { state: "done" | "active" | "pending" }) {
         <motion.div className="absolute inset-0 rounded-full border-2 border-[#FF5A36]/40"
           animate={{ scale: [1, 1.55], opacity: [0.7, 0] }}
           transition={{ duration: 1.4, repeat: Infinity, ease: "easeOut" }} />
-        <motion.div className="w-3.5 h-3.5 rounded-full bg-[#FF5A36]"
+        <motion.div className="w-3.5 h-3.5 rounded-full bg-[#FF5A36] shadow-lg shadow-[#FF5A36]/40"
           animate={{ scale: [1, 1.18, 1] }} transition={{ duration: 0.9, repeat: Infinity }} />
       </div>
     )
@@ -109,28 +119,47 @@ export function ProcessingStep() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center gap-6 py-20 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="flex flex-col items-center justify-center gap-6 py-20 text-center"
+      >
+        <motion.div 
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 15 }}
+          className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50 shadow-lg shadow-red-100"
+        >
           <AlertCircle className="h-8 w-8 text-red-500" />
-        </div>
+        </motion.div>
         <div>
           <p className="text-xl font-semibold text-slate-900">Background Removal Failed</p>
           <p className="mt-1 text-sm text-slate-500 max-w-sm">{error}</p>
         </div>
-        <Button onClick={() => { hasStarted.current = false; runPipeline() }}
-          className="rounded-xl bg-[#FF5A36] text-white hover:bg-[#e04e2d] px-6 py-3">
-          <RefreshCw className="mr-2 h-4 w-4" />Try Again
-        </Button>
-      </div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+          <Button onClick={() => { hasStarted.current = false; runPipeline() }}
+            className="rounded-xl bg-[#FF5A36] text-white hover:bg-[#e04e2d] px-6 py-3 shadow-lg hover:shadow-xl transition-all">
+            <RefreshCw className="mr-2 h-4 w-4" />Try Again
+          </Button>
+        </motion.div>
+      </motion.div>
     )
   }
+
+  // Random tip to show during processing
+  const tipIndex = Math.floor((stage + modelProgress / 50) % TIPS.length)
 
   return (
     <div className="space-y-10">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#1a1a1a] flex items-center gap-2">
+        <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#1a1a1a] flex items-center gap-3">
           Removing Background
-          <Sparkles className="h-8 w-8 text-[#FF5A36]" />
+          <motion.div
+            animate={{ rotate: [0, 15, -15, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Sparkles className="h-8 w-8 text-[#FF5A36]" />
+          </motion.div>
         </h1>
         <p className="mt-1 text-base text-[#6b7280]">
           {stage < STAGES.length ? STAGES[Math.min(stage, STAGES.length - 1)].detail : "Done! Taking you to the crop editor…"}
@@ -221,6 +250,23 @@ export function ProcessingStep() {
           <div className="rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] px-4 py-3 text-sm text-[#166534]">
             🔒 Background removal runs <strong>entirely in your browser</strong> — your photo stays private.
           </div>
+
+          {/* Dynamic tip during processing */}
+          <AnimatePresence mode="wait">
+            {stage < STAGES.length && (
+              <motion.div
+                key={tipIndex}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="rounded-xl bg-[#FFFBEB] border border-[#FDE68A] px-4 py-3 flex items-start gap-3"
+              >
+                <Lightbulb className="w-5 h-5 text-[#F59E0B] shrink-0 mt-0.5" />
+                <p className="text-sm text-[#92400E]">{TIPS[tipIndex]}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

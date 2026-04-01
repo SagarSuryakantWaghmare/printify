@@ -15,8 +15,9 @@ import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { motion, AnimatePresence } from "framer-motion"
-import { CheckCircle2, Camera, Sun, UserRound, Ban, Smile, Star, Files } from "lucide-react"
+import { CheckCircle2, Camera, Sun, UserRound, Ban, Smile, Star, Files, Video } from "lucide-react"
 import { BatchQueuePanel } from "@/components/wizard/BatchQueuePanel"
+import { WebcamCapture } from "@/components/wizard/WebcamCapture"
 import { PassportIcon, ProfessionalIcon, EditIcon, CheckIcon, ArrowRightIcon } from "@/components/ui/icons"
 
 const TIPS = [
@@ -71,11 +72,21 @@ export function PhotoCaptureStep() {
   const [faceDetected, setFaceDetected] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [uploadMode, setUploadMode] = useState<"single" | "batch">("single")
+  const [showWebcam, setShowWebcam] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const batchInputRef = useRef<HTMLInputElement>(null)
 
   const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20 MB
   const ALLOWED_FORMATS = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
+
+  const handleWebcamCapture = (imageData: string) => {
+    setUploadedImage(imageData)
+    setPhotoData({ original: imageData })
+    success("Photo captured successfully!", 2000)
+    photoHistory.addPhoto(imageData, false)
+    setTimeout(() => setFaceDetected(true), 800)
+    setShowWebcam(false)
+  }
 
   const validateFile = (file: File): { valid: boolean; message?: string } => {
     if (!ALLOWED_FORMATS.includes(file.type)) {
@@ -329,10 +340,14 @@ export function PhotoCaptureStep() {
                   onDragLeave={() => setIsDragging(false)}
                   onDrop={handleDrop}
                   onClick={() => fileInputRef.current?.click()}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInputRef.current?.click() } }}
+                  aria-label="Upload photo. Drag and drop or click to browse files"
                   className={`hidden md:flex relative flex-col items-center justify-center h-72 rounded-3xl border-2 border-dashed cursor-pointer transition-all duration-300 ${isDragging
                       ? "border-[#FF5A36] bg-[#ffe7df] scale-[1.01]"
                       : "border-[#FF5A36]/60 bg-[#fff5f0] hover:border-[#FF5A36] hover:bg-[#ffeae0]"
-                    }`}
+                    } focus:outline-none focus:ring-2 focus:ring-[#FF5A36] focus:ring-offset-2`}
                 >
                   <div className="pointer-events-none absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_top_right,rgba(255,90,54,0.1),transparent_55%)]" />
                   <motion.div animate={isDragging ? { scale: 1.2, rotate: 8 } : { scale: 1, rotate: 0 }}
@@ -348,19 +363,44 @@ export function PhotoCaptureStep() {
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f) }} />
                 </div>
 
+                {/* Desktop webcam button */}
+                <div className="hidden md:flex justify-center mt-4">
+                  <Button
+                    onClick={() => setShowWebcam(true)}
+                    variant="outline"
+                    className="border-[#E5E7EB] rounded-xl px-6 py-2.5 font-semibold hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 transition-all"
+                  >
+                    <Video className="w-4 h-4 mr-2" />
+                    Use Webcam Instead
+                  </Button>
+                </div>
+
                 {/* Mobile */}
                 <div className="md:hidden space-y-3">
                   <div className="aspect-3/4 max-h-64 rounded-3xl bg-[#F7F7F8] border border-[#E5E5E5] flex items-center justify-center">
                     <div className="text-center">
                       <Camera className="w-12 h-12 text-[#9ca3af] mx-auto mb-2" />
-                      <p className="text-sm text-[#6b7280]">Upload your photo</p>
+                      <p className="text-sm text-[#6b7280]">Take or upload your photo</p>
                     </div>
                   </div>
-                  <Button onClick={() => fileInputRef.current?.click()}
-                    className="w-full bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-2xl py-5 text-base font-semibold h-auto">
-                    <Camera className="w-5 h-5 mr-2" />Take or Upload Photo
-                  </Button>
-                  <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden"
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button 
+                      onClick={() => setShowWebcam(true)}
+                      className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-2xl py-4 text-sm font-semibold h-auto"
+                    >
+                      <Video className="w-4 h-4 mr-1.5" />
+                      Take Photo
+                    </Button>
+                    <Button 
+                      onClick={() => fileInputRef.current?.click()}
+                      variant="outline"
+                      className="border-[#E5E7EB] rounded-2xl py-4 text-sm font-semibold h-auto hover:bg-[#F7F7F8]"
+                    >
+                      <Camera className="w-4 h-4 mr-1.5" />
+                      Upload
+                    </Button>
+                  </div>
+                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden"
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f) }} />
                 </div>
               </motion.div>
@@ -502,6 +542,16 @@ export function PhotoCaptureStep() {
           </Button>
         </motion.div>
       )}
+
+      {/* Webcam modal */}
+      <AnimatePresence>
+        {showWebcam && (
+          <WebcamCapture
+            onCapture={handleWebcamCapture}
+            onClose={() => setShowWebcam(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
