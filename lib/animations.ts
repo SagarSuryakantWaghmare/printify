@@ -80,7 +80,7 @@ export const scrollReveal = {
   initial: { opacity: 0, y: 40 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.3 },
-  transition: { duration: 0.6, ease: [0, 0, 0.2, 1] },
+  transition: { duration: 0.6 },
 };
 
 // Button hover/tap animations
@@ -243,7 +243,7 @@ export const useReducedMotion = (): boolean => {
  * @param variants - Framer Motion variants object
  * @returns Variants object or empty object if reduced motion is preferred
  */
-export const getAnimationProps = (variants: any) => {
+export const getAnimationProps = (variants: Record<string, unknown>) => {
   if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     return {};
   }

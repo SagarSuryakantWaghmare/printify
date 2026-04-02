@@ -153,6 +153,15 @@ export async function detectFaces(
         isValid = false
       }
 
+      if (verticalOffset > mergedConfig.maxCenterOffset!) {
+        if (primaryFace.relativeCenterY < 0.5) {
+          recommendations.push("Please move slightly down to center your face vertically.")
+        } else {
+          recommendations.push("Please move slightly up to center your face vertically.")
+        }
+        isValid = false
+      }
+
       // Vertical centering - face should be in upper half
       if (primaryFace.relativeCenterY > 0.6) {
         recommendations.push("Please raise the camera or lower your position.")

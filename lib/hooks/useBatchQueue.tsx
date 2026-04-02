@@ -1,7 +1,19 @@
 "use client"
 
 import { useState, useCallback, useRef } from "react"
-import { createBatchProcessor, type BatchProcessItem } from "@/lib/batch-processor"
+
+// Types defined locally to avoid any SSR import chain issues
+export interface BatchProcessItem {
+  id: string
+  imageData: string
+}
+
+export interface BatchProcessResult {
+  id: string
+  success: boolean
+  result?: string
+  error?: string
+}
 
 export interface BatchItem {
   id: string
@@ -11,6 +23,25 @@ export interface BatchItem {
   error?: string
   result?: string
   progress?: number
+}
+
+// Processor type - defined inline to avoid import
+interface BatchProcessor {
+  processBatch: (
+    items: BatchProcessItem[],
+    callbacks?: {
+      onItemStart?: (id: string) => void
+      onItemProgress?: (id: string, progress: number) => void
+      onItemComplete?: (result: BatchProcessResult) => void
+      onBatchProgress?: (completed: number, total: number) => void
+    }
+  ) => Promise<BatchProcessResult[]>
+  pause: () => void
+  resume: () => void
+  cancel: () => void
+  reset: () => void
+  isPaused: boolean
+  isCancelled: boolean
 }
 
 export interface BatchQueueContextType {
@@ -38,7 +69,7 @@ export function useBatchQueue(): BatchQueueContextType {
   const [items, setItems] = useState<BatchItem[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
-  const processorRef = useRef(createBatchProcessor(2))
+  const processorRef = useRef<BatchProcessor | null>(null)
 
   const addItems = useCallback((newItems: Array<{ fileName: string; photoData: string }>) => {
     setItems((prev) => [
@@ -82,11 +113,11 @@ export function useBatchQueue(): BatchQueueContextType {
   }, [])
 
   const clearAll = useCallback(() => {
-    processorRef.current.cancel()
+    processorRef.current?.cancel()
     setItems([])
     setIsProcessing(false)
     setIsPaused(false)
-    processorRef.current.reset()
+    processorRef.current?.reset()
   }, [])
 
   // Process entire queue using optimized batch processor
@@ -94,6 +125,12 @@ export function useBatchQueue(): BatchQueueContextType {
     if (isProcessing) return
     
     setIsProcessing(true)
+    
+    // Lazy load processor only when needed (client-side)
+    if (!processorRef.current) {
+      const { createBatchProcessor } = await import("@/lib/batch-processor")
+      processorRef.current = createBatchProcessor(2)
+    }
     processorRef.current.reset()
 
     // Get pending items
@@ -125,19 +162,19 @@ export function useBatchQueue(): BatchQueueContextType {
 
   // Pause processing
   const pauseProcessing = useCallback(() => {
-    processorRef.current.pause()
+    processorRef.current?.pause()
     setIsPaused(true)
   }, [])
 
   // Resume processing
   const resumeProcessing = useCallback(() => {
-    processorRef.current.resume()
+    processorRef.current?.resume()
     setIsPaused(false)
   }, [])
 
   // Cancel processing
   const cancelProcessing = useCallback(() => {
-    processorRef.current.cancel()
+    processorRef.current?.cancel()
     setIsProcessing(false)
     setIsPaused(false)
     // Reset pending items that haven't started
@@ -154,8 +191,9 @@ export function useBatchQueue(): BatchQueueContextType {
     if (completedItems.length === 0) return
 
     try {
-      const JSZip = (await import("jszip")).default
-      const zip = new JSZip()
+      const JSZip = (await import("jszip")).default as unknown
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const zip = new (JSZip as any)()
 
       completedItems.forEach((item) => {
         if (item.result) {

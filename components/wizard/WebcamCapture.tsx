@@ -1,10 +1,9 @@
 "use client"
 
 import { useState, useRef, useCallback, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { 
-  Camera, 
   FlipHorizontal, 
   X, 
   Circle, 
@@ -12,7 +11,6 @@ import {
   AlertCircle,
   Loader2,
   Timer,
-  Maximize2,
   Sun,
   UserRound,
   AlertTriangle,
@@ -128,37 +126,19 @@ export function WebcamCapture({ onCapture, onClose }: WebcamCaptureProps) {
 
   // Initialize camera on mount
   useEffect(() => {
-    startCamera()
-    
+    const handle = setTimeout(() => {
+      startCamera()
+    }, 0)
+
     return () => {
+      clearTimeout(handle)
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop())
       }
     }
   }, [startCamera])
 
-  // Handle countdown
-  useEffect(() => {
-    if (cameraState !== "countdown") return
-
-    if (countdown === 0) {
-      capturePhoto()
-      return
-    }
-
-    const timer = setTimeout(() => {
-      setCountdown(prev => prev - 1)
-    }, 1000)
-
-    return () => clearTimeout(timer)
-  }, [cameraState, countdown])
-
-  const startCountdown = () => {
-    setCountdown(COUNTDOWN_SECONDS)
-    setCameraState("countdown")
-  }
-
-  const capturePhoto = useCallback(() => {
+const capturePhoto = useCallback(() => {
     if (!videoRef.current || !canvasRef.current) return
 
     const video = videoRef.current
@@ -177,7 +157,7 @@ export function WebcamCapture({ onCapture, onClose }: WebcamCaptureProps) {
     }
 
     ctx.drawImage(video, 0, 0)
-    
+
     const imageData = canvas.toDataURL("image/jpeg", 0.92)
     setCapturedImage(imageData)
     setCameraState("captured")
@@ -187,6 +167,27 @@ export function WebcamCapture({ onCapture, onClose }: WebcamCaptureProps) {
       streamRef.current.getTracks().forEach(track => track.stop())
     }
   }, [facingMode])
+
+  // Handle countdown
+  useEffect(() => {
+    if (cameraState !== "countdown") return
+
+    if (countdown === 0) {
+      capturePhoto()
+      return
+    }
+
+    const timer = setTimeout(() => {
+      setCountdown(prev => prev - 1)
+    }, 1000)
+
+    return () => clearTimeout(timer)
+  }, [cameraState, countdown, capturePhoto])
+
+  const startCountdown = () => {
+    setCountdown(COUNTDOWN_SECONDS)
+    setCameraState("countdown")
+  }
 
   const handleInstantCapture = () => {
     capturePhoto()
@@ -210,9 +211,12 @@ export function WebcamCapture({ onCapture, onClose }: WebcamCaptureProps) {
   // Re-start camera when facing mode changes
   useEffect(() => {
     if (cameraState === "ready" || cameraState === "requesting") {
-      startCamera()
+      const handle = setTimeout(() => {
+        startCamera()
+      }, 0)
+      return () => clearTimeout(handle)
     }
-  }, [facingMode])
+  }, [facingMode, cameraState, startCamera])
 
   // Get status color based on compliance score
   const getScoreColor = () => {

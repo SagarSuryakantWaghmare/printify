@@ -64,7 +64,7 @@ self.addEventListener("fetch", (event) => {
           })
           return response
         })
-        .catch(() => caches.match(request).then((response) => response || caches.match("/")))
+        .catch(() => caches.match(request).then((response) => (response as Response) || (caches.match("/") as unknown as Response)))
     )
     return
   }
@@ -94,9 +94,10 @@ self.addEventListener("fetch", (event) => {
 })
 
 // Handle background sync for offline photo processing queue
-self.addEventListener("sync", (event) => {
-  if (event.tag === "sync-photos") {
-    event.waitUntil(syncPhotos())
+self.addEventListener("sync", (event: Event) => {
+  const syncEvent = event as unknown as { tag: string; waitUntil: (promise: Promise<unknown>) => void }
+  if (syncEvent.tag === "sync-photos") {
+    syncEvent.waitUntil(syncPhotos())
   }
 })
 

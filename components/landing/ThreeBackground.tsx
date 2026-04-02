@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
 import { Points, PointMaterial } from "@react-three/drei"
 import * as THREE from "three"
@@ -8,14 +8,17 @@ import * as THREE from "three"
 function Particles() {
     const pointsRef = useRef<THREE.Points>(null!)
 
-    // Generate random particle positions
+    // Generate random particle positions once in state initializer
     const count = 800
-    const positions = new Float32Array(count * 3)
-    for (let i = 0; i < count; i++) {
-        positions[i * 3] = (Math.random() - 0.5) * 20
-        positions[i * 3 + 1] = (Math.random() - 0.5) * 12
-        positions[i * 3 + 2] = (Math.random() - 0.5) * 8
-    }
+    const [positions] = useState(() => {
+        const arr = new Float32Array(count * 3)
+        for (let i = 0; i < count; i++) {
+            arr[i * 3] = (Math.random() - 0.5) * 20
+            arr[i * 3 + 1] = (Math.random() - 0.5) * 12
+            arr[i * 3 + 2] = (Math.random() - 0.5) * 8
+        }
+        return arr
+    })
 
     useFrame((state) => {
         const t = state.clock.getElapsedTime()

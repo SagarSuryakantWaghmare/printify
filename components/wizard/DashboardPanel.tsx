@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import {
@@ -101,8 +102,9 @@ export function DashboardPanel({ onClose, onSelectPhoto }: DashboardPanelProps) 
     }
 
     try {
-      const JSZip = (await import("jszip")).default
-      const zip = new JSZip()
+      const JSZip = (await import("jszip")).default as unknown
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const zip = new (JSZip as any)()
 
       selectedPhotosList.forEach((photo, index) => {
         const base64Data = photo.originalData.split(",")[1]
@@ -235,7 +237,9 @@ export function DashboardPanel({ onClose, onSelectPhoto }: DashboardPanelProps) 
           <div className="grid grid-cols-3 gap-2">
             {filteredPhotos.map((photo) => (
               <div key={photo.id} className="group relative aspect-[3/4] rounded-lg overflow-hidden bg-[#F3F4F6] border border-[#E5E7EB]">
-                <img src={photo.thumbnail} alt="" className="w-full h-full object-cover cursor-pointer" onClick={() => onSelectPhoto?.(photo) || setPreviewPhoto(photo)} />
+                <div className="relative w-full h-full cursor-pointer" onClick={() => onSelectPhoto?.(photo) || setPreviewPhoto(photo)}>
+                  <Image src={photo.thumbnail} alt="" fill style={{ objectFit: "cover" }} unoptimized />
+                </div>
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleSelection(photo.id) }}
                   className={`absolute top-1.5 left-1.5 h-5 w-5 rounded-full border-2 flex items-center justify-center ${selectedPhotos.has(photo.id) ? "bg-[#FF5A36] border-[#FF5A36]" : "bg-white/80 border-[#E5E7EB] opacity-0 group-hover:opacity-100"}`}
@@ -265,7 +269,9 @@ export function DashboardPanel({ onClose, onSelectPhoto }: DashboardPanelProps) 
                 <button onClick={(e) => { e.stopPropagation(); toggleSelection(photo.id) }} className={`h-4 w-4 rounded border flex items-center justify-center ${selectedPhotos.has(photo.id) ? "bg-[#FF5A36] border-[#FF5A36]" : "border-[#E5E7EB]"}`}>
                   {selectedPhotos.has(photo.id) && <CheckCircle2 className="h-2.5 w-2.5 text-white" />}
                 </button>
-                <img src={photo.thumbnail} alt="" className="h-10 w-8 rounded object-cover" />
+                <div className="relative h-10 w-8 rounded overflow-hidden">
+                  <Image src={photo.thumbnail} alt="" fill style={{ objectFit: "cover" }} unoptimized />
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-[#111827]">Passport Photo</p>
                   <p className="text-[10px] text-[#6b7280]">{formatPhotoTime(photo.timestamp)}</p>
@@ -290,7 +296,9 @@ export function DashboardPanel({ onClose, onSelectPhoto }: DashboardPanelProps) 
               <button onClick={() => setPreviewPhoto(null)} className="absolute top-3 right-3 z-10 h-8 w-8 rounded-full bg-black/50 flex items-center justify-center text-white">
                 <X className="h-4 w-4" />
               </button>
-              <img src={previewPhoto.originalData} alt="Preview" className="w-full" />
+              <div className="relative w-full" style={{ aspectRatio: "4 / 3" }}>
+                <Image src={previewPhoto.originalData} alt="Preview" fill style={{ objectFit: "contain" }} unoptimized />
+              </div>
               <div className="p-4 border-t border-[#E5E7EB]">
                 <div className="flex items-center justify-between mb-3">
                   <div>

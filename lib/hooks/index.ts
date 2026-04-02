@@ -21,8 +21,5 @@ export {
     type HistoryState,
 } from "./useHistory"
 
-export {
-    useBatchQueue,
-    type BatchItem,
-    type BatchQueueContextType,
-} from "./useBatchQueue"
+// NOTE: useBatchQueue is NOT exported here to avoid SSR issues with onnxruntime-web
+// Import directly from "@/lib/hooks/useBatchQueue" in client components

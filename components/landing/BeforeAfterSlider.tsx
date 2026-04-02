@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import Image from "next/image";
 
 interface BeforeAfterSliderProps {
   beforeImage?: string;
@@ -176,29 +177,32 @@ export function BeforeAfterSlider({
             }}
           >
             {/* BOTTOM: original (full width) */}
-            <img
-              src={beforeImage}
-              alt="Original"
-              draggable={false}
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{ filter: "grayscale(100%) brightness(0.85)" }}
-            />
+            <div className="absolute inset-0">
+              <Image
+                src={beforeImage}
+                alt="Original"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                style={{ objectFit: "cover", filter: "grayscale(100%) brightness(0.85)" }}
+                unoptimized
+              />
+            </div>
 
             {/* TOP: AI enhanced (clipped) */}
             <div
               className="absolute inset-0 overflow-hidden"
               style={{ width: `${sliderPos}%` }}
             >
-              <img
-                src={afterImage}
-                alt="AI Enhanced"
-                draggable={false}
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{
-                  maxWidth: "none",
-                  filter: "saturate(1.3) contrast(1.05) brightness(1.05)",
-                }}
-              />
+              <div className="absolute inset-0">
+                <Image
+                  src={afterImage}
+                  alt="AI Enhanced"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  style={{ objectFit: "cover", filter: "saturate(1.3) contrast(1.05) brightness(1.05)" }}
+                  unoptimized
+                />
+              </div>
             </div>
 
             {/* Divider line */}

@@ -3,7 +3,6 @@
 import { useToast, type ToastType } from "@/lib/hooks/useToast"
 import { motion, AnimatePresence } from "framer-motion"
 import { CheckCircle2, AlertCircle, Info, AlertTriangle, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
 
 const ICON_MAP: Record<ToastType, React.ReactNode> = {
   success: <CheckCircle2 className="h-5 w-5 text-[#10B981]" />,

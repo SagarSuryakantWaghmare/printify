@@ -1,6 +1,6 @@
 "use client"
 
-import { Check, Sparkles, Zap, Shield, Download, Globe, Clock } from "lucide-react"
+import { Sparkles, Zap, Shield, Download, Globe, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import type { Variants } from "framer-motion"
@@ -111,7 +111,7 @@ export function PricingCards() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
-        {features.map((feature, idx) => (
+        {features.map((feature) => (
           <motion.div
             key={feature.title}
             variants={cardVariants}

@@ -3,7 +3,6 @@
 import { motion } from "framer-motion"
 import { Star } from "lucide-react"
 import { scrollReveal } from "@/lib/animations"
-import Image from "next/image"
 
 const testimonials = [
   {
@@ -110,7 +109,7 @@ export function Testimonials() {
                   </motion.div>
                 ))}
               </motion.div>
-              <p className="text-base leading-relaxed text-slate-700 italic group-hover:text-slate-800 transition-colors">"{item.quote}"</p>
+              <p className="text-base leading-relaxed text-slate-700 italic group-hover:text-slate-800 transition-colors">&ldquo;{item.quote}&rdquo;</p>
             </div>
             <div className="mt-8 pt-6 border-t border-slate-200/60 flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#FF5A36] to-[#FF8C6B] text-white font-bold text-sm shadow-md">

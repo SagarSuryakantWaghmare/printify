@@ -101,7 +101,6 @@ export function applyBgAndCrop(options: {
                 const max = Math.max(r, g, b), min = Math.min(r, g, b)
                 const lum = (max + min) / 2 / 255
                 if (max !== min) {
-                    const d = (max - min) / 255
                     const factor2 = 1 + saturation * (1 - 2 * Math.abs(lum - 0.5)) * 0.5
                     r = 128 + (r - 128) * factor2
                     g = 128 + (g - 128) * factor2

@@ -1,20 +1,15 @@
 /**
- * Batch Processing Utilities
+ * Batch Processing Utilities (Client-Only)
  * 
- * Provides optimized batch processing with:
- * - Concurrent processing with configurable limits
- * - Memory-efficient chunked processing
- * - Pause/resume functionality
- * - Progress tracking
+ * This module MUST only be imported dynamically in client components.
+ * It uses @imgly/background-removal which requires browser APIs.
  */
-
-import { removeBackground } from "@imgly/background-removal"
 
 // Configuration
 const BG_REMOVAL_CONFIG = {
   publicPath: "/bg-removal/",
   device: "gpu" as const,
-  model: "medium" as const,
+  model: "isnet" as const,
 }
 
 // Maximum concurrent processing tasks
@@ -64,10 +59,13 @@ export async function processImage(
   onProgress?: (progress: number) => void
 ): Promise<string> {
   const blob = base64ToBlob(imageData)
+  
+  // Dynamic import at runtime - only happens in browser
+  const { removeBackground } = await import("@imgly/background-removal")
 
   const resultBlob = await removeBackground(blob, {
     ...BG_REMOVAL_CONFIG,
-    progress: (key, current, total) => {
+    progress: (_key: string, current: number, total: number) => {
       if (onProgress) {
         const progress = Math.round((current / total) * 100)
         onProgress(progress)

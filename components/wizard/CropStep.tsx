@@ -207,7 +207,7 @@ export function CropStep() {
         ctx.font = "11px sans-serif"
         ctx.textAlign = "center"
         ctx.fillText(label, fx + fw / 2, fy + fh + 18)
-    }, [canvasSize, offset, rotation, scale, getFrame, frameAspect, photoSpec, showGuides, guideType])
+    }, [canvasSize, offset, rotation, scale, getFrame, photoSpec, showGuides, guideType])
 
     // Load image + set initial scale
     useEffect(() => {
@@ -307,7 +307,7 @@ export function CropStep() {
         setIsApplying(true)
         try {
             const { w: cw, h: ch } = canvasSize
-            const { fw, fh } = getFrame(cw, ch)
+              const { fw } = getFrame(cw, ch)
             const OUTPUT_W = 1050
             const OUTPUT_H = Math.round(OUTPUT_W / frameAspect)
 
@@ -339,6 +339,14 @@ export function CropStep() {
             setIsApplying(false)
         }
     }, [canvasSize, frameAspect, offset, rotation, scale, photoSpec.bgColor, setPhotoData, nextStep, getFrame])
+
+    const reset = useCallback(() => {
+        transformHistory.setState({
+            scale: baseScale,
+            rotation: 0,
+            offset: { x: 0, y: 0 }
+        })
+    }, [baseScale, transformHistory])
 
     // Keyboard shortcuts
     useEffect(() => {
@@ -424,15 +432,7 @@ export function CropStep() {
 
         window.addEventListener("keydown", handleKeyDown)
         return () => window.removeEventListener("keydown", handleKeyDown)
-    }, [applyCrop, transformHistory])
-
-    const reset = () => {
-        transformHistory.setState({
-            scale: baseScale,
-            rotation: 0,
-            offset: { x: 0, y: 0 }
-        })
-    }
+    }, [applyCrop, reset, setOffset, setScale, setRotation, transformHistory])
 
     return (
         <div className="space-y-5">
@@ -441,10 +441,10 @@ export function CropStep() {
                 <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#1a1a1a]">
                     Adjust & Crop
                 </h1>
-                <p className="text-sm text-[#6b7280] space-y-1">
+                <div className="text-sm text-[#6b7280] space-y-1">
                     <div><Move className="inline h-3.5 w-3.5 mr-1" />Drag to reposition · Scroll/pinch to zoom · Use buttons to rotate</div>
                     <div className="text-xs text-[#9ca3af]">Keyboard: Arrow keys pan · +/- zoom · R reset · Shift+Arrow rotate · Enter confirm</div>
-                </p>
+                </div>
             </motion.div>
 
             {/* Canvas editor */}
@@ -470,11 +470,8 @@ export function CropStep() {
             </motion.div>
 
             {/* Controls */}
-            <motion.div 
+            <div
                 className="rounded-2xl border border-[#E5E7EB] bg-white p-4 space-y-4 shadow-sm"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
             >
                 {/* Zoom slider */}
                 <div className="space-y-1.5">

@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Camera, Wand2, DownloadCloud, Check } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { scrollReveal, staggerContainer, staggerItem } from "@/lib/animations"
+import { scrollReveal } from "@/lib/animations"
 
 const steps = [
   {
