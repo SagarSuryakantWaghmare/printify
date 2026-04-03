@@ -10,11 +10,11 @@ import { CheckIcon } from "@/components/ui/icons"
 
 const STAGES = [
   { label: "Analysing photo", detail: "Checking image quality and face position…" },
-  { label: "Removing background", detail: "AI separating you from the background in your browser (private & free)…" },
+  { label: "Removing background", detail: "AI separating you from the background via remove.bg API…" },
 ]
 
 const TIPS = [
-  "Your photo is processed 100% locally - it never leaves your device!",
+  "Your photo is processed securely via remove.bg API.",
   "AI background removal works best with clear face visibility",
   "Good lighting in your original photo means better results",
   "The final output will be cropped to Indian passport spec (35×45mm)",
@@ -67,36 +67,20 @@ export function ProcessingStep() {
       await new Promise((r) => setTimeout(r, 700))
       setStage(1)
 
-      // Stage 1: BG removal via @imgly/background-removal (local model files, no CDN)
-      const { removeBackground } = await import("@imgly/background-removal")
-
-      const res = await fetch(photoData.original)
-      const blob = await res.blob()
-
-      const transparentBlob = await removeBackground(blob, {
-        // Model files are served from public/bg-removal/ folder
-        publicPath: `${window.location.origin}/bg-removal/`,
-        // Use the smaller/faster fp16 model
-        model: "isnet_fp16",
-        progress: (key: string, current: number, total: number) => {
-          if (total > 0) {
-            const pct = Math.round((current / total) * 100)
-            setModelProgress(pct)
-            console.log(`BG model: ${key} ${pct}%`)
-          }
-        },
+      // Stage 1: BG removal via API
+      const response = await fetch("/api/remove-bg", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageDataUrl: photoData.original })
       })
-
-      const transparentUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve(reader.result as string)
-        reader.onerror = reject
-        reader.readAsDataURL(transparentBlob)
-      })
-
-      setPhotoData({ transparent: transparentUrl })
-      setPreviewUrl(transparentUrl)
-      setStage(2) // done
+      const data = await response.json()
+      if (data.resultDataUrl) {
+        setPhotoData({ transparent: data.resultDataUrl })
+        setPreviewUrl(data.resultDataUrl)
+        setStage(2) // done
+      } else {
+        setError(data.error || "Background removal failed")
+      }
 
       await new Promise((r) => setTimeout(r, 400))
       nextStep() // → CropStep

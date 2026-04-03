@@ -2,15 +2,11 @@
  * Batch Processing Utilities (Client-Only)
  * 
  * This module MUST only be imported dynamically in client components.
- * It uses @imgly/background-removal which requires browser APIs.
+ * It uses remove.bg API for background removal.
  */
 
 // Configuration
-const BG_REMOVAL_CONFIG = {
-  publicPath: "/bg-removal/",
-  device: "gpu" as const,
-  model: "isnet" as const,
-}
+// No local config needed for API-based removal
 
 // Maximum concurrent processing tasks
 const DEFAULT_CONCURRENCY = 2
@@ -58,22 +54,18 @@ export async function processImage(
   imageData: string,
   onProgress?: (progress: number) => void
 ): Promise<string> {
-  const blob = base64ToBlob(imageData)
-  
-  // Dynamic import at runtime - only happens in browser
-  const { removeBackground } = await import("@imgly/background-removal")
-
-  const resultBlob = await removeBackground(blob, {
-    ...BG_REMOVAL_CONFIG,
-    progress: (_key: string, current: number, total: number) => {
-      if (onProgress) {
-        const progress = Math.round((current / total) * 100)
-        onProgress(progress)
-      }
-    },
+  // Use API for background removal
+  const response = await fetch("/api/remove-bg", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imageDataUrl: imageData })
   })
-
-  return blobToBase64(resultBlob)
+  const data = await response.json()
+  if (data.resultDataUrl) {
+    return data.resultDataUrl
+  } else {
+    throw new Error(data.error || "Background removal failed")
+  }
 }
 
 /**

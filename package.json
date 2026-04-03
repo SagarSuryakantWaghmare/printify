@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^7.0.6",
-    "@imgly/background-removal": "^1.7.0",
-    "onnxruntime-web": "^1.21.0",
+    
+    
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@types/three": "^0.183.1",

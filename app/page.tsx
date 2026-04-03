@@ -35,7 +35,7 @@ export default function Home() {
 
         <LogoStrip />
         <Testimonials />
-        <SupportedSizesPreview />
+        
       </section>
 
       {/* Pricing */}
