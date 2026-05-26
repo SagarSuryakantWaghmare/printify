@@ -183,20 +183,20 @@ export function PhotoCaptureStep() {
     <div className="space-y-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-1">
-        <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#1a1a1a]">
+        <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground">
           Upload Your Photo
         </h1>
-        <p className="text-base text-[#6b7280]">
+        <p className="text-base text-muted-foreground">
           Choose type, background colour, and count — then upload
         </p>
       </motion.div>
 
       {/* Config card */}
-      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 sm:p-5 space-y-5">
+      <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-5">
 
         {/* Photo type */}
         <div className="space-y-2">
-          <p className="text-sm font-semibold text-[#111827]">Photo type</p>
+          <p className="text-sm font-semibold text-foreground">Photo type</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {PHOTO_TYPES.map((type) => {
               const IconComponent = type.icon
@@ -204,29 +204,30 @@ export function PhotoCaptureStep() {
               <button
                 key={type.value}
                 onClick={() => setPhotoSpec({ preset: type.value })}
-                className={`relative rounded-xl p-3 text-left border-2 transition-all duration-200 ${photoSpec.preset === type.value
-                    ? "border-[#FF5A36] bg-[#FFF5F0]"
-                    : "border-[#E5E7EB] bg-white hover:border-[#FF5A36]/40 hover:bg-[#FFF8F6]"
+                aria-pressed={photoSpec.preset === type.value}
+                className={`relative rounded-xl p-3 text-left border-2 transition-colors ${photoSpec.preset === type.value
+                    ? "border-primary bg-brand-50"
+                    : "border-border bg-card hover:border-primary/40 hover:bg-brand-50/50"
                   }`}
               >
                 <div className="flex items-start gap-2">
-                  <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-[#FF5A36]/10 to-[#FF5A36]/5">
-                    <IconComponent className="h-5 w-5 text-[#FF5A36]" />
+                  <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-primary/5">
+                    <IconComponent className="h-5 w-5 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-semibold text-sm text-[#111827]">{type.label}</span>
+                      <span className="font-semibold text-sm text-foreground">{type.label}</span>
                       {type.badge && (
-                        <span className="text-[10px] font-bold text-[#FF5A36] flex items-center gap-0.5">
+                        <span className="text-[10px] font-bold text-primary flex items-center gap-0.5">
                           <Star className="h-2.5 w-2.5 fill-current" />{type.badge}
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-[#6b7280] mt-0.5">{type.desc}</p>
-                    <p className="text-[11px] font-semibold text-[#9ca3af] mt-0.5">{type.size}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">{type.desc}</p>
+                    <p className="text-[11px] font-semibold text-muted-foreground/80 mt-0.5">{type.size}</p>
                   </div>
                   {photoSpec.preset === type.value && (
-                    <CheckCircle2 className="h-4 w-4 text-[#FF5A36] shrink-0 mt-0.5" />
+                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   )}
                 </div>
               </button>
@@ -255,24 +256,25 @@ export function PhotoCaptureStep() {
 
         {/* Background colour */}
         <div className="space-y-2">
-          <p className="text-sm font-semibold text-[#111827]">Background colour</p>
-          <div className="flex gap-2">
+          <p className="text-sm font-semibold text-foreground">Background colour</p>
+          <div className="flex gap-2 flex-wrap">
             {BG_OPTIONS.map((bg) => (
               <button
                 key={bg.value}
                 onClick={() => setPhotoSpec({ bgColor: bg.value })}
-                className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold border-2 transition-all duration-200 ${photoSpec.bgColor === bg.value
-                    ? "border-[#FF5A36] shadow-sm"
-                    : "border-[#E5E7EB] hover:border-[#FF5A36]/40"
+                aria-pressed={photoSpec.bgColor === bg.value}
+                className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold border-2 transition-colors ${photoSpec.bgColor === bg.value
+                    ? "border-primary shadow-sm"
+                    : "border-border hover:border-primary/40"
                   }`}
               >
                 <span
-                  className="h-5 w-5 rounded-full border border-[#d1d5db] shrink-0"
+                  className="h-5 w-5 rounded-full border border-border shrink-0"
                   style={{ background: bg.hex }}
                 />
-                <span className="text-[#111827]">{bg.label}</span>
+                <span className="text-foreground">{bg.label}</span>
                 {photoSpec.bgColor === bg.value && (
-                  <CheckCircle2 className="h-3.5 w-3.5 text-[#FF5A36]" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
                 )}
               </button>
             ))}
@@ -281,13 +283,13 @@ export function PhotoCaptureStep() {
 
         {/* Count */}
         <div className="space-y-2">
-          <p className="text-sm font-semibold text-[#111827]">Photos per sheet</p>
+          <p className="text-sm font-semibold text-foreground">Photos per sheet</p>
           <Tabs value={String(photoSpec.count)}
             onValueChange={(v) => setPhotoSpec({ count: Number(v) as 6 | 8 | 12 })}>
-            <TabsList className="grid h-auto w-full max-w-xs grid-cols-3 rounded-xl bg-[#F7F7F8] p-1 gap-1">
+            <TabsList className="grid h-auto w-full max-w-xs grid-cols-3 rounded-xl bg-muted p-1 gap-1">
               {COUNT_OPTIONS.map((c) => (
                 <TabsTrigger key={c} value={String(c)}
-                  className="rounded-lg py-2 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                  className="rounded-lg py-2 text-sm font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm">
                   {c} photos
                 </TabsTrigger>
               ))}
@@ -297,24 +299,28 @@ export function PhotoCaptureStep() {
       </div>
 
       {/* Upload mode toggle */}
-      <div className="flex items-center gap-2 rounded-xl border border-[#E5E7EB] bg-[#F7F7F8] p-1 w-fit">
+      <div role="tablist" aria-label="Upload mode" className="flex items-center gap-1 rounded-xl border border-border bg-muted p-1 w-fit">
         <button
+          role="tab"
+          aria-selected={uploadMode === "single"}
           onClick={() => setUploadMode("single")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
             uploadMode === "single"
-              ? "bg-white text-[#FF5A36] shadow-sm"
-              : "text-[#6b7280] hover:text-[#111827]"
+              ? "bg-card text-primary shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           <Camera className="h-4 w-4" />
           Single
         </button>
         <button
+          role="tab"
+          aria-selected={uploadMode === "batch"}
           onClick={() => setUploadMode("batch")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
             uploadMode === "batch"
-              ? "bg-white text-[#FF5A36] shadow-sm"
-              : "text-[#6b7280] hover:text-[#111827]"
+              ? "bg-card text-primary shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           <Files className="h-4 w-4" />
@@ -344,59 +350,48 @@ export function PhotoCaptureStep() {
                   tabIndex={0}
                   onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInputRef.current?.click() } }}
                   aria-label="Upload photo. Drag and drop or click to browse files"
-                  className={`hidden md:flex relative flex-col items-center justify-center h-72 rounded-3xl border-2 border-dashed cursor-pointer transition-all duration-300 ${isDragging
-                      ? "border-[#FF5A36] bg-[#ffe7df] scale-[1.01]"
-                      : "border-[#FF5A36]/60 bg-[#fff5f0] hover:border-[#FF5A36] hover:bg-[#ffeae0]"
-                    } focus:outline-none focus:ring-2 focus:ring-[#FF5A36] focus:ring-offset-2`}
+                  className={`hidden md:flex relative flex-col items-center justify-center h-72 rounded-3xl border-2 border-dashed cursor-pointer transition-colors ${isDragging
+                      ? "border-primary bg-brand-100 scale-[1.01]"
+                      : "border-primary/60 bg-brand-50 hover:border-primary hover:bg-brand-100/60"
+                    } focus:outline-none focus:ring-2 focus:ring-ring/60 focus:ring-offset-2`}
                 >
                   <div className="pointer-events-none absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_top_right,rgba(255,90,54,0.1),transparent_55%)]" />
-                  <motion.div animate={isDragging ? { scale: 1.2, rotate: 8 } : { scale: 1, rotate: 0 }}
+                  <motion.div animate={isDragging ? { scale: 1.15, rotate: 6 } : { scale: 1, rotate: 0 }}
                     transition={{ type: "spring", stiffness: 300 }}>
-                    <Camera className="w-14 h-14 text-[#FF5A36] mb-3" />
+                    <Camera className="w-14 h-14 text-primary mb-3" />
                   </motion.div>
-                  <p className="text-lg font-semibold text-[#1a1a1a]">
+                  <p className="text-lg font-semibold text-foreground">
                     {isDragging ? "Drop it here!" : "Drag your photo here"}
                   </p>
-                  <p className="text-sm text-[#6b7280] mt-1">or click to browse</p>
-                  <p className="mt-2 text-xs text-[#9ca3af] font-semibold">JPG, PNG — up to 20 MB</p>
+                  <p className="text-sm text-muted-foreground mt-1">or click to browse</p>
+                  <p className="mt-2 text-xs text-muted-foreground/80 font-semibold">JPG, PNG, WebP — up to 20 MB</p>
                   <input ref={fileInputRef} type="file" accept="image/*" className="hidden"
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f) }} />
                 </div>
 
                 {/* Desktop webcam button */}
                 <div className="hidden md:flex justify-center mt-4">
-                  <Button
-                    onClick={() => setShowWebcam(true)}
-                    variant="outline"
-                    className="border-[#E5E7EB] rounded-xl px-6 py-2.5 font-semibold hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 transition-all"
-                  >
-                    <Video className="w-4 h-4 mr-2" />
+                  <Button onClick={() => setShowWebcam(true)} variant="outline" size="lg">
+                    <Video className="w-4 h-4" />
                     Use Webcam Instead
                   </Button>
                 </div>
 
                 {/* Mobile */}
                 <div className="md:hidden space-y-3">
-                  <div className="aspect-3/4 max-h-64 rounded-3xl bg-[#F7F7F8] border border-[#E5E5E5] flex items-center justify-center">
+                  <div className="aspect-3/4 max-h-64 rounded-3xl bg-muted border border-border flex items-center justify-center">
                     <div className="text-center">
-                      <Camera className="w-12 h-12 text-[#9ca3af] mx-auto mb-2" />
-                      <p className="text-sm text-[#6b7280]">Take or upload your photo</p>
+                      <Camera className="w-12 h-12 text-muted-foreground/70 mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">Take or upload your photo</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    <Button 
-                      onClick={() => setShowWebcam(true)}
-                      className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-2xl py-4 text-sm font-semibold h-auto"
-                    >
-                      <Video className="w-4 h-4 mr-1.5" />
+                    <Button onClick={() => setShowWebcam(true)} variant="cta" size="xl">
+                      <Video className="w-4 h-4" />
                       Take Photo
                     </Button>
-                    <Button 
-                      onClick={() => fileInputRef.current?.click()}
-                      variant="outline"
-                      className="border-[#E5E7EB] rounded-2xl py-4 text-sm font-semibold h-auto hover:bg-[#F7F7F8]"
-                    >
-                      <Camera className="w-4 h-4 mr-1.5" />
+                    <Button onClick={() => fileInputRef.current?.click()} variant="outline" size="xl">
+                      <Camera className="w-4 h-4" />
                       Upload
                     </Button>
                   </div>
@@ -408,28 +403,27 @@ export function PhotoCaptureStep() {
               <motion.div key="preview"
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
                 className="space-y-4">
-                <div className="relative rounded-3xl overflow-hidden bg-[#F7F7F8] aspect-3/4 max-h-80">
+                <div className="relative rounded-3xl overflow-hidden bg-muted aspect-3/4 max-h-80">
                   <Image src={uploadedImage} alt="Uploaded" fill className="object-cover object-top"
                     sizes="(max-width: 768px) 100vw, 50vw" />
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-linear-to-t from-black/20 to-transparent" />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent" />
                   {faceDetected && (
                     <motion.div initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }}
-                      className="absolute top-3 right-3 flex items-center gap-1.5 bg-white rounded-full px-3 py-1.5 shadow-lg">
-                      <CheckCircle2 className="w-4 h-4 text-[#1D9E75]" />
-                      <span className="text-xs font-semibold text-[#1D9E75]">Face detected</span>
+                      className="absolute top-3 right-3 flex items-center gap-1.5 bg-card rounded-full px-3 py-1.5 shadow-lg">
+                      <CheckCircle2 className="w-4 h-4 text-success-500" />
+                      <span className="text-xs font-semibold text-success-500">Face detected</span>
                     </motion.div>
                   )}
                 </div>
-                <p className="rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] p-3 text-sm text-[#4b5563]">
-                  <span className="inline-flex items-center gap-1">
+                <p className="rounded-xl border border-border bg-muted/40 p-3 text-sm text-foreground/80">
+                  <span className="inline-flex items-center gap-1.5">
                     <CheckIcon className="w-4 h-4" />
                     Great! AI will remove background, apply <strong>{photoSpec.bgColor}</strong> colour, and crop to{" "}
                     {photoSpec.preset === "professional" ? "professional square" : "passport 35×45 mm"} spec.
                   </span>
                 </p>
                 <Button onClick={() => { setUploadedImage(null); setFaceDetected(false) }}
-                  variant="outline"
-                  className="w-full border border-[#E5E5E5] rounded-xl py-2.5 font-semibold hover:bg-[#F7F7F8]">
+                  variant="outline" size="lg" className="w-full">
                   Change Photo
                 </Button>
               </motion.div>
@@ -439,16 +433,16 @@ export function PhotoCaptureStep() {
 
         {/* Tips */}
         <div className="space-y-3">
-          <h3 className="font-semibold text-[#1a1a1a] text-sm">Tips for Best Results</h3>
+          <h3 className="font-semibold text-foreground text-sm">Tips for Best Results</h3>
           {/* Mobile scroll */}
           <ScrollArea className="md:hidden w-full">
             <div className="flex gap-2 pb-2">
               {TIPS.map((tip, idx) => (
-                <div key={idx} className="shrink-0 w-28 rounded-xl bg-[#F7F7F8] p-3 text-center">
-                  <div className="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white text-[#6b7280]">
+                <div key={idx} className="shrink-0 w-28 rounded-xl bg-muted p-3 text-center">
+                  <div className="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-card text-muted-foreground">
                     <tip.icon className="h-4 w-4" />
                   </div>
-                  <p className="text-xs font-semibold text-[#1a1a1a] leading-tight">{tip.text}</p>
+                  <p className="text-xs font-semibold text-foreground leading-tight">{tip.text}</p>
                 </div>
               ))}
             </div>
@@ -456,11 +450,11 @@ export function PhotoCaptureStep() {
           {/* Desktop stacked */}
           <div className="hidden md:flex flex-col gap-2.5">
             {TIPS.map((tip, idx) => (
-              <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-[#F7F7F8]">
-                <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-[#6b7280]">
+              <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-muted">
+                <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-card text-muted-foreground">
                   <tip.icon className="h-4 w-4" />
                 </div>
-                <p className="text-sm font-semibold text-[#1a1a1a]">{tip.text}</p>
+                <p className="text-sm font-semibold text-foreground">{tip.text}</p>
               </div>
             ))}
           </div>
@@ -471,17 +465,14 @@ export function PhotoCaptureStep() {
         {/* Batch upload mode */}
         {uploadMode === "batch" && (
         <div className="md:col-span-3 space-y-4">
-          <div className="rounded-2xl border-2 border-dashed border-[#FF5A36] bg-[#FFF5F0] px-8 py-12 text-center">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white mb-4">
-              <Files className="h-8 w-8 text-[#FF5A36]" />
+          <div className="rounded-2xl border-2 border-dashed border-primary bg-brand-50 px-8 py-12 text-center">
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-card mb-4 shadow-sm">
+              <Files className="h-8 w-8 text-primary" />
             </div>
-            <h3 className="text-lg font-semibold text-[#1a1a1a] mb-1">Upload Multiple Photos</h3>
-            <p className="text-sm text-[#6b7280] mb-4">Select multiple JPG, PNG, or WebP files to process them all at once</p>
-            <Button
-              onClick={() => batchInputRef.current?.click()}
-              className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-xl px-6 py-3 font-semibold"
-            >
-              <Files className="h-4 w-4 mr-2" />
+            <h3 className="text-lg font-semibold text-foreground mb-1">Upload Multiple Photos</h3>
+            <p className="text-sm text-muted-foreground mb-4">Select multiple JPG, PNG, or WebP files to process them all at once</p>
+            <Button onClick={() => batchInputRef.current?.click()} variant="cta" size="lg">
+              <Files className="h-4 w-4" />
               Choose Photos
             </Button>
             <input
@@ -494,9 +485,8 @@ export function PhotoCaptureStep() {
             />
           </div>
 
-          {/* Batch queue panel inline */}
           {batchQueue.items.length > 0 && (
-            <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
+            <div className="rounded-2xl border border-border bg-card p-5">
               <BatchQueuePanel
                 items={batchQueue.items}
                 onRemove={batchQueue.removeItem}
@@ -514,7 +504,7 @@ export function PhotoCaptureStep() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-[#E5E7EB] bg-white p-4 space-y-4"
+          className="rounded-2xl border border-border bg-card p-4 space-y-4"
         >
           <RecentPhotosGrid
             photos={photoHistory.photos}
@@ -530,14 +520,16 @@ export function PhotoCaptureStep() {
           <Button
             onClick={() => { if (uploadedImage) nextStep() }}
             disabled={!faceDetected}
-            className="w-full bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-2xl py-6 text-base font-semibold h-auto shadow-[0_8px_24px_rgba(255,90,54,0.3)] hover:shadow-[0_12px_28px_rgba(255,90,54,0.4)] transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+            variant="cta"
+            size="xl"
+            className="w-full h-14 text-base"
           >
             {faceDetected ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="inline-block w-1.5 h-1.5 bg-white rounded-full"></span>
+              <>
+                <span className="inline-block w-1.5 h-1.5 bg-current rounded-full opacity-80" />
                 Start AI Processing
-                <ArrowRightIcon className="w-4 h-4" stroke="white" />
-              </span>
+                <ArrowRightIcon className="w-4 h-4" stroke="currentColor" />
+              </>
             ) : "Detecting face…"}
           </Button>
         </motion.div>
