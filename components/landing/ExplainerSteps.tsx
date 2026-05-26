@@ -36,10 +36,10 @@ export function ExplainerSteps() {
         {...scrollReveal}
         className="text-center space-y-4"
       >
-        <h2 className="font-display text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+        <h2 className="font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
           Professional Output in <span className="gradient-text">3 Steps</span>
         </h2>
-        <p className="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg">
+        <p className="mx-auto max-w-2xl text-base text-foreground/70 sm:text-lg">
           No editing skills needed. AI handles the hard part — you just upload and download.
         </p>
       </motion.div>
@@ -60,7 +60,7 @@ export function ExplainerSteps() {
                 stiffness: 100
               }}
             >
-              <Card className="border-slate-200/60 bg-white/70 backdrop-blur-md h-full overflow-hidden group hover:border-[#FF5A36]/30 hover:shadow-[0_20px_40px_-15px_rgba(255,90,54,0.15)] transition-all duration-500 hover:-translate-y-3 rounded-3xl cursor-default">
+              <Card className="border-slate-200/60 bg-white/70 backdrop-blur-md h-full overflow-hidden group hover:border-primary/30 hover:shadow-[0_20px_40px_-15px_rgba(255,90,54,0.15)] transition-all duration-500 hover:-translate-y-3 rounded-3xl cursor-default">
                 <CardContent className="p-8 sm:p-10">
                   <motion.div
                     whileHover={{ rotate: [0, -5, 5, -5, 0], scale: 1.15 }}
@@ -70,9 +70,9 @@ export function ExplainerSteps() {
                   >
                     <step.icon className="h-7 w-7" style={{ color: step.color }} />
                   </motion.div>
-                  <p className="text-sm font-bold tracking-widest text-[#FF5A36] uppercase mb-2">Step {idx + 1}</p>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-3 group-hover:text-[#FF5A36] transition-colors">{step.label}</h3>
-                  <p className="text-base leading-relaxed text-slate-500 group-hover:text-slate-600 transition-colors">{step.description}</p>
+                  <p className="text-sm font-bold tracking-widest text-primary uppercase mb-2">Step {idx + 1}</p>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">{step.label}</h3>
+                  <p className="text-base leading-relaxed text-muted-foreground group-hover:text-foreground/70 transition-colors">{step.description}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -113,7 +113,7 @@ export function ExplainerSteps() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.55, delay: idx * 0.12, type: "spring", stiffness: 100 }}
           >
-            <Card className="border-slate-200/60 bg-white/70 backdrop-blur-md overflow-hidden group hover:border-[#FF5A36]/30 hover:shadow-[0_20px_40px_-15px_rgba(255,90,54,0.15)] transition-all duration-500 rounded-3xl active:scale-95">
+            <Card className="border-slate-200/60 bg-white/70 backdrop-blur-md overflow-hidden group hover:border-primary/30 hover:shadow-[0_20px_40px_-15px_rgba(255,90,54,0.15)] transition-all duration-500 rounded-3xl active:scale-95">
               <CardContent className="p-8">
                 <motion.div 
                   whileTap={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
@@ -122,9 +122,9 @@ export function ExplainerSteps() {
                 >
                   <step.icon className="h-7 w-7" style={{ color: step.color }} />
                 </motion.div>
-                <p className="text-sm font-bold tracking-widest text-[#FF5A36] uppercase mb-2">Step {idx + 1}</p>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-3">{step.label}</h3>
-                <p className="text-base leading-relaxed text-slate-500">{step.description}</p>
+                <p className="text-sm font-bold tracking-widest text-primary uppercase mb-2">Step {idx + 1}</p>
+                <h3 className="font-display text-xl font-bold text-foreground mb-3">{step.label}</h3>
+                <p className="text-base leading-relaxed text-muted-foreground">{step.description}</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -147,9 +147,9 @@ export function ExplainerSteps() {
             viewport={{ once: true }}
             transition={{ duration: 0.3, delay: 0.4 + idx * 0.1 }}
             whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-600 hover:border-[#1D9E75]/30 hover:bg-white transition-all cursor-default"
+            className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-foreground/70 hover:border-[#1D9E75]/30 hover:bg-white transition-all cursor-default"
           >
-            <Check className="h-3.5 w-3.5 text-[#1D9E75]" />
+            <Check className="h-3.5 w-3.5 text-success-500" />
             {tag}
           </motion.span>
         ))}

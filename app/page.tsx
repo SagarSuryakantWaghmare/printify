@@ -10,7 +10,7 @@ import { Footer } from "@/components/common/footer"
 
 export default function Home() {
   return (
-    <div className="relative w-full overflow-x-hidden bg-slate-50/30">
+    <div className="relative w-full overflow-x-hidden bg-background">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_6%,rgba(255,90,54,0.05),transparent_34%),radial-gradient(circle_at_88%_14%,rgba(29,158,117,0.05),transparent_32%)]" />
 
       {/* Hero */}
@@ -18,8 +18,8 @@ export default function Home() {
 
       {/* Value anchor banner */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 mb-6">
-        <div className="flex items-center justify-center gap-2 rounded-2xl border border-[#FFD5C8] bg-[#FFF5F0] px-5 py-3 text-sm font-semibold text-[#C84426]">
-          <span>💸</span>
+        <div className="flex items-center justify-center gap-2 rounded-2xl border border-brand-200 bg-brand-50 px-5 py-3 text-sm font-semibold text-brand-700">
+          <span aria-hidden>💸</span>
           <span>Studios charge <strong>₹50–₹150 per photo</strong> — PrintfY is completely free.</span>
         </div>
       </div>

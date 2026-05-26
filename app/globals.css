@@ -3,6 +3,53 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Tailwind v4 theme: exposes CSS vars as utilities (bg-primary, text-muted-foreground, etc.) */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--primary);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover: var(--card);
+  --color-popover-foreground: var(--card-foreground);
+
+  --color-brand-50:  #FFF1ED;
+  --color-brand-100: #FFE0D4;
+  --color-brand-200: #FFC4AC;
+  --color-brand-300: #FFA17F;
+  --color-brand-400: #FF7C53;
+  --color-brand-500: #FF5A36;
+  --color-brand-600: #E63E1D;
+  --color-brand-700: #C84426;
+
+  --color-success-50: #EDFAF5;
+  --color-success-500: #1D9E75;
+  --color-success-600: #178D67;
+
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+}
+
 :root {
   /* Color System */
   --background: #ffffff;
@@ -11,15 +58,19 @@
   --primary-hover: #FF4522;
   --primary-active: #E63E1D;
   --primary-foreground: #ffffff;
+  --secondary: #f7f7f8;
+  --secondary-foreground: #1a1a1a;
   --success: #1D9E75;
   --success-hover: #178D67;
   --success-foreground: #ffffff;
   --muted: #f7f7f8;
   --muted-foreground: #6b7280;
-  --border: #e5e5e5;
+  --border: #e5e7eb;
   --border-light: #f0f0f0;
   --card: #ffffff;
   --card-foreground: #1a1a1a;
+  --accent: #FFF1ED;
+  --accent-foreground: #C84426;
   --destructive: #EF4444;
   --destructive-foreground: #ffffff;
 
@@ -116,9 +167,6 @@ body {
   font-family: var(--font-sans), sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  background-image:
-    radial-gradient(circle at 10% -20%, rgba(255, 90, 54, 0.08), transparent 28%),
-    radial-gradient(circle at 90% 0%, rgba(29, 158, 117, 0.07), transparent 30%);
 }
 
 .font-display {

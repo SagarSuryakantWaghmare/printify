@@ -23,27 +23,27 @@ const TIPS = [
 function StageIcon({ state }: { state: "done" | "active" | "pending" }) {
   if (state === "done")
     return (
-      <motion.div 
-        initial={{ scale: 0.6, opacity: 0 }} 
+      <motion.div
+        initial={{ scale: 0.6, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 15 }}
-        className="w-7 h-7 rounded-full bg-[#1D9E75] flex items-center justify-center shadow-md shadow-[#1D9E75]/30">
+        className="w-7 h-7 rounded-full bg-success-500 flex items-center justify-center shadow-md shadow-success-500/30">
         <CheckCircle2 className="w-4 h-4 text-white" />
       </motion.div>
     )
   if (state === "active")
     return (
       <div className="relative w-7 h-7 flex items-center justify-center">
-        <motion.div className="absolute inset-0 rounded-full border-2 border-[#FF5A36]/40"
+        <motion.div className="absolute inset-0 rounded-full border-2 border-primary/40"
           animate={{ scale: [1, 1.55], opacity: [0.7, 0] }}
           transition={{ duration: 1.4, repeat: Infinity, ease: "easeOut" }} />
-        <motion.div className="w-3.5 h-3.5 rounded-full bg-[#FF5A36] shadow-lg shadow-[#FF5A36]/40"
+        <motion.div className="w-3.5 h-3.5 rounded-full bg-primary shadow-lg shadow-primary/40"
           animate={{ scale: [1, 1.18, 1] }} transition={{ duration: 0.9, repeat: Infinity }} />
       </div>
     )
   return (
-    <div className="w-7 h-7 rounded-full bg-[#E5E5E5] flex items-center justify-center">
-      <span className="w-2 h-2 rounded-full bg-[#d1d5db]" />
+    <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
+      <span className="w-2 h-2 rounded-full bg-muted-foreground/40" />
     </div>
   )
 }
@@ -117,15 +117,12 @@ export function ProcessingStep() {
           <AlertCircle className="h-8 w-8 text-red-500" />
         </motion.div>
         <div>
-          <p className="text-xl font-semibold text-slate-900">Background Removal Failed</p>
-          <p className="mt-1 text-sm text-slate-500 max-w-sm">{error}</p>
+          <p className="text-xl font-semibold text-foreground">Background Removal Failed</p>
+          <p className="mt-1 text-sm text-muted-foreground max-w-sm">{error}</p>
         </div>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-          <Button onClick={() => { hasStarted.current = false; runPipeline() }}
-            className="rounded-xl bg-[#FF5A36] text-white hover:bg-[#e04e2d] px-6 py-3 shadow-lg hover:shadow-xl transition-all">
-            <RefreshCw className="mr-2 h-4 w-4" />Try Again
-          </Button>
-        </motion.div>
+        <Button onClick={() => { hasStarted.current = false; runPipeline() }} variant="cta" size="lg">
+          <RefreshCw className="h-4 w-4" />Try Again
+        </Button>
       </motion.div>
     )
   }
@@ -136,16 +133,16 @@ export function ProcessingStep() {
   return (
     <div className="space-y-10">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#1a1a1a] flex items-center gap-3">
+        <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground flex items-center gap-3">
           Removing Background
           <motion.div
             animate={{ rotate: [0, 15, -15, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
-            <Sparkles className="h-8 w-8 text-[#FF5A36]" />
+            <Sparkles className="h-8 w-8 text-primary" />
           </motion.div>
         </h1>
-        <p className="mt-1 text-base text-[#6b7280]">
+        <p className="mt-1 text-base text-muted-foreground">
           {stage < STAGES.length ? STAGES[Math.min(stage, STAGES.length - 1)].detail : "Done! Taking you to the crop editor…"}
         </p>
       </motion.div>
@@ -184,15 +181,15 @@ export function ProcessingStep() {
                   transition={{ delay: idx * 0.08 }} className="flex items-start gap-4">
                   <div className="shrink-0 mt-0.5"><StageIcon state={state} /></div>
                   <div>
-                    <p className={`font-semibold ${state !== "pending" ? "text-[#1a1a1a]" : "text-[#9ca3af]"}`}>{s.label}</p>
+                    <p className={`font-semibold ${state !== "pending" ? "text-foreground" : "text-muted-foreground"}`}>{s.label}</p>
                     {state === "active" && (
                       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                        className="text-sm text-[#6b7280] mt-0.5">{s.detail}</motion.p>
+                        className="text-sm text-muted-foreground mt-0.5">{s.detail}</motion.p>
                     )}
                     {state === "done" && (
                       <div className="flex items-center gap-1.5">
-                        <p className="text-sm text-[#1D9E75] font-semibold">Complete</p>
-                        <CheckIcon className="w-4 h-4 text-[#1D9E75]" />
+                        <p className="text-sm text-success-500 font-semibold">Complete</p>
+                        <CheckIcon className="w-4 h-4 text-success-500" />
                       </div>
                     )}
                   </div>
@@ -204,25 +201,26 @@ export function ProcessingStep() {
           <div className="space-y-2.5">
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-[#6b7280]">Processing</span>
-                <span className="text-sm font-semibold text-[#1a1a1a]">{Math.round(progress)}%</span>
+                <span className="text-sm font-semibold text-muted-foreground">Processing</span>
+                <span className="text-sm font-semibold text-foreground tabular-nums">{Math.round(progress)}%</span>
               </div>
-              <div className="relative w-full h-3 bg-[#E5E5E5] rounded-full overflow-hidden shadow-inner">
-                <motion.div 
-                  className="h-full bg-gradient-to-r from-[#FF5A36] via-[#FF8C6B] to-[#FF5A36] rounded-full shadow-lg"
-                  animate={{ width: `${progress}%` }} 
-                  transition={{ duration: 0.5, ease: "easeOut" }} 
+              <div role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100}
+                className="relative w-full h-2.5 bg-muted rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-primary via-brand-300 to-primary rounded-full"
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
                 />
                 {stage < STAGES.length && (
-                  <motion.div 
-                    className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-transparent via-white/60 to-transparent blur-sm"
+                  <motion.div
+                    className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-transparent via-white/50 to-transparent blur-sm"
                     animate={{ x: ["-100%", "500%"] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }} 
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                   />
                 )}
               </div>
             </div>
-            <p className="text-xs text-[#6b7280]">
+            <p className="text-xs text-muted-foreground">
               {stage === 1 && modelProgress > 0 && modelProgress < 100
                 ? `Loading AI model… ${modelProgress}%`
                 : stage >= STAGES.length
@@ -231,8 +229,8 @@ export function ProcessingStep() {
             </p>
           </div>
 
-          <div className="rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] px-4 py-3 text-sm text-[#166534]">
-            🔒 Background removal runs <strong>entirely in your browser</strong> — your photo stays private.
+          <div className="rounded-xl bg-success-50 border border-success-500/30 px-4 py-3 text-sm text-success-600">
+            🔒 Background removal is processed securely — your photo stays private.
           </div>
 
           {/* Dynamic tip during processing */}

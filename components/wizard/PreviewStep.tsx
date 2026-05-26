@@ -179,21 +179,21 @@ export function PreviewStep() {
     <div className="space-y-7">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-1">
-        <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#1a1a1a]">
+        <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground">
           Your Photo is Ready
         </h1>
-        <p className="text-base text-[#6b7280]">{selectedSizeLabel} · {photoSpec.bgColor} background</p>
+        <p className="text-base text-muted-foreground">{selectedSizeLabel} · {photoSpec.bgColor} background</p>
       </motion.div>
 
       {/* Enhancement status */}
       {isEnhancing && (
-        <div className="flex items-center gap-3 rounded-xl border border-[#E0E7FF] bg-[#EEF2FF] px-4 py-3 text-sm text-[#4338CA]">
+        <div className="flex items-center gap-3 rounded-xl border border-[#C7D2FE] bg-[#EEF2FF] px-4 py-3 text-sm text-[#4338CA]">
           <RefreshCw className="h-4 w-4 animate-spin shrink-0" />
           <span><strong>Sharpening photo…</strong> Applying smart enhance for crisp print quality</span>
         </div>
       )}
       {!isEnhancing && photoData.enhanced && (
-        <div className="flex items-center gap-3 rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm text-[#166534]">
+        <div className="flex items-center gap-3 rounded-xl border border-success-500/30 bg-success-50 px-4 py-3 text-sm text-success-600">
           <Sparkles className="h-4 w-4 shrink-0" />
           <span><strong>Smart Enhance applied!</strong> Photo sharpened and contrast-boosted for print-ready quality.</span>
         </div>
@@ -201,14 +201,20 @@ export function PreviewStep() {
 
       <div className="space-y-3">
         {photoData.original && photoData.processed && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-slate-500">View:</span>
-            <button onClick={() => setShowOriginal(false)}
-              className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-all ${!showOriginal ? "bg-[#FF5A36] text-white shadow-sm" : "text-slate-500 hover:bg-slate-100"}`}>
+          <div className="flex items-center gap-2" role="tablist" aria-label="Photo view">
+            <span className="text-sm font-semibold text-muted-foreground">View:</span>
+            <button
+              role="tab"
+              aria-selected={!showOriginal}
+              onClick={() => setShowOriginal(false)}
+              className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${!showOriginal ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted"}`}>
               AI Result
             </button>
-            <button onClick={() => setShowOriginal(true)}
-              className={`rounded-lg px-3 py-1.5 text-sm font-semibold flex items-center gap-1.5 transition-all ${showOriginal ? "bg-slate-800 text-white shadow-sm" : "text-slate-500 hover:bg-slate-100"}`}>
+            <button
+              role="tab"
+              aria-selected={showOriginal}
+              onClick={() => setShowOriginal(true)}
+              className={`rounded-lg px-3 py-1.5 text-sm font-semibold flex items-center gap-1.5 transition-colors ${showOriginal ? "bg-foreground text-background shadow-sm" : "text-muted-foreground hover:bg-muted"}`}>
               <Contrast className="h-3.5 w-3.5" />Original
             </button>
           </div>
@@ -217,14 +223,14 @@ export function PreviewStep() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {/* Main photo preview */}
           <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#6b7280]">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {showOriginal ? "Original Upload" : "AI Enhanced"}
             </p>
             <AnimatePresence mode="wait">
               <motion.div key={showOriginal ? "original" : "processed"}
                 initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.25 }}
-                className="relative rounded-2xl overflow-hidden bg-[#F7F7F8] aspect-3/4 shadow-md border border-slate-100"
+                className="relative rounded-2xl overflow-hidden bg-muted aspect-3/4 shadow-md border border-border"
               >
                 {(showOriginal ? photoData.original : (photoData.processed ?? photoData.original)) && (
                   <Image
@@ -235,14 +241,14 @@ export function PreviewStep() {
                   />
                 )}
                 {isApplyingBg && (
-                  <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
-                    <RefreshCw className="h-6 w-6 text-[#FF5A36] animate-spin" />
+                  <div className="absolute inset-0 bg-background/70 flex items-center justify-center">
+                    <RefreshCw className="h-6 w-6 text-primary animate-spin" />
                   </div>
                 )}
                 {!showOriginal && !isApplyingBg && (
                   <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.25 }}
-                    className="absolute top-3 right-3 bg-[#1D9E75] text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
+                    className="absolute top-3 right-3 bg-success-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
                     <Check className="w-3.5 h-3.5" />Approved
                   </motion.div>
                 )}
@@ -252,41 +258,40 @@ export function PreviewStep() {
 
           {/* BG color picker + quality check */}
           <div className="lg:col-span-2 space-y-4">
-            {/* BG color */}
             {photoData.transparent && (
-              <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 space-y-2">
-                <p className="text-sm font-semibold text-[#111827]">Change background colour</p>
+              <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
+                <p className="text-sm font-semibold text-foreground">Change background colour</p>
                 <div className="flex gap-2 flex-wrap">
                   {BG_OPTIONS.map((bg) => (
                     <button key={bg.value}
                       onClick={() => handleBgChange(bg.value)}
                       disabled={isApplyingBg}
-                      className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold border-2 transition-all ${photoSpec.bgColor === bg.value
-                        ? "border-[#FF5A36] bg-[#FFF5F0] shadow-sm"
-                        : "border-[#E5E7EB] hover:border-[#FF5A36]/40"
+                      aria-pressed={photoSpec.bgColor === bg.value}
+                      className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold border-2 transition-colors ${photoSpec.bgColor === bg.value
+                        ? "border-primary bg-brand-50 shadow-sm"
+                        : "border-border hover:border-primary/40"
                         } disabled:opacity-50`}
                     >
-                      <span className="h-5 w-5 rounded-full border border-[#d1d5db]" style={{ background: bg.hex }} />
+                      <span className="h-5 w-5 rounded-full border border-border" style={{ background: bg.hex }} />
                       {bg.label}
-                      {photoSpec.bgColor === bg.value && <Check className="h-3.5 w-3.5 text-[#FF5A36]" />}
+                      {photoSpec.bgColor === bg.value && <Check className="h-3.5 w-3.5 text-primary" />}
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-slate-500">Changing colour re-processes the image instantly.</p>
+                <p className="text-xs text-muted-foreground">Changing colour re-processes the image instantly.</p>
               </div>
             )}
 
-            {/* Quality checklist */}
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#6b7280] mb-2">Quality Check</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Quality Check</p>
               <div className="grid grid-cols-2 gap-2">
                 {VALIDATION_POINTS.map((point, idx) => (
                   <motion.div key={idx}
                     initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.06 + idx * 0.05 }}
-                    className="flex items-center gap-2 rounded-xl bg-[#F7F7F8] px-3 py-2">
-                    <Check className="w-4 h-4 text-[#1D9E75] shrink-0" />
-                    <p className="text-xs font-semibold text-[#1a1a1a]">{point}</p>
+                    className="flex items-center gap-2 rounded-xl bg-muted px-3 py-2">
+                    <Check className="w-4 h-4 text-success-500 shrink-0" />
+                    <p className="text-xs font-semibold text-foreground">{point}</p>
                   </motion.div>
                 ))}
               </div>
@@ -296,17 +301,17 @@ export function PreviewStep() {
       </div>
 
       {/* Print options */}
-      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 sm:p-5 space-y-4">
+      <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-4">
         {/* Count */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-bold text-[#111827]">Print Quantity</p>
-            <p className="text-xs text-[#6b7280]">{selectedSizeLabel}</p>
+            <p className="text-sm font-bold text-foreground">Print Quantity</p>
+            <p className="text-xs text-muted-foreground">{selectedSizeLabel}</p>
           </div>
           <Tabs value={String(photoSpec.count)} onValueChange={(v) => setPhotoSpec({ count: Number(v) as 6 | 8 | 12 })}>
-            <TabsList className="grid h-auto w-55 grid-cols-3 rounded-xl bg-[#F8F9FA] p-1">
+            <TabsList className="grid h-auto w-full sm:w-56 grid-cols-3 rounded-xl bg-muted p-1">
               {[6, 8, 12].map((c) => (
-                <TabsTrigger key={c} value={String(c)} className="rounded-lg py-2 text-sm font-bold">{c}</TabsTrigger>
+                <TabsTrigger key={c} value={String(c)} className="rounded-lg py-2 text-sm font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm">{c}</TabsTrigger>
               ))}
             </TabsList>
           </Tabs>
@@ -314,22 +319,22 @@ export function PreviewStep() {
 
         {/* Sheet type */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-bold text-[#111827]">Sheet type</p>
+          <p className="text-sm font-bold text-foreground">Sheet type</p>
           <Tabs value={sheetPreset} onValueChange={(v) => setSheetPreset(v as SheetPreset)}>
-            <TabsList className="grid h-auto w-40 grid-cols-2 rounded-xl bg-[#F8F9FA] p-1">
-              <TabsTrigger value="4x6" className="rounded-lg py-2 text-sm font-bold">4×6</TabsTrigger>
-              <TabsTrigger value="a4" className="rounded-lg py-2 text-sm font-bold">A4</TabsTrigger>
+            <TabsList className="grid h-auto w-full sm:w-40 grid-cols-2 rounded-xl bg-muted p-1">
+              <TabsTrigger value="4x6" className="rounded-lg py-2 text-sm font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm">4×6</TabsTrigger>
+              <TabsTrigger value="a4" className="rounded-lg py-2 text-sm font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm">A4</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
         {/* Quality */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-bold text-[#111827]">Export quality</p>
+          <p className="text-sm font-bold text-foreground">Export quality</p>
           <Tabs value={exportQuality} onValueChange={(v) => setExportQuality(v as ExportQuality)}>
-            <TabsList className="grid h-auto w-48 grid-cols-2 rounded-xl bg-[#F8F9FA] p-1">
-              <TabsTrigger value="standard" className="rounded-lg py-2 text-sm font-bold">Standard</TabsTrigger>
-              <TabsTrigger value="low-data" className="rounded-lg py-2 text-sm font-bold">Low Data</TabsTrigger>
+            <TabsList className="grid h-auto w-full sm:w-48 grid-cols-2 rounded-xl bg-muted p-1">
+              <TabsTrigger value="standard" className="rounded-lg py-2 text-sm font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm">Standard</TabsTrigger>
+              <TabsTrigger value="low-data" className="rounded-lg py-2 text-sm font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm">Low Data</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -338,51 +343,49 @@ export function PreviewStep() {
         <PrinterProfileSelector value={printerProfile} onValueChange={setPrinterProfile} />
 
         {/* File Naming Options (collapsible) */}
-        <details className="rounded-xl border border-[#E5E7EB] bg-white">
-          <summary className="flex items-center justify-between cursor-pointer px-4 py-3.5 font-semibold text-[#111827] hover:bg-[#F7F7F8] transition-colors">
-            <span className="flex items-center gap-2">
-              📝 File Naming Options
-            </span>
-            <span className="text-[#6b7280] text-sm">+</span>
+        <details className="rounded-xl border border-border bg-card group">
+          <summary className="flex items-center justify-between cursor-pointer px-4 py-3.5 font-semibold text-foreground hover:bg-muted transition-colors rounded-xl group-open:rounded-b-none">
+            <span className="flex items-center gap-2">📝 File Naming Options</span>
+            <span className="text-muted-foreground text-sm group-open:rotate-45 transition-transform">+</span>
           </summary>
-          <div className="border-t border-[#E5E7EB] px-4 py-4 space-y-4">
+          <div className="border-t border-border px-4 py-4 space-y-4">
             <FileNamingDialog value={fileNamingConfig} onChange={setFileNamingConfig} />
           </div>
         </details>
 
         {/* Mini print preview grid */}
-        <div className="rounded-xl border border-[#E8EAEE] bg-[#FBFCFD] p-3">
+        <div className="rounded-xl border border-border bg-muted/40 p-3">
           <div className="mb-2.5 flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#6b7280]">
+            <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
               <LayoutGrid className="h-3.5 w-3.5" />Sheet Preview
             </span>
-            <span className="text-xs font-bold text-[#1D9E75]">{photoSpec.count} photos</span>
+            <span className="text-xs font-bold text-success-500">{photoSpec.count} photos</span>
           </div>
           <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${Math.min(photoSpec.count, 6)}, 1fr)` }}>
             {Array.from({ length: photoSpec.count }).map((_, idx) => (
-              <div key={idx} className="relative aspect-3/4 overflow-hidden rounded border border-[#DFE3E8] bg-white">
+              <div key={idx} className="relative aspect-3/4 overflow-hidden rounded border border-border bg-card">
                 {imageForSheet && (
                   <Image src={imageForSheet} alt={`${idx + 1}`} fill className="object-cover object-top" sizes="60px" />
                 )}
                 <div className="pointer-events-none absolute inset-0">
-                  <span className="absolute left-0.5 top-0.5 h-1.5 w-1.5 border-l border-t border-[#9CA3AF]" />
-                  <span className="absolute right-0.5 top-0.5 h-1.5 w-1.5 border-r border-t border-[#9CA3AF]" />
-                  <span className="absolute right-0.5 bottom-0.5 h-1.5 w-1.5 border-r border-b border-[#9CA3AF]" />
-                  <span className="absolute left-0.5 bottom-0.5 h-1.5 w-1.5 border-l border-b border-[#9CA3AF]" />
+                  <span className="absolute left-0.5 top-0.5 h-1.5 w-1.5 border-l border-t border-muted-foreground/60" />
+                  <span className="absolute right-0.5 top-0.5 h-1.5 w-1.5 border-r border-t border-muted-foreground/60" />
+                  <span className="absolute right-0.5 bottom-0.5 h-1.5 w-1.5 border-r border-b border-muted-foreground/60" />
+                  <span className="absolute left-0.5 bottom-0.5 h-1.5 w-1.5 border-l border-b border-muted-foreground/60" />
                 </div>
               </div>
             ))}
           </div>
-          <p className="mt-2 text-xs text-[#6b7280]">Corner marks are trim guides for clean cutting.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Corner marks are trim guides for clean cutting.</p>
         </div>
       </div>
 
       {/* Download actions */}
       <div className="space-y-3">
-        <div className="rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-xs text-[#4B5563]">
+        <div className="rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-xs text-foreground/70">
           Estimated: JPG {estimatedJpgSize} · PDF {estimatedPdfSize}
         </div>
-        
+
         <AnimatePresence mode="wait">
           {statusText && (
             <motion.div
@@ -390,79 +393,78 @@ export function PreviewStep() {
               initial={{ opacity: 0, y: -8, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-              className="rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm text-[#166534] font-semibold flex items-center gap-2"
+              transition={{ duration: 0.25 }}
+              role="status"
+              className="rounded-xl border border-success-500/30 bg-success-50 px-4 py-3 text-sm text-success-600 font-semibold flex items-center gap-2"
             >
               {statusText.includes("downloaded") || statusText.includes("Shared") ? (
-                <>
-                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                    <CheckIcon className="h-4 w-4 text-[#10B981]" />
-                  </motion.div>
-                  {statusText}
-                </>
+                <><CheckIcon className="h-4 w-4 text-success-500" />{statusText}</>
               ) : (
-                <>
-                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity }}>
-                    <RefreshCw className="h-4 w-4" />
-                  </motion.div>
-                  {statusText}
-                </>
+                <><RefreshCw className="h-4 w-4 animate-spin" />{statusText}</>
               )}
             </motion.div>
           )}
         </AnimatePresence>
-        
-        <Button onClick={() => setIsPreviewModalOpen(true)} disabled={!imageForSheet || busy} variant="outline"
-          className="w-full border border-[#FF5A36] text-[#FF5A36] rounded-2xl py-6 text-base font-semibold h-auto hover:bg-[#FFF5F0]">
-          <Eye className="w-5 h-5 mr-2" />
+
+        <Button
+          onClick={() => setIsPreviewModalOpen(true)}
+          disabled={!imageForSheet || busy}
+          variant="outline"
+          size="xl"
+          className="w-full h-14 border-primary text-primary hover:bg-brand-50 hover:text-primary text-base"
+        >
+          <Eye className="w-5 h-5" />
           Preview Output Before Download
         </Button>
 
         {/* File name preview */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl border border-[#E5E7EB] bg-[#F7F7F8] px-4 py-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#6b7280] mb-2">File Name</p>
-          <p className="text-sm font-mono text-[#1a1a1a] break-all">
+        <div className="rounded-xl border border-border bg-muted px-4 py-3">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">File Name</p>
+          <p className="text-sm font-mono text-foreground break-all">
             {generateFileName({ config: fileNamingConfig, photoIndex: 0 })}.jpg
           </p>
-        </motion.div>
-        
-        <Button onClick={handleDownloadJpg} disabled={!imageForSheet || busy}
-          className="w-full bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-2xl py-6 text-base font-semibold h-auto shadow-[0_8px_24px_rgba(255,90,54,0.25)] hover:shadow-[0_12px_28px_rgba(255,90,54,0.35)] transition-all hover:scale-[1.01] disabled:opacity-60">
-          <motion.div
-            animate={isExportingJpg ? { rotate: 360 } : { rotate: 0 }}
-            transition={{ duration: isExportingJpg ? 1 : 0.3, repeat: isExportingJpg ? Infinity : 0 }}
-            className="w-5 h-5 mr-2"
-          >
-            <Download className="w-5 h-5" />
-          </motion.div>
+        </div>
+
+        <Button
+          onClick={handleDownloadJpg}
+          disabled={!imageForSheet || busy}
+          variant="cta"
+          size="xl"
+          className="w-full h-14 text-base"
+        >
+          <Download className={`w-5 h-5 ${isExportingJpg ? "animate-spin" : ""}`} />
           {isExportingJpg ? "Creating JPG…" : `Download ${sheetPreset.toUpperCase()} JPG Sheet`}
         </Button>
-        
-        <Button onClick={handleDownloadPdf} disabled={!imageForSheet || busy} variant="outline"
-          className="w-full border border-[#E5E5E5] rounded-2xl py-6 text-base font-semibold h-auto hover:bg-[#F7F7F8]">
-          <motion.div
-            animate={isExportingPdf ? { rotate: 360 } : { rotate: 0 }}
-            transition={{ duration: isExportingPdf ? 1 : 0.3, repeat: isExportingPdf ? Infinity : 0 }}
-            className="w-5 h-5 mr-2"
-          >
-            <Download className="w-5 h-5" />
-          </motion.div>
+
+        <Button
+          onClick={handleDownloadPdf}
+          disabled={!imageForSheet || busy}
+          variant="outline"
+          size="xl"
+          className="w-full h-14 text-base"
+        >
+          <Download className={`w-5 h-5 ${isExportingPdf ? "animate-spin" : ""}`} />
           {isExportingPdf ? "Creating PDF…" : `Download ${sheetPreset.toUpperCase()} PDF Sheet`}
         </Button>
-        
-        <Button onClick={handleNativeShare} disabled={!imageForSheet || busy} variant="outline"
-          className="w-full border border-[#E5E5E5] rounded-2xl py-6 text-base font-semibold h-auto hover:bg-[#F7F7F8]">
+
+        <Button
+          onClick={handleNativeShare}
+          disabled={!imageForSheet || busy}
+          variant="outline"
+          size="xl"
+          className="w-full h-14 text-base"
+        >
           {isNativeSharing ? "Preparing…" : "Share to My Devices"}
         </Button>
 
         {/* Post-download nudges */}
-        <div className="rounded-2xl border border-[#E8EAEE] bg-[#FAFBFD] px-4 py-4 space-y-3">
-          <p className="text-xs font-bold uppercase tracking-wider text-[#9ca3af]">What&apos;s next?</p>
+        <div className="rounded-2xl border border-border bg-muted/40 px-4 py-4 space-y-3">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">What&apos;s next?</p>
           <a
             href={`https://wa.me/?text=${encodeURIComponent("I just created my passport photo in seconds with PrintfY — free! Try it: https://printfy.app")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 rounded-xl border border-[#DCF8C6] bg-[#F3FFF0] px-4 py-3 text-sm font-semibold text-[#1a7a40] hover:bg-[#E8FFE0] transition-colors"
+            className="flex items-center gap-3 rounded-xl border border-success-500/30 bg-success-50/60 px-4 py-3 text-sm font-semibold text-success-600 hover:bg-success-50 transition-colors"
           >
             <MessageCircle className="h-5 w-5" />
             <span>Share with a friend on WhatsApp</span>
@@ -471,14 +473,14 @@ export function PreviewStep() {
             href="https://g.page/r/printfy/review"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 rounded-xl border border-[#E5E7EB] bg-white px-4 py-3 text-sm font-semibold text-[#4b5563] hover:bg-[#F7F7F8] transition-colors"
+            className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground/80 hover:bg-muted transition-colors"
           >
             <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
             <span>Leave us a quick review — it helps a lot!</span>
           </a>
         </div>
 
-        <Button onClick={reset} variant="ghost" className="w-full text-[#6b7280] hover:text-[#1a1a1a] font-semibold py-3 flex items-center justify-center gap-2">
+        <Button onClick={reset} variant="ghost" size="lg" className="w-full text-muted-foreground hover:text-foreground">
           <RotateCcw className="h-4 w-4" />
           Create Another Photo
         </Button>

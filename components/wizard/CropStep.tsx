@@ -438,12 +438,12 @@ export function CropStep() {
         <div className="space-y-5">
             {/* Header */}
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-1">
-                <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#1a1a1a]">
+                <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground">
                     Adjust & Crop
                 </h1>
-                <div className="text-sm text-[#6b7280] space-y-1">
+                <div className="text-sm text-muted-foreground space-y-1">
                     <div><Move className="inline h-3.5 w-3.5 mr-1" />Drag to reposition · Scroll/pinch to zoom · Use buttons to rotate</div>
-                    <div className="text-xs text-[#9ca3af]">Keyboard: Arrow keys pan · +/- zoom · R reset · Shift+Arrow rotate · Enter confirm</div>
+                    <div className="text-xs text-muted-foreground/80 hidden sm:block">Keyboard: Arrow keys pan · +/- zoom · R reset · Shift+Arrow rotate · Enter confirm</div>
                 </div>
             </motion.div>
 
@@ -457,7 +457,7 @@ export function CropStep() {
             >
                 <canvas
                     ref={canvasRef}
-                    className={`w-full rounded-2xl border border-slate-200 shadow-lg hover:shadow-xl touch-none transition-shadow duration-300 ${imageLoaded ? "cursor-move" : "cursor-wait"}`}
+                    className={`w-full rounded-2xl border border-border shadow-md touch-none ${imageLoaded ? "cursor-move" : "cursor-wait"}`}
                     onMouseDown={onMouseDown}
                     onMouseMove={onMouseMove}
                     onMouseUp={onMouseUp}
@@ -470,19 +470,18 @@ export function CropStep() {
             </motion.div>
 
             {/* Controls */}
-            <div
-                className="rounded-2xl border border-[#E5E7EB] bg-white p-4 space-y-4 shadow-sm"
-            >
+            <div className="rounded-2xl border border-border bg-card p-4 space-y-4 shadow-sm">
                 {/* Zoom slider */}
                 <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-xs font-semibold text-[#6b7280]">
+                    <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
                         <span>Zoom</span>
-                        <span>{Math.round(scale / baseScale * 100)}%</span>
+                        <span className="tabular-nums">{Math.round(scale / baseScale * 100)}%</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <button
+                            aria-label="Zoom out"
                             onClick={() => setScale((s) => Math.max(0.2, s * 0.92))}
-                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#E5E7EB] text-[#6b7280] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 hover:text-[#FF5A36] transition-all active:scale-95"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground hover:bg-muted hover:border-primary/40 hover:text-primary transition-colors active:scale-95"
                         >
                             <ZoomOut className="h-4 w-4" />
                         </button>
@@ -493,11 +492,13 @@ export function CropStep() {
                             step={0.01}
                             value={scale}
                             onChange={(e) => setScale(Number(e.target.value))}
-                            className="flex-1 h-2 appearance-none rounded-full bg-[#E5E7EB] accent-[#FF5A36] cursor-pointer [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#FF5A36] [&::-webkit-slider-thumb]:shadow-md"
+                            aria-label="Zoom"
+                            className="flex-1 h-2 appearance-none rounded-full bg-muted accent-[var(--primary)] cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-md"
                         />
                         <button
+                            aria-label="Zoom in"
                             onClick={() => setScale((s) => Math.min(8, s * 1.08))}
-                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#E5E7EB] text-[#6b7280] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 hover:text-[#FF5A36] transition-all active:scale-95"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground hover:bg-muted hover:border-primary/40 hover:text-primary transition-colors active:scale-95"
                         >
                             <ZoomIn className="h-4 w-4" />
                         </button>
@@ -506,43 +507,36 @@ export function CropStep() {
 
                 {/* Rotate + Reset */}
                 <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-xs font-semibold text-[#6b7280] mr-1">Rotate:</p>
-                    <button
-                        onClick={() => setRotation((r) => r - 1)}
-                        className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] px-3 py-2 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 transition-all active:scale-95"
-                    >
-                        <RotateCcw className="h-3.5 w-3.5" /> −1°
-                    </button>
-                    <button
-                        onClick={() => setRotation((r) => r + 1)}
-                        className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] px-3 py-2 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 transition-all active:scale-95"
-                    >
-                        <RotateCw className="h-3.5 w-3.5" /> +1°
-                    </button>
-                    <button
-                        onClick={() => setRotation((r) => r - 5)}
-                        className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] px-3 py-2 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 transition-all active:scale-95"
-                    >
-                        <RotateCcw className="h-3.5 w-3.5" /> −5°
-                    </button>
-                    <button
-                        onClick={() => setRotation((r) => r + 5)}
-                        className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] px-3 py-2 text-sm font-semibold text-[#374151] hover:bg-[#F7F7F8] hover:border-[#FF5A36]/40 transition-all active:scale-95"
-                    >
-                        <RotateCw className="h-3.5 w-3.5" /> +5°
-                    </button>
-                    <span className="text-xs text-[#9ca3af] px-1 tabular-nums font-mono">{rotation}°</span>
+                    <p className="text-xs font-semibold text-muted-foreground mr-1">Rotate:</p>
+                    {[
+                        { delta: -1, label: "−1°", Icon: RotateCcw },
+                        { delta: 1, label: "+1°", Icon: RotateCw },
+                        { delta: -5, label: "−5°", Icon: RotateCcw },
+                        { delta: 5, label: "+5°", Icon: RotateCw },
+                    ].map(({ delta, label, Icon }) => (
+                        <button
+                            key={delta}
+                            onClick={() => setRotation((r) => r + delta)}
+                            className="flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm font-semibold text-foreground hover:bg-muted hover:border-primary/40 transition-colors active:scale-95"
+                        >
+                            <Icon className="h-3.5 w-3.5" /> {label}
+                        </button>
+                    ))}
+                    <span className="text-xs text-muted-foreground px-1 tabular-nums font-mono">{rotation}°</span>
                 </div>
 
                 {/* Composition guides */}
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                        <label className="text-xs font-semibold text-[#6b7280]">Composition Guides</label>
+                        <label htmlFor="guides-toggle" className="text-xs font-semibold text-muted-foreground">Composition Guides</label>
                         <button
+                            id="guides-toggle"
+                            role="switch"
+                            aria-checked={showGuides}
                             onClick={() => setShowGuides(!showGuides)}
-                            className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors ${showGuides ? "bg-[#FF5A36]" : "bg-[#E5E7EB]"}`}
+                            className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors ${showGuides ? "bg-primary" : "bg-muted"}`}
                         >
-                            <motion.div
+                            <motion.span
                                 initial={false}
                                 animate={{ x: showGuides ? 20 : 2 }}
                                 className="h-5 w-5 rounded-full bg-white shadow-sm"
@@ -559,14 +553,15 @@ export function CropStep() {
                                 <button
                                     key={guide.value}
                                     onClick={() => setGuideType(guide.value as typeof guideType)}
-                                    className={`rounded-lg border-2 px-2 py-1.5 text-center transition-all ${
+                                    aria-pressed={guideType === guide.value}
+                                    className={`rounded-lg border-2 px-2 py-1.5 text-center transition-colors ${
                                         guideType === guide.value
-                                            ? "border-[#FF5A36] bg-[#FFF5F0]"
-                                            : "border-[#E5E7EB] hover:border-[#FF5A36]/40"
+                                            ? "border-primary bg-brand-50"
+                                            : "border-border hover:border-primary/40"
                                     }`}
                                 >
-                                    <p className="text-xs font-semibold text-[#111827]">{guide.label}</p>
-                                    <p className="text-[10px] text-[#6b7280] mt-0.5">{guide.desc}</p>
+                                    <p className="text-xs font-semibold text-foreground">{guide.label}</p>
+                                    <p className="text-[10px] text-muted-foreground mt-0.5">{guide.desc}</p>
                                 </button>
                             ))}
                         </div>
@@ -578,23 +573,25 @@ export function CropStep() {
                     <button
                         onClick={() => transformHistory.undo()}
                         disabled={!transformHistory.canUndo}
-                        className="flex items-center justify-center h-8 w-8 rounded-lg border border-[#E5E7EB] text-[#6b7280] hover:bg-[#F7F7F8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center justify-center h-9 w-9 rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Undo (Ctrl+Z)"
+                        aria-label="Undo"
                     >
                         <Undo2 className="h-3.5 w-3.5" />
                     </button>
                     <button
                         onClick={() => transformHistory.redo()}
                         disabled={!transformHistory.canRedo}
-                        className="flex items-center justify-center h-8 w-8 rounded-lg border border-[#E5E7EB] text-[#6b7280] hover:bg-[#F7F7F8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center justify-center h-9 w-9 rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Redo (Ctrl+Y)"
+                        aria-label="Redo"
                     >
                         <Redo2 className="h-3.5 w-3.5" />
                     </button>
-                    
+
                     <button
                         onClick={reset}
-                        className="ml-auto flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-sm font-semibold text-[#6b7280] hover:bg-[#F7F7F8] transition-colors"
+                        className="ml-auto flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                     >
                         <RefreshCw className="h-3.5 w-3.5" /> Reset
                     </button>
@@ -602,7 +599,7 @@ export function CropStep() {
             </div>
 
             {/* Tip */}
-            <p className="text-xs text-[#9ca3af] px-1 flex items-start gap-2">
+            <p className="text-xs text-muted-foreground px-1 flex items-start gap-2">
                 <Lightbulb className="h-4 w-4 shrink-0 mt-0.5" />
                 Tip: Use the orange frame as your crop guide. Face should be centred and eyes level.
             </p>
@@ -611,12 +608,14 @@ export function CropStep() {
             <Button
                 onClick={applyCrop}
                 disabled={!imageLoaded || isApplying}
-                className="w-full bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-2xl py-6 text-base font-semibold h-auto shadow-[0_8px_24px_rgba(255,90,54,0.3)] hover:shadow-[0_12px_28px_rgba(255,90,54,0.4)] transition-all hover:scale-[1.01] disabled:opacity-60"
+                variant="cta"
+                size="xl"
+                className="w-full h-14 text-base"
             >
                 {isApplying ? (
-                    <><RefreshCw className="mr-2 h-5 w-5 animate-spin" />Applying crop…</>
+                    <><RefreshCw className="h-5 w-5 animate-spin" />Applying crop…</>
                 ) : (
-                    <><Check className="mr-2 h-5 w-5" />Apply Crop & Enhance →</>
+                    <><Check className="h-5 w-5" />Apply Crop & Enhance</>
                 )}
             </Button>
         </div>
