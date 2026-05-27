@@ -20,10 +20,10 @@ export function RecentPhotosGrid({
 }: RecentPhotosGridProps) {
   if (photos.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-[#E5E7EB] bg-[#FAFAFA] px-6 py-8 text-center">
+      <div className="rounded-xl border border-dashed border-border bg-muted/40 px-6 py-8 text-center">
         <Clock className="h-8 w-8 text-[#D1D5DB] mx-auto mb-2" />
-        <p className="text-sm text-[#6b7280] font-medium">No recent photos yet</p>
-        <p className="text-xs text-[#9CA3AF] mt-1">Your history will appear here</p>
+        <p className="text-sm text-muted-foreground font-medium">No recent photos yet</p>
+        <p className="text-xs text-muted-foreground/80 mt-1">Your history will appear here</p>
       </div>
     )
   }
@@ -32,15 +32,15 @@ export function RecentPhotosGrid({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-[#FF5A36]" />
-          <h3 className="text-sm font-bold text-[#111827]">Recent Photos ({photos.length})</h3>
+          <Clock className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-bold text-foreground">Recent Photos ({photos.length})</h3>
         </div>
         {photos.length > 0 && (
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onClearHistory}
-            className="text-xs font-semibold text-[#6b7280] hover:text-red-600 transition-colors"
+            className="text-xs font-semibold text-muted-foreground hover:text-red-600 transition-colors"
           >
             Clear
           </motion.button>
@@ -63,7 +63,7 @@ export function RecentPhotosGrid({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onSelectPhoto?.(photo)}
-                className="relative w-full aspect-square rounded-lg overflow-hidden border-2 border-[#E5E7EB] hover:border-[#FF5A36] transition-colors bg-white shadow-sm hover:shadow-md"
+                className="relative w-full aspect-square rounded-lg overflow-hidden border-2 border-border hover:border-primary transition-colors bg-white shadow-sm hover:shadow-md"
               >
                 <Image
                   src={photo.thumbnail}
@@ -73,13 +73,13 @@ export function RecentPhotosGrid({
                   sizes="100px"
                 />
                 {photo.backgroundApplied && (
-                  <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#1D9E75]" title="BG applied" />
+                  <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-success-500" title="BG applied" />
                 )}
               </motion.button>
 
               {/* Info tooltip */}
               <motion.div className="absolute -bottom-8 left-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                <p className="text-xs text-[#6b7280] text-center whitespace-nowrap">
+                <p className="text-xs text-muted-foreground text-center whitespace-nowrap">
                   {formatPhotoTime(photo.timestamp)}
                 </p>
               </motion.div>
@@ -103,7 +103,7 @@ export function RecentPhotosGrid({
         </AnimatePresence>
       </div>
 
-      <p className="text-xs text-[#9CA3AF] text-center">
+      <p className="text-xs text-muted-foreground/80 text-center">
         Click a photo to load it, hover for options
       </p>
     </div>

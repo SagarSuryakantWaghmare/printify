@@ -14,6 +14,7 @@ interface WizardLayoutProps {
 export function WizardLayout({ children }: WizardLayoutProps) {
   const { currentStep, prevStep } = useWizard()
   const isFirst = currentStep === "capture"
+  const isProcessing = currentStep === "processing"
 
   // Warn before accidental back-navigation / tab close mid-wizard
   useEffect(() => {
@@ -26,21 +27,31 @@ export function WizardLayout({ children }: WizardLayoutProps) {
     return () => window.removeEventListener("beforeunload", handler)
   }, [isFirst])
 
-  // Keyboard navigation
+  // Keyboard navigation — Esc goes back unless on first step, processing step, or focused in a field
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      // Ignore when typing in inputs
-      const tag = (e.target as HTMLElement | null)?.tagName
-      if (tag === "INPUT" || tag === "TEXTAREA") return
-      if (e.key === "Escape" && !isFirst) prevStep()
+      if (e.key !== "Escape") return
+      if (isFirst || isProcessing) return
+      const target = e.target as HTMLElement
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.tagName === "SELECT" ||
+        target.isContentEditable
+      ) return
+      prevStep()
     },
-    [isFirst, prevStep]
+    [isFirst, isProcessing, prevStep]
   )
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [handleKeyDown])
+
+  // Back-button label changes on the processing step so users know they're cancelling
+  const backLabel = isProcessing ? "Cancel & restart" : "Back"
+  const backHint  = isProcessing ? "Cancels the background removal" : "Press Esc to go back"
 
   return (
     <div className="min-h-[100svh] bg-background">
@@ -54,7 +65,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
         </div>
       </div>
 
-      {/* Main content. Bottom padding leaves room for mobile back bar (64px + safe area). */}
+      {/* Main content. Bottom padding leaves room for mobile back bar. */}
       <div className="px-3 sm:px-6 md:px-8 max-w-5xl mx-auto py-5 sm:py-8 md:py-12 pb-32 md:pb-16 safe-x">
         <AnimatePresence mode="wait">
           <motion.div
@@ -73,9 +84,9 @@ export function WizardLayout({ children }: WizardLayoutProps) {
           <div className="hidden md:flex items-center gap-3 pt-10">
             <Button variant="outline" size="lg" onClick={prevStep} className="group">
               <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-              Back
+              {backLabel}
             </Button>
-            <span className="text-xs text-muted-foreground">Press Esc to go back</span>
+            <span className="text-xs text-muted-foreground">{backHint}</span>
           </div>
         )}
       </div>
@@ -86,7 +97,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
           <div className="p-3">
             <Button variant="outline" size="xl" onClick={prevStep} className="w-full">
               <ChevronLeft className="h-5 w-5" />
-              Back
+              {backLabel}
             </Button>
           </div>
         </div>

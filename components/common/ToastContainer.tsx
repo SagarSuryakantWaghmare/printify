@@ -59,7 +59,7 @@ export function ToastContainer() {
             )}
             <button
               onClick={() => removeToast(toast.id)}
-              className={`shrink-0 text-[#6B7280] hover:text-[#111827]`}
+              className={`shrink-0 text-[#6B7280] hover:text-foreground`}
             >
               <X className="h-4 w-4" />
             </button>

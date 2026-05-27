@@ -101,7 +101,7 @@ export function FileNamingDialog({ value, onChange }: FileNamingDialogProps) {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-sm font-bold text-[#111827] mb-3">Naming Pattern</p>
+        <p className="text-sm font-bold text-foreground mb-3">Naming Pattern</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {PATTERNS.map((pattern) => (
             <motion.button
@@ -111,19 +111,19 @@ export function FileNamingDialog({ value, onChange }: FileNamingDialogProps) {
               whileTap={{ scale: 0.98 }}
               className={`rounded-xl border-2 p-3 text-left relative transition-all ${
                 config.pattern === pattern.id
-                  ? "border-[#FF5A36] bg-[#FFF5F0] shadow-sm"
-                  : "border-[#E5E7EB] hover:border-[#FF5A36]/40 bg-white"
+                  ? "border-primary bg-brand-50 shadow-sm"
+                  : "border-border hover:border-primary/40 bg-white"
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-[#FF5A36]/10 to-[#FF5A36]/5">
-                      <pattern.icon className="h-4 w-4 text-[#FF5A36]" />
+                      <pattern.icon className="h-4 w-4 text-primary" />
                     </div>
-                    <span className="font-semibold text-sm text-[#111827]">{pattern.label}</span>
+                    <span className="font-semibold text-sm text-foreground">{pattern.label}</span>
                   </div>
-                  <p className="text-xs text-[#6b7280]">{pattern.description}</p>
+                  <p className="text-xs text-muted-foreground">{pattern.description}</p>
                 </div>
                 {config.pattern === pattern.id && (
                   <motion.div
@@ -131,7 +131,7 @@ export function FileNamingDialog({ value, onChange }: FileNamingDialogProps) {
                     animate={{ scale: 1 }}
                     className="ml-2"
                   >
-                    <Check className="h-5 w-5 text-[#FF5A36]" />
+                    <Check className="h-5 w-5 text-primary" />
                   </motion.div>
                 )}
               </div>
@@ -151,9 +151,9 @@ export function FileNamingDialog({ value, onChange }: FileNamingDialogProps) {
             className="space-y-3"
           >
             <div>
-              <p className="text-sm font-semibold text-[#111827] mb-2">Date Format</p>
+              <p className="text-sm font-semibold text-foreground mb-2">Date Format</p>
               <Tabs value={config.dateFormat || "YYYY-MM-DD"} onValueChange={(v) => handleDateFormatChange(v as "YYYY-MM-DD" | "DD-MM-YYYY" | "MMDDYYYY")}>
-                <TabsList className="grid w-full grid-cols-3 rounded-xl bg-[#F8F9FA] p-1">
+                <TabsList className="grid w-full grid-cols-3 rounded-xl bg-muted p-1">
                   <TabsTrigger value="YYYY-MM-DD" className="rounded-lg py-2 text-xs font-semibold">
                     YYYY-MM-DD
                   </TabsTrigger>
@@ -178,16 +178,16 @@ export function FileNamingDialog({ value, onChange }: FileNamingDialogProps) {
             className="space-y-3"
           >
             <div>
-              <p className="text-sm font-semibold text-[#111827] mb-2">Custom Prefix</p>
+              <p className="text-sm font-semibold text-foreground mb-2">Custom Prefix</p>
               <Input
                 type="text"
                 value={config.customPrefix || ""}
                 onChange={(e) => handlePrefixChange(e.target.value)}
                 placeholder="e.g., passport, portrait, event-2024"
-                className="rounded-xl border-[#E5E7EB] px-3.5 py-2.5 text-sm focus:border-[#FF5A36] focus:ring-[#FF5A36]"
+                className="rounded-xl border-border px-3.5 py-2.5 text-sm focus:border-primary focus:ring-primary"
                 maxLength={30}
               />
-              <p className="text-xs text-[#6b7280] mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 Alphanumeric and hyphens only (e.g., {config.customPrefix}-001)
               </p>
             </div>
@@ -197,16 +197,16 @@ export function FileNamingDialog({ value, onChange }: FileNamingDialogProps) {
 
       {/* Start index */}
       <div>
-        <p className="text-sm font-semibold text-[#111827] mb-2">Start Index</p>
+        <p className="text-sm font-semibold text-foreground mb-2">Start Index</p>
         <Input
           type="number"
           min="0"
           max="9999"
           value={config.startIndex || 1}
           onChange={(e) => handleStartIndexChange(e.target.value)}
-          className="rounded-xl border-[#E5E7EB] px-3.5 py-2.5 text-sm focus:border-[#FF5A36] focus:ring-[#FF5A36]"
+          className="rounded-xl border-border px-3.5 py-2.5 text-sm focus:border-primary focus:ring-primary"
         />
-        <p className="text-xs text-[#6b7280] mt-2">First file will be numbered {config.startIndex || 1}</p>
+        <p className="text-xs text-muted-foreground mt-2">First file will be numbered {config.startIndex || 1}</p>
       </div>
 
       {/* Validation error */}
@@ -225,15 +225,15 @@ export function FileNamingDialog({ value, onChange }: FileNamingDialogProps) {
       </AnimatePresence>
 
       {/* Preview */}
-      <Card className="border border-[#E5E7EB] bg-[#FBFCFD] p-4">
+      <Card className="border border-border bg-muted/40 p-4">
         <div className="flex items-start gap-3">
-          <FileText className="h-5 w-5 text-[#FF5A36] mt-0.5 shrink-0" />
+          <FileText className="h-5 w-5 text-primary mt-0.5 shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#6b7280] mb-2">
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
               File Name Preview
             </p>
-            <p className="text-sm font-mono text-[#1a1a1a] break-all">{preview}.jpg</p>
-            <p className="text-xs text-[#6b7280] mt-2">
+            <p className="text-sm font-mono text-foreground break-all">{preview}.jpg</p>
+            <p className="text-xs text-muted-foreground mt-2">
               {getPatternDescription(config.pattern)}
             </p>
           </div>

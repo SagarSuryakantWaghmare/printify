@@ -132,10 +132,10 @@ export function BeforeAfterSlider({
 
         {/* Header */}
         <div className="px-8 pt-10 pb-6 text-center relative z-20">
-          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full border border-[#FF5A36]/30 bg-[#FF5A36]/10">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF5A36] animate-pulse" />
+          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full border border-primary/30 bg-primary/10">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             <span
-              className="text-xs font-semibold tracking-widest text-[#FF5A36] uppercase"
+              className="text-xs font-semibold tracking-widest text-primary uppercase"
               style={{ fontFamily: "var(--font-sans)" }}
             >
               AI Vision Engine
@@ -326,7 +326,7 @@ export function BeforeAfterSlider({
         <div className="px-6 pt-4 relative z-20">
           <div className="flex items-center gap-3">
             <span
-              className="text-[10px] text-[#FF5A36] font-bold tracking-widest uppercase"
+              className="text-[10px] text-primary font-bold tracking-widest uppercase"
               style={{ fontFamily: "'DM Mono', monospace", minWidth: 36 }}
             >
               {Math.round(sliderPos)}%

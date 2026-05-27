@@ -93,7 +93,7 @@ export function Footer() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-white border border-border text-muted-foreground hover:text-primary hover:border-[#FF5A36]/30 hover:shadow-md transition-all"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-white border border-border text-muted-foreground hover:text-primary hover:border-primary/30 hover:shadow-md transition-all"
                   aria-label={social.label}
                 >
                   <social.icon className="h-4 w-4" />
@@ -171,12 +171,12 @@ export function Footer() {
               <input 
                 type="email" 
                 placeholder="Enter your email" 
-                className="flex-1 md:w-64 px-4 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/30 focus:border-[#FF5A36] transition-all"
+                className="flex-1 md:w-64 px-4 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/30 focus:border-primary transition-all"
               />
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="px-5 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-[#E24D2E] shadow-md hover:shadow-lg transition-all"
+                className="px-5 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-[#E63E1D] shadow-md hover:shadow-lg transition-all"
               >
                 Subscribe
               </motion.button>

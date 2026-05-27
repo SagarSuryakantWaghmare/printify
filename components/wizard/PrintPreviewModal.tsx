@@ -42,17 +42,17 @@ export function PrintPreviewModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col bg-white">
-        <DialogHeader className="border-b border-[#E5E7EB] pb-4">
+        <DialogHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
-              <Eye className="h-5 w-5 text-[#FF5A36]" />
-              <DialogTitle className="text-lg font-bold text-[#111827]">
+              <Eye className="h-5 w-5 text-primary" />
+              <DialogTitle className="text-lg font-bold text-foreground">
                 Print Preview
               </DialogTitle>
             </div>
             <button
               onClick={() => onOpenChange(false)}
-              className="text-[#6b7280] hover:text-[#111827]"
+              className="text-muted-foreground hover:text-foreground"
             >
               <X className="h-5 w-5" />
             </button>
@@ -60,9 +60,9 @@ export function PrintPreviewModal({
         </DialogHeader>
 
         {/* Preview tabs */}
-        <div className="border-b border-[#E5E7EB] px-6 py-3">
+        <div className="border-b border-border px-6 py-3">
           <Tabs value={previewMode} onValueChange={(v) => setPreviewMode(v as PreviewMode)}>
-            <TabsList className="grid w-fit grid-cols-3 rounded-xl bg-[#F8F9FA] p-1">
+            <TabsList className="grid w-fit grid-cols-3 rounded-xl bg-muted p-1">
               <TabsTrigger value="layout" className="rounded-lg py-2 text-sm font-semibold">
                 <Maximize2 className="h-4 w-4 mr-2" />
                 Layout
@@ -80,7 +80,7 @@ export function PrintPreviewModal({
         </div>
 
         {/* Preview viewport */}
-        <div className="flex-1 overflow-auto flex items-center justify-center bg-[#FAFAFA] p-6">
+        <div className="flex-1 overflow-auto flex items-center justify-center bg-muted/40 p-6">
           <div className="space-y-4 w-full">
             {previewMode === "layout" && (
               <motion.div
@@ -91,7 +91,7 @@ export function PrintPreviewModal({
                 className="flex flex-col items-center justify-center h-full gap-4"
               >
                 {/* Sheet preview container */}
-                <div className="relative bg-white shadow-xl rounded-lg overflow-hidden border border-[#E5E7EB]">
+                <div className="relative bg-white shadow-xl rounded-lg overflow-hidden border border-border">
                   {/* Sheet background */}
                   <div
                     style={{
@@ -115,7 +115,7 @@ export function PrintPreviewModal({
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: idx * 0.05 }}
-                          className="relative rounded-sm border border-[#E5E7EB] overflow-hidden bg-[#F7F7F8] shadow-sm"
+                          className="relative rounded-sm border border-border overflow-hidden bg-muted shadow-sm"
                           style={{
                             aspectRatio: "3/4",
                           }}
@@ -146,24 +146,24 @@ export function PrintPreviewModal({
                 </div>
 
                 {/* Zoom controls */}
-                <div className="flex items-center gap-2 text-xs text-[#6b7280]">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <button
                     onClick={() => setScale(Math.max(0.5, scale - 0.1))}
-                    className="px-2 py-1 rounded border border-[#E5E7EB] hover:bg-[#F7F7F8]"
+                    className="px-2 py-1 rounded border border-border hover:bg-muted"
                   >
                     −
                   </button>
                   <span className="w-8 text-center font-semibold">{Math.round(scale * 100)}%</span>
                   <button
                     onClick={() => setScale(Math.min(2, scale + 0.1))}
-                    className="px-2 py-1 rounded border border-[#E5E7EB] hover:bg-[#F7F7F8]"
+                    className="px-2 py-1 rounded border border-border hover:bg-muted"
                   >
                     +
                   </button>
                 </div>
 
                 {/* Info note */}
-                <p className="text-xs text-[#6b7280] text-center max-w-md">
+                <p className="text-xs text-muted-foreground text-center max-w-md">
                   Dashed red border shows print bleed area. Trim marks in corners ensure clean cutting.
                 </p>
               </motion.div>
@@ -180,11 +180,11 @@ export function PrintPreviewModal({
                 {/* Color profile info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Background color */}
-                  <div className="rounded-xl border border-[#E5E7EB] bg-white p-4">
-                    <h4 className="font-semibold text-[#111827] mb-3 text-sm">Background Color</h4>
+                  <div className="rounded-xl border border-border bg-white p-4">
+                    <h4 className="font-semibold text-foreground mb-3 text-sm">Background Color</h4>
                     <div className="flex items-center gap-3">
                       <div
-                        className="h-16 w-16 rounded-lg border-2 border-[#E5E7EB] shadow-sm"
+                        className="h-16 w-16 rounded-lg border-2 border-border shadow-sm"
                         style={{
                           backgroundColor:
                             bgColor === "white"
@@ -195,8 +195,8 @@ export function PrintPreviewModal({
                         }}
                       />
                       <div>
-                        <p className="font-semibold text-[#111827] capitalize">{bgColor}</p>
-                        <p className="text-xs text-[#6b7280]">
+                        <p className="font-semibold text-foreground capitalize">{bgColor}</p>
+                        <p className="text-xs text-muted-foreground">
                           {bgColor === "white"
                             ? "Bright & neutral"
                             : bgColor === "red"
@@ -208,45 +208,45 @@ export function PrintPreviewModal({
                   </div>
 
                   {/* Color space */}
-                  <div className="rounded-xl border border-[#E5E7EB] bg-white p-4">
-                    <h4 className="font-semibold text-[#111827] mb-3 text-sm">Color Space</h4>
+                  <div className="rounded-xl border border-border bg-white p-4">
+                    <h4 className="font-semibold text-foreground mb-3 text-sm">Color Space</h4>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-[#1D9E75]" />
-                        <span className="text-sm font-semibold text-[#1a1a1a]">sRGB Optimized</span>
+                        <CheckCircle2 className="h-4 w-4 text-success-500" />
+                        <span className="text-sm font-semibold text-foreground">sRGB Optimized</span>
                       </div>
-                      <p className="text-xs text-[#6b7280]">
+                      <p className="text-xs text-muted-foreground">
                         Colors calibrated for accurate printing on your selected printer
                       </p>
                     </div>
                   </div>
 
                   {/* Contrast check */}
-                  <div className="rounded-xl border border-[#E5E7EB] bg-white p-4">
-                    <h4 className="font-semibold text-[#111827] mb-3 text-sm">Contrast Check</h4>
+                  <div className="rounded-xl border border-border bg-white p-4">
+                    <h4 className="font-semibold text-foreground mb-3 text-sm">Contrast Check</h4>
                     <div className="space-y-2">
-                      <div className="w-full bg-[#F7F7F8] rounded h-2 overflow-hidden">
-                        <div className="bg-[#FF5A36] h-full w-4/5" />
+                      <div className="w-full bg-muted rounded h-2 overflow-hidden">
+                        <div className="bg-primary h-full w-4/5" />
                       </div>
-                      <p className="text-xs text-[#6b7280]">High contrast detected — excellent for printing</p>
+                      <p className="text-xs text-muted-foreground">High contrast detected — excellent for printing</p>
                     </div>
                   </div>
 
                   {/* Saturation */}
-                  <div className="rounded-xl border border-[#E5E7EB] bg-white p-4">
-                    <h4 className="font-semibold text-[#111827] mb-3 text-sm">Saturation Level</h4>
+                  <div className="rounded-xl border border-border bg-white p-4">
+                    <h4 className="font-semibold text-foreground mb-3 text-sm">Saturation Level</h4>
                     <div className="space-y-2">
-                      <div className="w-full bg-[#F7F7F8] rounded h-2 overflow-hidden">
+                      <div className="w-full bg-muted rounded h-2 overflow-hidden">
                         <div className="bg-linear-to-r from-[#FF5A36] to-[#FFA500] h-full w-3/5" />
                       </div>
-                      <p className="text-xs text-[#6b7280]">Optimized for vibrant, natural-looking prints</p>
+                      <p className="text-xs text-muted-foreground">Optimized for vibrant, natural-looking prints</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Quality checks */}
-                <div className="rounded-xl border border-[#E5E7EB] bg-white p-4">
-                  <h4 className="font-semibold text-[#111827] mb-3 text-sm">Quality Checks</h4>
+                <div className="rounded-xl border border-border bg-white p-4">
+                  <h4 className="font-semibold text-foreground mb-3 text-sm">Quality Checks</h4>
                   <div className="space-y-2">
                     {[
                       "No blown highlights or crushed blacks",
@@ -255,8 +255,8 @@ export function PrintPreviewModal({
                       "Proper edge detailing & sharpness",
                     ].map((check, idx) => (
                       <div key={idx} className="flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-[#1D9E75] shrink-0" />
-                        <span className="text-sm text-[#4B5563]">{check}</span>
+                        <CheckCircle2 className="h-4 w-4 text-success-500 shrink-0" />
+                        <span className="text-sm text-foreground/80">{check}</span>
                       </div>
                     ))}
                   </div>
@@ -274,69 +274,69 @@ export function PrintPreviewModal({
               >
                 {/* Sheet specs */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="rounded-xl border border-[#E5E7EB] bg-white p-4">
-                    <h4 className="font-semibold text-[#111827] mb-4 text-sm">Sheet Dimensions</h4>
+                  <div className="rounded-xl border border-border bg-white p-4">
+                    <h4 className="font-semibold text-foreground mb-4 text-sm">Sheet Dimensions</h4>
                     <div className="space-y-2.5">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-[#6b7280]">Size</span>
-                        <span className="font-semibold text-[#1a1a1a]">
+                        <span className="text-sm text-muted-foreground">Size</span>
+                        <span className="font-semibold text-foreground">
                           {sheetPreset === "4x6" ? "4×6 inches" : "A4 (210×297 mm)"}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-[#6b7280]">Dimensions (mm)</span>
-                        <span className="font-semibold text-[#1a1a1a]">
+                        <span className="text-sm text-muted-foreground">Dimensions (mm)</span>
+                        <span className="font-semibold text-foreground">
                           {physicalWidth}×{physicalHeight} mm
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-[#6b7280]">Photo count</span>
-                        <span className="font-semibold text-[#1a1a1a]">{quantity} photos</span>
+                        <span className="text-sm text-muted-foreground">Photo count</span>
+                        <span className="font-semibold text-foreground">{quantity} photos</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-[#6b7280]">Layout</span>
-                        <span className="font-semibold text-[#1a1a1a]">
+                        <span className="text-sm text-muted-foreground">Layout</span>
+                        <span className="font-semibold text-foreground">
                           {sheetPreset === "4x6" ? "2×3 grid" : "3×4 grid"}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-[#E5E7EB] bg-white p-4">
-                    <h4 className="font-semibold text-[#111827] mb-4 text-sm">Photo Specs</h4>
+                  <div className="rounded-xl border border-border bg-white p-4">
+                    <h4 className="font-semibold text-foreground mb-4 text-sm">Photo Specs</h4>
                     <div className="space-y-2.5">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-[#6b7280]">Per photo (mm)</span>
-                        <span className="font-semibold text-[#1a1a1a]">
+                        <span className="text-sm text-muted-foreground">Per photo (mm)</span>
+                        <span className="font-semibold text-foreground">
                           {photoWidth}×{photoHeight}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-[#6b7280]">Aspect ratio</span>
-                        <span className="font-semibold text-[#1a1a1a]">3:4 (portrait)</span>
+                        <span className="text-sm text-muted-foreground">Aspect ratio</span>
+                        <span className="font-semibold text-foreground">3:4 (portrait)</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-[#6b7280]">Margin per photo</span>
-                        <span className="font-semibold text-[#1a1a1a]">2 mm</span>
+                        <span className="text-sm text-muted-foreground">Margin per photo</span>
+                        <span className="font-semibold text-foreground">2 mm</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-[#6b7280]">Trim marks</span>
-                        <span className="font-semibold text-[#1a1a1a]">Included</span>
+                        <span className="text-sm text-muted-foreground">Trim marks</span>
+                        <span className="font-semibold text-foreground">Included</span>
                       </div>
                     </div>
                   </div>
 
                   {printerProfile && (
-                    <div className="rounded-xl border border-[#E5E7EB] bg-white p-4 md:col-span-2">
-                      <h4 className="font-semibold text-[#111827] mb-4 text-sm">Printer Profile</h4>
+                    <div className="rounded-xl border border-border bg-white p-4 md:col-span-2">
+                      <h4 className="font-semibold text-foreground mb-4 text-sm">Printer Profile</h4>
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-[#1a1a1a]">{printerProfile}</p>
-                          <p className="text-xs text-[#6b7280]">
+                          <p className="text-sm text-foreground">{printerProfile}</p>
+                          <p className="text-xs text-muted-foreground">
                             Output optimized for your selected printer
                           </p>
                         </div>
-                        <CheckCircle2 className="h-5 w-5 text-[#1D9E75]" />
+                        <CheckCircle2 className="h-5 w-5 text-success-500" />
                       </div>
                     </div>
                   )}
@@ -363,19 +363,19 @@ export function PrintPreviewModal({
         </div>
 
         {/* Action footer */}
-        <div className="border-t border-[#E5E7EB] bg-[#FAFAFA] px-6 py-4 flex items-center justify-between">
-          <p className="text-xs text-[#6b7280]">Review all details before downloading</p>
+        <div className="border-t border-border bg-muted/40 px-6 py-4 flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">Review all details before downloading</p>
           <div className="flex gap-3">
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="rounded-lg border-[#E5E7EB] hover:bg-[#F7F7F8]"
+              className="rounded-lg border-border hover:bg-muted"
             >
               Back to Edit
             </Button>
             <Button
               onClick={() => onOpenChange(false)}
-              className="bg-[#FF5A36] text-white hover:bg-[#e04e2d] rounded-lg font-semibold"
+              className="bg-primary text-white hover:bg-[#E63E1D] rounded-lg font-semibold"
             >
               Ready to Download
             </Button>
