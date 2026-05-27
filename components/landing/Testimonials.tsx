@@ -44,7 +44,7 @@ export function Testimonials() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="text-sm font-bold uppercase tracking-widest text-[#FF5A36]"
+            className="text-sm font-bold uppercase tracking-widest text-primary"
           >
             Trusted by users
           </motion.p>
@@ -53,7 +53,7 @@ export function Testimonials() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900"
+            className="font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-foreground"
           >
             Trusted For Premium <span className="gradient-text">Indian</span> Passport Prints
           </motion.h2>
@@ -62,7 +62,7 @@ export function Testimonials() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="max-w-2xl text-base sm:text-lg text-slate-600"
+            className="max-w-2xl text-base sm:text-lg text-muted-foreground"
           >
             Users choose PrintfY for cleaner output, premium paper quality, and confident final submission.
           </motion.p>
@@ -73,7 +73,7 @@ export function Testimonials() {
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: 0.3 }}
           whileHover={{ scale: 1.05 }}
-          className="rounded-2xl border border-[#FFD5C8] bg-[#FFF1ED] px-5 py-3 text-sm font-bold text-[#C84426] shadow-sm hover:shadow-md transition-all cursor-default"
+          className="rounded-2xl border border-brand-200 bg-brand-50 px-5 py-3 text-sm font-bold text-brand-700 shadow-sm hover:shadow-md transition-all cursor-default"
         >
           ⭐ 4.9/5 Average User Rating
         </motion.div>
@@ -88,11 +88,11 @@ export function Testimonials() {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6, delay: idx * 0.15, type: "spring", stiffness: 100 }}
             whileHover={{ y: -8, boxShadow: "0 20px 40px -15px rgba(255,90,54,0.15)" }}
-            className="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-md p-8 shadow-[0_8px_24px_rgba(17,24,39,0.04)] transition-all duration-500 hover:border-[#FF5A36]/30 flex flex-col justify-between group cursor-default"
+            className="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-md p-8 shadow-[0_8px_24px_rgba(17,24,39,0.04)] transition-all duration-500 hover:border-primary/30 flex flex-col justify-between group cursor-default"
           >
             <div>
               <motion.div 
-                className="mb-6 flex items-center gap-1.5 text-[#FF5A36]"
+                className="mb-6 flex items-center gap-1.5 text-primary"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: idx * 0.15 + 0.2 }}
@@ -109,15 +109,15 @@ export function Testimonials() {
                   </motion.div>
                 ))}
               </motion.div>
-              <p className="text-base leading-relaxed text-slate-700 italic group-hover:text-slate-800 transition-colors">&ldquo;{item.quote}&rdquo;</p>
+              <p className="text-base leading-relaxed text-foreground/90 italic group-hover:text-foreground transition-colors">&ldquo;{item.quote}&rdquo;</p>
             </div>
             <div className="mt-8 pt-6 border-t border-slate-200/60 flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#FF5A36] to-[#FF8C6B] text-white font-bold text-sm shadow-md">
                 {item.avatar}
               </div>
               <div>
-                <p className="text-lg font-bold text-slate-900 group-hover:text-[#FF5A36] transition-colors">{item.name}</p>
-                <p className="text-sm font-medium text-slate-500">{item.role}</p>
+                <p className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">{item.name}</p>
+                <p className="text-sm font-medium text-muted-foreground">{item.role}</p>
               </div>
             </div>
           </motion.article>

@@ -91,15 +91,15 @@ export function PricingCards() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="inline-flex items-center gap-2 rounded-full bg-[#FFF1ED] border border-[#FFD5C8] px-4 py-1.5 text-sm font-bold text-[#C84426]"
+          className="inline-flex items-center gap-2 rounded-full bg-brand-50 border border-brand-200 px-4 py-1.5 text-sm font-bold text-brand-700"
         >
           <Sparkles className="w-4 h-4" />
           100% Free Forever
         </motion.span>
-        <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-slate-900">
+        <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground">
           Everything You Need, <span className="gradient-text">Free</span>
         </h2>
-        <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto font-medium">
+        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
           Professional passport photos without the professional price tag. All features, no limits.
         </p>
       </motion.div>
@@ -116,7 +116,7 @@ export function PricingCards() {
             key={feature.title}
             variants={cardVariants}
             whileHover={{ y: -8, boxShadow: "0 20px 40px -15px rgba(0,0,0,0.1)" }}
-            className="relative rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-lg p-8 flex flex-col transition-all duration-300 hover:border-slate-300 group cursor-default"
+            className="relative rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur-lg p-8 flex flex-col transition-all duration-300 hover:border-border group cursor-default"
           >
             <motion.div
               whileHover={{ rotate: [0, -5, 5, 0], scale: 1.1 }}
@@ -127,10 +127,10 @@ export function PricingCards() {
               <feature.icon className="h-7 w-7" style={{ color: feature.color }} />
             </motion.div>
 
-            <h3 className="font-display text-xl font-bold text-slate-900 mb-2 group-hover:text-[#FF5A36] transition-colors">
+            <h3 className="font-display text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
               {feature.title}
             </h3>
-            <p className="text-base text-slate-500 leading-relaxed group-hover:text-slate-600 transition-colors">
+            <p className="text-base text-muted-foreground leading-relaxed group-hover:text-muted-foreground transition-colors">
               {feature.description}
             </p>
           </motion.div>
@@ -151,7 +151,7 @@ export function PricingCards() {
         >
           <Button
             asChild
-            className="h-14 sm:h-16 rounded-2xl bg-[#FF5A36] px-10 sm:px-12 text-base sm:text-lg font-bold text-white hover:bg-[#E24D2E] shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="h-14 sm:h-16 rounded-2xl bg-primary px-10 sm:px-12 text-base sm:text-lg font-bold text-white hover:bg-[#E63E1D] shadow-xl hover:shadow-2xl transition-all duration-300"
           >
             <Link href="/app">
               Start Creating Free
@@ -159,7 +159,7 @@ export function PricingCards() {
             </Link>
           </Button>
         </motion.div>
-        <p className="mt-4 text-sm text-slate-500">No signup required • No credit card needed</p>
+        <p className="mt-4 text-sm text-muted-foreground">No signup required • No credit card needed</p>
       </motion.div>
     </section>
   )

@@ -155,7 +155,7 @@ export function ProcessingStep() {
               <motion.div key="preview"
                 initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                className="relative rounded-2xl overflow-hidden bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22%3E%3Crect width=%2210%22 height=%2210%22 fill=%22%23e5e7eb%22/%3E%3Crect x=%2210%22 y=%2210%22 width=%2210%22 height=%2210%22 fill=%22%23e5e7eb%22/%3E%3C/svg%3E')] w-full max-w-[200px] aspect-[35/45] border border-slate-200 shadow-sm"
+                className="relative rounded-2xl overflow-hidden bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22%3E%3Crect width=%2210%22 height=%2210%22 fill=%22%23e5e7eb%22/%3E%3Crect x=%2210%22 y=%2210%22 width=%2210%22 height=%2210%22 fill=%22%23e5e7eb%22/%3E%3C/svg%3E')] w-full max-w-[200px] aspect-[35/45] border border-border shadow-sm"
               >
                 {(previewUrl ?? photoData.original) && (
                   <Image src={previewUrl ?? photoData.original!} alt="Processing"
@@ -164,7 +164,7 @@ export function ProcessingStep() {
               </motion.div>
             ) : (
               <motion.div key="skeleton"
-                className="relative rounded-2xl overflow-hidden w-full max-w-[200px] aspect-[35/45] border border-slate-200 shadow-sm bg-[#F3F4F6]">
+                className="relative rounded-2xl overflow-hidden w-full max-w-[200px] aspect-[35/45] border border-border shadow-sm bg-muted">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
               </motion.div>
             )}

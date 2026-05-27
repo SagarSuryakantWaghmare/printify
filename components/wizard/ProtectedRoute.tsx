@@ -18,7 +18,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-pulse">
-          <div className="h-12 w-12 bg-[#FF5A36] rounded-full"></div>
+          <div className="h-12 w-12 bg-primary rounded-full"></div>
         </div>
       </div>
     )

@@ -46,10 +46,10 @@ export function CountrySelectorStep({ onSelect, selectedCountryId }: CountrySele
         animate={{ opacity: 1, y: 0 }} 
         className="space-y-1"
       >
-        <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#1a1a1a]">
+        <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground">
           Select Your Country
         </h1>
-        <p className="text-base text-[#6b7280]">
+        <p className="text-base text-muted-foreground">
           Choose your destination country to get the correct photo specifications
         </p>
       </motion.div>
@@ -61,13 +61,13 @@ export function CountrySelectorStep({ onSelect, selectedCountryId }: CountrySele
         transition={{ delay: 0.1 }}
         className="relative"
       >
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#9ca3af]" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/80" />
         <Input
           type="text"
           placeholder="Search countries..."
           value={searchQuery}
           onChange={(e) => { setSearchQuery(e.target.value); setActiveRegion(null) }}
-          className="h-12 pl-12 pr-4 rounded-xl border-[#E5E7EB] bg-white text-base focus:border-[#FF5A36] focus:ring-[#FF5A36]/20"
+          className="h-12 pl-12 pr-4 rounded-xl border-border bg-white text-base focus:border-primary focus:ring-[#FF5A36]/20"
         />
       </motion.div>
 
@@ -79,7 +79,7 @@ export function CountrySelectorStep({ onSelect, selectedCountryId }: CountrySele
           transition={{ delay: 0.15 }}
           className="space-y-3"
         >
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#6b7280]">
+          <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
             <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
             Popular Countries
           </div>
@@ -106,7 +106,7 @@ export function CountrySelectorStep({ onSelect, selectedCountryId }: CountrySele
           transition={{ delay: 0.2 }}
           className="space-y-3"
         >
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#6b7280]">
+          <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
             <Globe className="h-4 w-4" />
             Browse by Region
           </div>
@@ -117,8 +117,8 @@ export function CountrySelectorStep({ onSelect, selectedCountryId }: CountrySele
                 onClick={() => setActiveRegion(activeRegion === region ? null : region)}
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                   activeRegion === region
-                    ? "bg-[#FF5A36] text-white shadow-sm"
-                    : "bg-[#F7F7F8] text-[#374151] hover:bg-[#E5E7EB]"
+                    ? "bg-primary text-white shadow-sm"
+                    : "bg-muted text-foreground hover:bg-[#E5E7EB]"
                 }`}
               >
                 {region}
@@ -136,7 +136,7 @@ export function CountrySelectorStep({ onSelect, selectedCountryId }: CountrySele
         className="space-y-2 max-h-[400px] overflow-y-auto scrollbar-hide rounded-xl"
       >
         {filteredCountries.length === 0 ? (
-          <div className="text-center py-12 text-[#6b7280]">
+          <div className="text-center py-12 text-muted-foreground">
             <Globe className="h-12 w-12 mx-auto mb-3 opacity-30" />
             <p className="font-semibold">No countries found</p>
             <p className="text-sm">Try a different search term</p>
@@ -167,22 +167,22 @@ export function CountrySelectorStep({ onSelect, selectedCountryId }: CountrySele
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border-2 border-[#FF5A36] bg-[#FFF5F0] p-4"
+          className="rounded-2xl border-2 border-primary bg-brand-50 p-4"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-3xl">{selectedCountry.flag}</span>
               <div>
-                <p className="font-semibold text-[#1a1a1a]">{selectedCountry.name}</p>
-                <p className="text-sm text-[#6b7280]">
+                <p className="font-semibold text-foreground">{selectedCountry.name}</p>
+                <p className="text-sm text-muted-foreground">
                   {selectedCountry.passportSpec.widthMm}×{selectedCountry.passportSpec.heightMm}mm
                 </p>
               </div>
             </div>
-            <Check className="h-6 w-6 text-[#FF5A36]" />
+            <Check className="h-6 w-6 text-primary" />
           </div>
           {selectedCountry.passportSpec.notes && (
-            <p className="mt-3 text-xs text-[#6b7280] bg-white rounded-lg px-3 py-2">
+            <p className="mt-3 text-xs text-muted-foreground bg-white rounded-lg px-3 py-2">
               {selectedCountry.passportSpec.notes}
             </p>
           )}
@@ -217,28 +217,28 @@ function CountryCard({ country, isSelected, onSelect, onShowDetails, compact }: 
       onClick={() => onSelect(country.id)}
       className={`relative flex items-center gap-3 w-full rounded-xl p-3 text-left transition-all ${
         isSelected
-          ? "border-2 border-[#FF5A36] bg-[#FFF5F0] shadow-sm"
-          : "border border-[#E5E7EB] bg-white hover:border-[#FF5A36]/40 hover:bg-[#FFF8F6]"
+          ? "border-2 border-primary bg-brand-50 shadow-sm"
+          : "border border-border bg-white hover:border-primary/40 hover:bg-brand-50/50"
       } ${compact ? "p-2.5" : ""}`}
     >
       <span className={`${compact ? "text-xl" : "text-2xl"}`}>{country.flag}</span>
       <div className="flex-1 min-w-0">
-        <p className={`font-semibold text-[#1a1a1a] truncate ${compact ? "text-sm" : ""}`}>
+        <p className={`font-semibold text-foreground truncate ${compact ? "text-sm" : ""}`}>
           {country.name}
         </p>
         {!compact && (
-          <p className="text-xs text-[#6b7280] truncate">{country.specs}</p>
+          <p className="text-xs text-muted-foreground truncate">{country.specs}</p>
         )}
       </div>
       {isSelected && (
-        <Check className="h-5 w-5 text-[#FF5A36] shrink-0" />
+        <Check className="h-5 w-5 text-primary shrink-0" />
       )}
       {!isSelected && !compact && (
         <button
           onClick={(e) => { e.stopPropagation(); onShowDetails(country.id) }}
           className="p-1 rounded-lg hover:bg-[#E5E7EB] transition-colors"
         >
-          <Info className="h-4 w-4 text-[#9ca3af]" />
+          <Info className="h-4 w-4 text-muted-foreground/80" />
         </button>
       )}
     </button>
@@ -273,12 +273,12 @@ function CountryDetailsModal({ countryId, onClose, onSelect }: CountryDetailsMod
         className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden"
       >
         {/* Header */}
-        <div className="bg-[#F7F7F8] px-6 py-5 border-b border-[#E5E7EB]">
+        <div className="bg-muted px-6 py-5 border-b border-border">
           <div className="flex items-center gap-4">
             <span className="text-4xl">{country.flag}</span>
             <div>
-              <h3 className="font-display text-xl font-bold text-[#1a1a1a]">{country.name}</h3>
-              <p className="text-sm text-[#6b7280]">{country.region}</p>
+              <h3 className="font-display text-xl font-bold text-foreground">{country.name}</h3>
+              <p className="text-sm text-muted-foreground">{country.region}</p>
             </div>
           </div>
         </div>
@@ -286,30 +286,30 @@ function CountryDetailsModal({ countryId, onClose, onSelect }: CountryDetailsMod
         {/* Specs */}
         <div className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-xl bg-[#F7F7F8] p-3 text-center">
-              <p className="text-2xl font-bold text-[#1a1a1a]">{spec.widthMm}×{spec.heightMm}</p>
-              <p className="text-xs text-[#6b7280]">Size (mm)</p>
+            <div className="rounded-xl bg-muted p-3 text-center">
+              <p className="text-2xl font-bold text-foreground">{spec.widthMm}×{spec.heightMm}</p>
+              <p className="text-xs text-muted-foreground">Size (mm)</p>
             </div>
-            <div className="rounded-xl bg-[#F7F7F8] p-3 text-center">
+            <div className="rounded-xl bg-muted p-3 text-center">
               <div 
-                className="w-8 h-8 rounded-lg mx-auto border border-[#E5E7EB]"
+                className="w-8 h-8 rounded-lg mx-auto border border-border"
                 style={{ backgroundColor: spec.bgColorHex }}
               />
-              <p className="text-xs text-[#6b7280] mt-1 capitalize">{spec.bgColor.replace("-", " ")}</p>
+              <p className="text-xs text-muted-foreground mt-1 capitalize">{spec.bgColor.replace("-", " ")}</p>
             </div>
           </div>
 
           {spec.faceCoverage && (
-            <div className="rounded-xl border border-[#E5E7EB] p-3">
-              <p className="text-xs font-semibold text-[#6b7280] mb-1">Face Coverage</p>
-              <p className="text-sm text-[#1a1a1a]">{spec.faceCoverage}</p>
+            <div className="rounded-xl border border-border p-3">
+              <p className="text-xs font-semibold text-muted-foreground mb-1">Face Coverage</p>
+              <p className="text-sm text-foreground">{spec.faceCoverage}</p>
             </div>
           )}
 
           {spec.notes && (
-            <div className="rounded-xl border border-[#E5E7EB] p-3">
-              <p className="text-xs font-semibold text-[#6b7280] mb-1">Requirements</p>
-              <p className="text-sm text-[#1a1a1a]">{spec.notes}</p>
+            <div className="rounded-xl border border-border p-3">
+              <p className="text-xs font-semibold text-muted-foreground mb-1">Requirements</p>
+              <p className="text-sm text-foreground">{spec.notes}</p>
             </div>
           )}
         </div>
@@ -319,13 +319,13 @@ function CountryDetailsModal({ countryId, onClose, onSelect }: CountryDetailsMod
           <Button
             onClick={onClose}
             variant="outline"
-            className="flex-1 rounded-xl border-[#E5E7EB]"
+            className="flex-1 rounded-xl border-border"
           >
             Cancel
           </Button>
           <Button
             onClick={() => { onSelect(country.id); onClose() }}
-            className="flex-1 rounded-xl bg-[#FF5A36] hover:bg-[#e04e2d] text-white"
+            className="flex-1 rounded-xl bg-primary hover:bg-[#E63E1D] text-white"
           >
             Select Country
             <ChevronRight className="h-4 w-4 ml-1" />

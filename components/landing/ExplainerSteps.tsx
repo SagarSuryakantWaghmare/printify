@@ -88,7 +88,7 @@ export function ExplainerSteps() {
               >
                 <motion.svg 
                   viewBox="0 0 24 24" 
-                  className="w-5 h-5 text-slate-300" 
+                  className="w-5 h-5 text-muted-foreground/50" 
                   fill="none" 
                   stroke="currentColor" 
                   strokeWidth="2"
@@ -147,7 +147,7 @@ export function ExplainerSteps() {
             viewport={{ once: true }}
             transition={{ duration: 0.3, delay: 0.4 + idx * 0.1 }}
             whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-foreground/70 hover:border-[#1D9E75]/30 hover:bg-white transition-all cursor-default"
+            className="flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-4 py-2 text-sm text-foreground/70 hover:border-success-500/30 hover:bg-white transition-all cursor-default"
           >
             <Check className="h-3.5 w-3.5 text-success-500" />
             {tag}

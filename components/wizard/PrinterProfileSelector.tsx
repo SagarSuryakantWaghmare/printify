@@ -48,8 +48,8 @@ export function PrinterProfileSelector({ value, onValueChange }: PrinterProfileS
     <div className="space-y-3">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-bold text-[#111827]">Printer Profile</p>
-          <p className="text-xs text-[#6b7280]">Optimize output for your printer type</p>
+          <p className="text-sm font-bold text-foreground">Printer Profile</p>
+          <p className="text-xs text-muted-foreground">Optimize output for your printer type</p>
         </div>
         <Select value={value || ""} onValueChange={handleValueChange}>
           <SelectTrigger className="w-full sm:w-[240px]">
@@ -64,7 +64,7 @@ export function PrinterProfileSelector({ value, onValueChange }: PrinterProfileS
               return (
                 <div key={category}>
                   {/* Category header */}
-                  <div className="py-1.5 px-2 text-xs font-bold uppercase text-[#6b7280] tracking-wider">
+                  <div className="py-1.5 px-2 text-xs font-bold uppercase text-muted-foreground tracking-wider">
                     {categoryLabels[category]}
                   </div>
 
@@ -93,19 +93,19 @@ export function PrinterProfileSelector({ value, onValueChange }: PrinterProfileS
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-            <Card className="border border-[#E5E7EB] bg-[#FBFCFD] p-4 space-y-3">
+            <Card className="border border-border bg-muted/40 p-4 space-y-3">
               {/* Header */}
               <div className="flex items-start justify-between gap-2">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[#6b7280]">
+                    <span className="text-muted-foreground">
                       {categoryIcons[selectedProfile.category]}
                     </span>
-                    <h4 className="text-sm font-bold text-[#111827]">
+                    <h4 className="text-sm font-bold text-foreground">
                       {selectedProfile.name}
                     </h4>
                   </div>
-                  <p className="text-xs text-[#6b7280]">
+                  <p className="text-xs text-muted-foreground">
                     {selectedProfile.description}
                   </p>
                 </div>
@@ -114,37 +114,37 @@ export function PrinterProfileSelector({ value, onValueChange }: PrinterProfileS
               {/* Key specs */}
               <div className="grid grid-cols-2 gap-2">
                 {/* DPI */}
-                <div className="rounded-lg bg-white p-2.5 border border-[#E8EAEE]">
-                  <p className="text-xs font-semibold text-[#6b7280] uppercase tracking-wider">DPI</p>
-                  <p className="text-sm font-bold text-[#111827]">
+                <div className="rounded-lg bg-white p-2.5 border border-border">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">DPI</p>
+                  <p className="text-sm font-bold text-foreground">
                     {selectedProfile.recommendedDpi}
                   </p>
                 </div>
 
                 {/* Color Space */}
-                <div className="rounded-lg bg-white p-2.5 border border-[#E8EAEE]">
-                  <p className="text-xs font-semibold text-[#6b7280] uppercase tracking-wider">Color Space</p>
-                  <p className="text-sm font-bold text-[#111827] uppercase">
+                <div className="rounded-lg bg-white p-2.5 border border-border">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Color Space</p>
+                  <p className="text-sm font-bold text-foreground uppercase">
                     {selectedProfile.colorSpace}
                   </p>
                 </div>
               </div>
 
               {/* Color space note */}
-              <div className="text-xs text-[#6b7280] bg-white rounded-lg p-2.5 border border-[#E8EAEE]">
+              <div className="text-xs text-muted-foreground bg-white rounded-lg p-2.5 border border-border">
                 <span className="font-semibold block mb-1">Recommended color space:</span>
                 {selectedProfile.colorSpaceDescription}
               </div>
 
               {/* Features */}
               <div className="space-y-1.5">
-                <p className="text-xs font-semibold text-[#6b7280] uppercase tracking-wider">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Capabilities
                 </p>
                 <ul className="space-y-1">
                   {selectedProfile.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-xs text-[#4B5563]">
-                      <span className="text-[#FF5A36] font-bold mt-0.5">•</span>
+                    <li key={idx} className="flex items-start gap-2 text-xs text-foreground/80">
+                      <span className="text-primary font-bold mt-0.5">•</span>
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -168,7 +168,7 @@ export function PrinterProfileSelector({ value, onValueChange }: PrinterProfileS
 
       {/* Help text */}
       {!selectedProfile && (
-        <p className="text-xs text-[#9CA3AF] italic">
+        <p className="text-xs text-muted-foreground/80 italic">
           Select your printer to optimize output quality and color space settings.
         </p>
       )}

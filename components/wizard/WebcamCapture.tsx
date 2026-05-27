@@ -220,13 +220,13 @@ const capturePhoto = useCallback(() => {
 
   // Get status color based on compliance score
   const getScoreColor = () => {
-    if (complianceScore >= 80) return "text-[#1D9E75]"
+    if (complianceScore >= 80) return "text-success-500"
     if (complianceScore >= 50) return "text-yellow-400"
     return "text-red-400"
   }
 
   const getScoreBgColor = () => {
-    if (complianceScore >= 80) return "bg-[#1D9E75]/20"
+    if (complianceScore >= 80) return "bg-success-500/20"
     if (complianceScore >= 50) return "bg-yellow-400/20"
     return "bg-red-400/20"
   }
@@ -296,7 +296,7 @@ const capturePhoto = useCallback(() => {
               {/* Oval guide with dynamic border color */}
               <div 
                 className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-64 sm:w-56 sm:h-72 border-2 rounded-[50%] shadow-[0_0_0_9999px_rgba(0,0,0,0.3)] transition-colors duration-300 ${
-                  faceResult?.isValid ? "border-[#1D9E75]" : faceResult?.detected ? "border-yellow-400" : "border-white/50"
+                  faceResult?.isValid ? "border-success-500" : faceResult?.detected ? "border-yellow-400" : "border-white/50"
                 }`} 
               />
               
@@ -305,7 +305,7 @@ const capturePhoto = useCallback(() => {
                 <div className="absolute top-4 left-0 right-0 flex justify-center px-4">
                   <div className={`${getScoreBgColor()} backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2`}>
                     {faceResult.isValid ? (
-                      <CheckCircle2 className="h-4 w-4 text-[#1D9E75]" />
+                      <CheckCircle2 className="h-4 w-4 text-success-500" />
                     ) : faceResult.detected ? (
                       <AlertTriangle className="h-4 w-4 text-yellow-400" />
                     ) : (
@@ -327,7 +327,7 @@ const capturePhoto = useCallback(() => {
                     <div className="w-24 h-1.5 bg-white/20 rounded-full overflow-hidden">
                       <motion.div
                         className={`h-full rounded-full ${
-                          complianceScore >= 80 ? "bg-[#1D9E75]" : complianceScore >= 50 ? "bg-yellow-400" : "bg-red-400"
+                          complianceScore >= 80 ? "bg-success-500" : complianceScore >= 50 ? "bg-yellow-400" : "bg-red-400"
                         }`}
                         initial={{ width: 0 }}
                         animate={{ width: `${complianceScore}%` }}
@@ -405,7 +405,7 @@ const capturePhoto = useCallback(() => {
               whileTap={{ scale: 0.9 }}
               onClick={handleInstantCapture}
               className={`relative h-20 w-20 rounded-full flex items-center justify-center shadow-lg transition-colors ${
-                faceResult?.isValid ? "bg-[#1D9E75]" : "bg-white"
+                faceResult?.isValid ? "bg-success-500" : "bg-white"
               }`}
             >
               <div className={`absolute inset-2 rounded-full border-4 ${
@@ -456,7 +456,7 @@ const capturePhoto = useCallback(() => {
             </Button>
             <Button
               onClick={handleConfirm}
-              className="flex-1 max-w-40 h-12 rounded-xl bg-[#1D9E75] hover:bg-[#178D67] text-white font-semibold"
+              className="flex-1 max-w-40 h-12 rounded-xl bg-success-500 hover:bg-success-600 text-white font-semibold"
             >
               <CheckCircle2 className="h-5 w-5 mr-2" />
               Use Photo
