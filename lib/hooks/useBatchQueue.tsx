@@ -63,6 +63,7 @@ export interface BatchQueueContextType {
   completedCount: number
   failedCount: number
   pendingCount: number
+  processingCount: number
 }
 
 export function useBatchQueue(): BatchQueueContextType {
@@ -172,15 +173,14 @@ export function useBatchQueue(): BatchQueueContextType {
     setIsPaused(false)
   }, [])
 
-  // Cancel processing
+  // Cancel processing — abort the processor and reset any mid-flight items back to pending
   const cancelProcessing = useCallback(() => {
     processorRef.current?.cancel()
     setIsProcessing(false)
     setIsPaused(false)
-    // Reset pending items that haven't started
     setItems((prev) =>
       prev.map((item) =>
-        item.status === "pending" ? item : item
+        item.status === "processing" ? { ...item, status: "pending" as const, progress: 0 } : item
       )
     )
   }, [])
@@ -230,6 +230,7 @@ export function useBatchQueue(): BatchQueueContextType {
   const completedCount = items.filter((item) => item.status === "completed").length
   const failedCount = items.filter((item) => item.status === "failed").length
   const pendingCount = items.filter((item) => item.status === "pending").length
+  const processingCount = items.filter((item) => item.status === "processing").length
 
   return {
     items,
@@ -250,5 +251,6 @@ export function useBatchQueue(): BatchQueueContextType {
     completedCount,
     failedCount,
     pendingCount,
+    processingCount,
   }
 }

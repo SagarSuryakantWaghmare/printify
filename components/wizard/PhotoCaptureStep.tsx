@@ -144,6 +144,8 @@ export function PhotoCaptureStep() {
 
   const handleLoadFromHistory = async (photo: RecentPhoto) => {
     setUploadedImage(photo.originalData)
+    // Also write to wizard context so ProcessingStep gets the correct image
+    setPhotoData({ original: photo.originalData, transparent: null, processed: null, enhanced: null })
     setFaceDetected(true)
     success("Photo loaded from history!")
   }
