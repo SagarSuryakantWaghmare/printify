@@ -8,25 +8,22 @@ export interface ExportPhotoSpec {
   count: 6 | 8 | 12
 }
 
-interface SheetDimension {
-  widthPx: number
-  heightPx: number
-  label: string
+/** Physical sheet dimensions in mm (used for correct-DPI PDF export) */
+const SHEET_MM: Record<SheetPreset, { widthMm: number; heightMm: number; label: string }> = {
+  "4x6": { widthMm: 101.6, heightMm: 152.4, label: "4×6 inch" }, // 4"×6" photo paper
+  a4:    { widthMm: 210,   heightMm: 297,   label: "A4" },
 }
 
-const SHEET_DIMENSIONS: Record<SheetPreset, SheetDimension> = {
-  "4x6": {
-    // 6x4 inch at ~300 DPI (landscape)
-    widthPx: 1800,
-    heightPx: 1200,
-    label: "4x6 inch",
-  },
-  a4: {
-    // A4 at ~300 DPI (portrait)
-    widthPx: 2480,
-    heightPx: 3508,
-    label: "A4",
-  },
+/**
+ * Canvas pixel dimensions at 300 DPI.
+ * 4×6 = 4"×6" → 1200×1800 px  (landscape = 1800 wide × 1200 tall)
+ * A4  = 210×297 mm → 2480×3508 px  (portrait)
+ *
+ * NOTE: 4×6 is stored portrait-first here and we flip in orientation logic.
+ */
+const SHEET_DIMENSIONS_300DPI: Record<SheetPreset, { widthPx: number; heightPx: number }> = {
+  "4x6": { widthPx: 1800, heightPx: 1200 }, // landscape
+  a4:    { widthPx: 2480, heightPx: 3508 }, // portrait
 }
 
 function createCanvas(width: number, height: number): HTMLCanvasElement {
@@ -83,32 +80,13 @@ function drawTrimGuides(
   ctx.globalAlpha = 0.9
 
   // top-left
-  ctx.beginPath()
-  ctx.moveTo(x, y + corner)
-  ctx.lineTo(x, y)
-  ctx.lineTo(x + corner, y)
-  ctx.stroke()
-
+  ctx.beginPath(); ctx.moveTo(x, y + corner); ctx.lineTo(x, y); ctx.lineTo(x + corner, y); ctx.stroke()
   // top-right
-  ctx.beginPath()
-  ctx.moveTo(x + width - corner, y)
-  ctx.lineTo(x + width, y)
-  ctx.lineTo(x + width, y + corner)
-  ctx.stroke()
-
+  ctx.beginPath(); ctx.moveTo(x + width - corner, y); ctx.lineTo(x + width, y); ctx.lineTo(x + width, y + corner); ctx.stroke()
   // bottom-right
-  ctx.beginPath()
-  ctx.moveTo(x + width, y + height - corner)
-  ctx.lineTo(x + width, y + height)
-  ctx.lineTo(x + width - corner, y + height)
-  ctx.stroke()
-
+  ctx.beginPath(); ctx.moveTo(x + width, y + height - corner); ctx.lineTo(x + width, y + height); ctx.lineTo(x + width - corner, y + height); ctx.stroke()
   // bottom-left
-  ctx.beginPath()
-  ctx.moveTo(x + corner, y + height)
-  ctx.lineTo(x, y + height)
-  ctx.lineTo(x, y + height - corner)
-  ctx.stroke()
+  ctx.beginPath(); ctx.moveTo(x + corner, y + height); ctx.lineTo(x, y + height); ctx.lineTo(x, y + height - corner); ctx.stroke()
 
   ctx.restore()
 }
@@ -121,32 +99,20 @@ function getBestGrid(
   margin: number,
   gap: number
 ): { cols: number; rows: number; tileWidth: number; tileHeight: number } {
-  let best = {
-    cols: 1,
-    rows: count,
-    tileWidth: 0,
-    tileHeight: 0,
-  }
+  let best = { cols: 1, rows: count, tileWidth: 0, tileHeight: 0 }
 
-  for (let cols = 1; cols <= count; cols += 1) {
+  for (let cols = 1; cols <= count; cols++) {
     const rows = Math.ceil(count / cols)
-
-    const availableWidth = pageWidth - margin * 2 - gap * (cols - 1)
+    const availableWidth  = pageWidth  - margin * 2 - gap * (cols - 1)
     const availableHeight = pageHeight - margin * 2 - gap * (rows - 1)
+    if (availableWidth <= 0 || availableHeight <= 0) continue
 
-    if (availableWidth <= 0 || availableHeight <= 0) {
-      continue
-    }
-
-    const maxTileWidthFromWidth = availableWidth / cols
+    const maxTileWidthFromWidth  = availableWidth  / cols
     const maxTileWidthFromHeight = (availableHeight / rows) * photoAspect
-    const tileWidth = Math.min(maxTileWidthFromWidth, maxTileWidthFromHeight)
+    const tileWidth  = Math.min(maxTileWidthFromWidth, maxTileWidthFromHeight)
     const tileHeight = tileWidth / photoAspect
 
-    if (tileWidth <= 0 || tileHeight <= 0) {
-      continue
-    }
-
+    if (tileWidth <= 0 || tileHeight <= 0) continue
     if (tileWidth * tileHeight > best.tileWidth * best.tileHeight) {
       best = { cols, rows, tileWidth, tileHeight }
     }
@@ -157,25 +123,13 @@ function getBestGrid(
 
 function getQualityConfig(quality: ExportQuality) {
   if (quality === "low-data") {
-    return {
-      scale: 0.72,
-      jpgQuality: 0.82,
-      label: "Low Data",
-    }
+    return { scale: 0.72, jpgQuality: 0.82, label: "Low Data" }
   }
-
-  return {
-    scale: 1,
-    jpgQuality: 0.95,
-    label: "Standard",
-  }
+  return { scale: 1, jpgQuality: 0.95, label: "Standard" }
 }
 
 function formatSizeKb(kb: number) {
-  if (kb < 1024) {
-    return `~${Math.max(1, Math.round(kb))} KB`
-  }
-
+  if (kb < 1024) return `~${Math.max(1, Math.round(kb))} KB`
   return `~${(kb / 1024).toFixed(1)} MB`
 }
 
@@ -184,26 +138,25 @@ export function estimateExportFileSize(options: {
   quality: ExportQuality
   format: ExportFormat
 }) {
-  const sheet = SHEET_DIMENSIONS[options.sheetPreset]
+  const sheet = SHEET_DIMENSIONS_300DPI[options.sheetPreset]
   const qualityConfig = getQualityConfig(options.quality)
-
-  const scaledWidth = Math.round(sheet.widthPx * qualityConfig.scale)
+  const scaledWidth  = Math.round(sheet.widthPx  * qualityConfig.scale)
   const scaledHeight = Math.round(sheet.heightPx * qualityConfig.scale)
-  const pixelCount = scaledWidth * scaledHeight
-
-  // Lightweight heuristic tuned for camera photos on white-sheet layouts.
-  const jpgPerPixel = options.quality === "low-data" ? 0.16 : 0.27
-  const jpgBytes = pixelCount * jpgPerPixel
-
-  if (options.format === "jpg") {
-    return formatSizeKb(jpgBytes / 1024)
-  }
-
-  // PDF wraps JPG and adds metadata/structure overhead.
+  const pixelCount   = scaledWidth * scaledHeight
+  const jpgPerPixel  = options.quality === "low-data" ? 0.16 : 0.27
+  const jpgBytes     = pixelCount * jpgPerPixel
+  if (options.format === "jpg") return formatSizeKb(jpgBytes / 1024)
   const pdfBytes = jpgBytes * 1.1 + 110 * 1024
   return formatSizeKb(pdfBytes / 1024)
 }
 
+/**
+ * Build the print-sheet canvas.
+ *
+ * FIX: all internal pixel math now uses canvasW/canvasH (scaled dimensions)
+ * so the layout is correct for both "standard" (scale=1) and "low-data"
+ * (scale=0.72) quality modes.
+ */
 export async function buildPrintSheetCanvas(options: {
   imageDataUrl: string
   photoSpec: ExportPhotoSpec
@@ -211,40 +164,43 @@ export async function buildPrintSheetCanvas(options: {
   quality?: ExportQuality
 }): Promise<HTMLCanvasElement> {
   const { imageDataUrl, photoSpec, sheetPreset, quality = "standard" } = options
-  const sheet = SHEET_DIMENSIONS[sheetPreset]
+  const sheet        = SHEET_DIMENSIONS_300DPI[sheetPreset]
   const qualityConfig = getQualityConfig(quality)
-  const image = await loadImage(imageDataUrl)
+  const image        = await loadImage(imageDataUrl)
 
-  const canvas = createCanvas(
-    Math.round(sheet.widthPx * qualityConfig.scale),
-    Math.round(sheet.heightPx * qualityConfig.scale)
-  )
+  // Canvas dimensions after quality scale
+  const canvasW = Math.round(sheet.widthPx  * qualityConfig.scale)
+  const canvasH = Math.round(sheet.heightPx * qualityConfig.scale)
+
+  const canvas = createCanvas(canvasW, canvasH)
   const ctx = canvas.getContext("2d")
+  if (!ctx) throw new Error("Canvas context not available")
 
-  if (!ctx) {
-    throw new Error("Canvas context not available")
-  }
-
+  // White sheet background — use actual canvas dims, not raw sheet dims
   ctx.fillStyle = "#ffffff"
-  ctx.fillRect(0, 0, sheet.widthPx, sheet.heightPx)
+  ctx.fillRect(0, 0, canvasW, canvasH)
 
-  const margin = sheetPreset === "4x6" ? 48 : 72
-  const gap = sheetPreset === "4x6" ? 22 : 28
+  // Scale margins and gaps to match the canvas resolution
+  const baseMargin = sheetPreset === "4x6" ? 48 : 72
+  const baseGap    = sheetPreset === "4x6" ? 22 : 28
+  const margin     = Math.round(baseMargin * qualityConfig.scale)
+  const gap        = Math.round(baseGap    * qualityConfig.scale)
   const photoAspect = photoSpec.widthMm / photoSpec.heightMm
 
-  const grid = getBestGrid(photoSpec.count, sheet.widthPx, sheet.heightPx, photoAspect, margin, gap)
+  // Grid computed against actual canvas dimensions
+  const grid = getBestGrid(photoSpec.count, canvasW, canvasH, photoAspect, margin, gap)
 
-  const totalGridWidth = grid.cols * grid.tileWidth + (grid.cols - 1) * gap
+  const totalGridWidth  = grid.cols * grid.tileWidth  + (grid.cols - 1) * gap
   const totalGridHeight = grid.rows * grid.tileHeight + (grid.rows - 1) * gap
 
-  const startX = (sheet.widthPx - totalGridWidth) / 2
-  const startY = (sheet.heightPx - totalGridHeight) / 2
+  // Centre the grid on the canvas
+  const startX = (canvasW - totalGridWidth)  / 2
+  const startY = (canvasH - totalGridHeight) / 2
 
-  for (let index = 0; index < photoSpec.count; index += 1) {
+  for (let index = 0; index < photoSpec.count; index++) {
     const row = Math.floor(index / grid.cols)
     const col = index % grid.cols
-
-    const x = startX + col * (grid.tileWidth + gap)
+    const x = startX + col * (grid.tileWidth  + gap)
     const y = startY + row * (grid.tileHeight + gap)
 
     ctx.save()
@@ -254,6 +210,7 @@ export async function buildPrintSheetCanvas(options: {
     drawCoverImage(ctx, image, x, y, grid.tileWidth, grid.tileHeight)
     ctx.restore()
 
+    // Thin border drawn outside the clip so it isn't cropped
     ctx.strokeStyle = "#d1d5db"
     ctx.lineWidth = 1
     ctx.strokeRect(x, y, grid.tileWidth, grid.tileHeight)
@@ -281,14 +238,19 @@ export async function downloadSheetAsJpg(options: {
 }) {
   const { quality = "standard" } = options
   const qualityConfig = getQualityConfig(quality)
-  const canvas = await buildPrintSheetCanvas(options)
+  const canvas  = await buildPrintSheetCanvas(options)
   const dataUrl = canvas.toDataURL("image/jpeg", qualityConfig.jpgQuality)
-  triggerDownload(
-    dataUrl,
-    `printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${qualityConfig.label.toLowerCase().replace(" ", "-")}.jpg`
-  )
+  const label   = qualityConfig.label.toLowerCase().replace(" ", "-")
+  triggerDownload(dataUrl, `printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${label}.jpg`)
 }
 
+/**
+ * PDF export — uses mm dimensions so the sheet is printed at the correct
+ * physical size (A4 = 210×297 mm, 4×6 = 101.6×152.4 mm) at 300 DPI.
+ *
+ * FIX: was using unit:"px" which caused printers to interpret the sheet
+ * at 72 DPI, making it ~4× too large on paper.
+ */
 export async function downloadSheetAsPdf(options: {
   imageDataUrl: string
   photoSpec: ExportPhotoSpec
@@ -297,23 +259,29 @@ export async function downloadSheetAsPdf(options: {
 }) {
   const { quality = "standard" } = options
   const qualityConfig = getQualityConfig(quality)
-  const canvas = await buildPrintSheetCanvas(options)
+  const canvas  = await buildPrintSheetCanvas(options)
   const dataUrl = canvas.toDataURL("image/jpeg", qualityConfig.jpgQuality)
+  const sheet   = SHEET_MM[options.sheetPreset]
 
   const { jsPDF } = await import("jspdf")
 
-  const orientation = canvas.width > canvas.height ? "landscape" : "portrait"
+  // Physical dimensions in mm — printers will produce the correct physical size
+  const isLandscape = canvas.width > canvas.height
   const pdf = new jsPDF({
-    orientation,
-    unit: "px",
-    format: [canvas.width, canvas.height],
+    orientation: isLandscape ? "landscape" : "portrait",
+    unit: "mm",
+    format: isLandscape
+      ? [sheet.heightMm, sheet.widthMm]   // jsPDF wants [w, h] for custom formats
+      : [sheet.widthMm,  sheet.heightMm],
     compress: true,
   })
 
-  pdf.addImage(dataUrl, "JPEG", 0, 0, canvas.width, canvas.height, undefined, "FAST")
-  pdf.save(
-    `printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${qualityConfig.label.toLowerCase().replace(" ", "-")}.pdf`
-  )
+  const pageW = pdf.internal.pageSize.getWidth()
+  const pageH = pdf.internal.pageSize.getHeight()
+  pdf.addImage(dataUrl, "JPEG", 0, 0, pageW, pageH, undefined, "FAST")
+
+  const label = qualityConfig.label.toLowerCase().replace(" ", "-")
+  pdf.save(`printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${label}.pdf`)
 }
 
 export async function buildSheetJpgFile(options: {
@@ -325,15 +293,12 @@ export async function buildSheetJpgFile(options: {
   const { quality = "standard" } = options
   const qualityConfig = getQualityConfig(quality)
   const canvas = await buildPrintSheetCanvas(options)
+  const label  = qualityConfig.label.toLowerCase().replace(" ", "-")
 
   const blob = await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
       (fileBlob) => {
-        if (!fileBlob) {
-          reject(new Error("Could not create export file"))
-          return
-        }
-
+        if (!fileBlob) { reject(new Error("Could not create export file")); return }
         resolve(fileBlob)
       },
       "image/jpeg",
@@ -343,25 +308,19 @@ export async function buildSheetJpgFile(options: {
 
   return new File(
     [blob],
-    `printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${qualityConfig.label.toLowerCase().replace(" ", "-")}.jpg`,
+    `printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${label}.jpg`,
     { type: "image/jpeg" }
   )
 }
 
-export function getPresetDimensionsMm(preset: "passport" | "stamp" | "custom", customWidthMm: number, customHeightMm: number) {
-  if (preset === "passport") {
-    return { widthMm: 35, heightMm: 45, label: "Passport 35 x 45 mm" }
-  }
-
-  if (preset === "stamp") {
-    return { widthMm: 25, heightMm: 35, label: "Stamp 25 x 35 mm" }
-  }
-
-  return {
-    widthMm: customWidthMm,
-    heightMm: customHeightMm,
-    label: `Custom ${customWidthMm} x ${customHeightMm} mm`,
-  }
+export function getPresetDimensionsMm(
+  preset: "passport" | "stamp" | "custom",
+  customWidthMm: number,
+  customHeightMm: number
+) {
+  if (preset === "passport") return { widthMm: 35,  heightMm: 45, label: "Passport 35 × 45 mm" }
+  if (preset === "stamp")    return { widthMm: 25,  heightMm: 35, label: "Stamp 25 × 35 mm" }
+  return { widthMm: customWidthMm, heightMm: customHeightMm, label: `Custom ${customWidthMm} × ${customHeightMm} mm` }
 }
 
 export function buildPrintInstructionMessage(options: {
@@ -369,30 +328,25 @@ export function buildPrintInstructionMessage(options: {
   count: number
   sheetPreset: SheetPreset
 }) {
-  const sheetLabel = SHEET_DIMENSIONS[options.sheetPreset].label
-
+  const sheetLabel = SHEET_MM[options.sheetPreset].label
   return [
     "Print instructions:",
     `Use ${sheetLabel} photo paper.`,
     `Photo size: ${options.sizeLabel}`,
     `Total photos on sheet: ${options.count}`,
-    "Keep colors natural and use corner marks for clean trimming.",
+    "Keep colours natural and use corner marks for clean trimming.",
     "",
-    "English:",
     `Please print on ${sheetLabel} photo paper.`,
-    `Photo size: ${options.sizeLabel}`,
-    `Total photos on sheet: ${options.count}`,
-    "Please keep colors natural and cut neatly using the corner marks.",
+    `Photo size: ${options.sizeLabel}, ${options.count} photos per sheet.`,
+    "Please keep colours natural and cut along the corner trim marks.",
     "Thank you.",
   ].join("\n")
 }
 
-// Backward-compatible alias for older imports.
+// Backward-compatible alias
 export const buildWhatsAppStudioMessage = buildPrintInstructionMessage
 
-/**
- * Download sheet as JPG with custom file naming
- */
+/** Download JPG with a custom file name */
 export async function downloadSheetAsJpgWithNaming(options: {
   imageDataUrl: string
   photoSpec: ExportPhotoSpec
@@ -402,15 +356,14 @@ export async function downloadSheetAsJpgWithNaming(options: {
 }) {
   const { quality = "standard", fileName } = options
   const qualityConfig = getQualityConfig(quality)
-  const canvas = await buildPrintSheetCanvas(options)
+  const canvas  = await buildPrintSheetCanvas(options)
   const dataUrl = canvas.toDataURL("image/jpeg", qualityConfig.jpgQuality)
-  const defaultFileName = `printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${qualityConfig.label.toLowerCase().replace(" ", "-")}.jpg`
-  triggerDownload(dataUrl, fileName || defaultFileName)
+  const label   = qualityConfig.label.toLowerCase().replace(" ", "-")
+  const defaultName = `printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${label}.jpg`
+  triggerDownload(dataUrl, fileName || defaultName)
 }
 
-/**
- * Download sheet as PDF with custom file naming
- */
+/** Download PDF with a custom file name — correct physical mm dimensions */
 export async function downloadSheetAsPdfWithNaming(options: {
   imageDataUrl: string
   photoSpec: ExportPhotoSpec
@@ -420,21 +373,27 @@ export async function downloadSheetAsPdfWithNaming(options: {
 }) {
   const { quality = "standard", fileName } = options
   const qualityConfig = getQualityConfig(quality)
-  const canvas = await buildPrintSheetCanvas(options)
+  const canvas  = await buildPrintSheetCanvas(options)
   const dataUrl = canvas.toDataURL("image/jpeg", qualityConfig.jpgQuality)
+  const sheet   = SHEET_MM[options.sheetPreset]
 
   const { jsPDF } = await import("jspdf")
 
-  const orientation = canvas.width > canvas.height ? "landscape" : "portrait"
+  const isLandscape = canvas.width > canvas.height
   const pdf = new jsPDF({
-    orientation,
-    unit: "px",
-    format: [canvas.width, canvas.height],
+    orientation: isLandscape ? "landscape" : "portrait",
+    unit: "mm",
+    format: isLandscape
+      ? [sheet.heightMm, sheet.widthMm]
+      : [sheet.widthMm,  sheet.heightMm],
     compress: true,
   })
 
-  pdf.addImage(dataUrl, "JPEG", 0, 0, canvas.width, canvas.height, undefined, "FAST")
-  
-  const defaultFileName = `printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${qualityConfig.label.toLowerCase().replace(" ", "-")}.pdf`
-  pdf.save(fileName || defaultFileName)
+  const pageW = pdf.internal.pageSize.getWidth()
+  const pageH = pdf.internal.pageSize.getHeight()
+  pdf.addImage(dataUrl, "JPEG", 0, 0, pageW, pageH, undefined, "FAST")
+
+  const label = qualityConfig.label.toLowerCase().replace(" ", "-")
+  const defaultName = `printify-${options.sheetPreset}-${options.photoSpec.count}-photos-${label}.pdf`
+  pdf.save(fileName || defaultName)
 }
