@@ -16,14 +16,20 @@ export function useHistory<T>(initialState: T) {
   })
 
   const setState = useCallback((newState: T | ((prev: T) => T)) => {
-    const resolvedState = typeof newState === "function" ? (newState as (prev: T) => T)(history.present) : newState
-    
-    setHistory((prev) => ({
-      past: [...prev.past, prev.present],
-      present: resolvedState,
-      future: [],
-    }))
-  }, [history.present])
+    // Resolve inside the functional updater so rapid sequential calls
+    // always see the latest present, not a stale closure value.
+    setHistory((prev) => {
+      const resolvedState =
+        typeof newState === "function"
+          ? (newState as (prev: T) => T)(prev.present)
+          : newState
+      return {
+        past: [...prev.past, prev.present],
+        present: resolvedState,
+        future: [],
+      }
+    })
+  }, []) // no dependency on history.present needed — computed inside updater
 
   const undo = useCallback(() => {
     setHistory((prev) => {
