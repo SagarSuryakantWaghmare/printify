@@ -351,35 +351,42 @@ export function CropStep() {
     // Keyboard shortcuts
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            const step = 15 // pixels to pan
+            const step = 15
             const zoomFactor = 1.15
 
-            // Undo/Redo
+            // Undo / Redo (Ctrl/Cmd+Z / Ctrl/Cmd+Y)
             if (e.ctrlKey || e.metaKey) {
                 if (e.key === "z" && !e.shiftKey) {
-                    e.preventDefault()
-                    transformHistory.undo()
-                    return
+                    e.preventDefault(); transformHistory.undo(); return
                 }
                 if ((e.key === "z" && e.shiftKey) || e.key === "y") {
+                    e.preventDefault(); transformHistory.redo(); return
+                }
+            }
+
+            // Shift+Arrow → rotate (must be checked BEFORE the plain-arrow pan block)
+            if (e.shiftKey) {
+                if (e.key === "ArrowLeft") {
                     e.preventDefault()
-                    transformHistory.redo()
+                    setRotation((r) => (r - 5 + 360) % 360)
+                    return
+                }
+                if (e.key === "ArrowRight") {
+                    e.preventDefault()
+                    setRotation((r) => (r + 5) % 360)
                     return
                 }
             }
 
+            // Plain Arrow / other shortcuts
             switch (e.key) {
                 case "ArrowLeft":
-                    if (!e.shiftKey) {
-                        e.preventDefault()
-                        setOffset((p) => ({ ...p, x: p.x + step }))
-                    }
+                    e.preventDefault()
+                    setOffset((p) => ({ ...p, x: p.x + step }))
                     break
                 case "ArrowRight":
-                    if (!e.shiftKey) {
-                        e.preventDefault()
-                        setOffset((p) => ({ ...p, x: p.x - step }))
-                    }
+                    e.preventDefault()
+                    setOffset((p) => ({ ...p, x: p.x - step }))
                     break
                 case "ArrowUp":
                 case "w":
@@ -406,26 +413,12 @@ export function CropStep() {
                 case "r":
                 case "R":
                     if (!e.ctrlKey && !e.metaKey) {
-                        e.preventDefault()
-                        reset()
+                        e.preventDefault(); reset()
                     }
                     break
                 case "Enter":
                     e.preventDefault()
                     applyCrop()
-                    break
-                // Rotation with Shift+Arrow keys
-                case "ArrowLeft":
-                    if (e.shiftKey) {
-                        e.preventDefault()
-                        setRotation((r) => (r - 5 + 360) % 360)
-                    }
-                    break
-                case "ArrowRight":
-                    if (e.shiftKey) {
-                        e.preventDefault()
-                        setRotation((r) => (r + 5) % 360)
-                    }
                     break
             }
         }

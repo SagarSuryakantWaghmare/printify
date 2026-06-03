@@ -124,7 +124,9 @@ export function WebcamCapture({ onCapture, onClose }: WebcamCaptureProps) {
     }
   }, [facingMode])
 
-  // Initialize camera on mount
+  // Initialize camera on mount AND restart when facingMode changes.
+  // startCamera is recreated whenever facingMode changes (it's in its useCallback deps),
+  // so depending on [startCamera] covers both cases without a separate toggle effect.
   useEffect(() => {
     const handle = setTimeout(() => {
       startCamera()
@@ -208,15 +210,8 @@ const capturePhoto = useCallback(() => {
     setFacingMode(prev => prev === "user" ? "environment" : "user")
   }
 
-  // Re-start camera when facing mode changes
-  useEffect(() => {
-    if (cameraState === "ready" || cameraState === "requesting") {
-      const handle = setTimeout(() => {
-        startCamera()
-      }, 0)
-      return () => clearTimeout(handle)
-    }
-  }, [facingMode, cameraState, startCamera])
+  // NOTE: facingMode changes are handled automatically by the init effect above —
+  // startCamera is recreated when facingMode changes, which re-fires [startCamera] effect.
 
   // Get status color based on compliance score
   const getScoreColor = () => {
