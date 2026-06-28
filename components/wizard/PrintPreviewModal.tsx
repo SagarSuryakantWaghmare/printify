@@ -41,8 +41,11 @@ export function PrintPreviewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col bg-white">
-        <DialogHeader className="border-b border-border pb-4">
+      <DialogContent
+        showCloseButton={false}
+        className="w-[95vw] sm:max-w-5xl max-h-[90vh] overflow-hidden flex flex-col bg-white p-0 gap-0"
+      >
+        <DialogHeader className="border-b border-border px-6 pt-5 pb-4">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
               <Eye className="h-5 w-5 text-primary" />
@@ -62,7 +65,7 @@ export function PrintPreviewModal({
         {/* Preview tabs */}
         <div className="border-b border-border px-6 py-3">
           <Tabs value={previewMode} onValueChange={(v) => setPreviewMode(v as PreviewMode)}>
-            <TabsList className="grid w-fit grid-cols-3 rounded-xl bg-muted p-1">
+            <TabsList className="grid w-full sm:w-fit grid-cols-3 rounded-xl bg-muted p-1">
               <TabsTrigger value="layout" className="rounded-lg py-2 text-sm font-semibold">
                 <Maximize2 className="h-4 w-4 mr-2" />
                 Layout
@@ -363,9 +366,9 @@ export function PrintPreviewModal({
         </div>
 
         {/* Action footer */}
-        <div className="border-t border-border bg-muted/40 px-6 py-4 flex items-center justify-between">
+        <div className="border-t border-border bg-muted/40 px-6 py-4 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">Review all details before downloading</p>
-          <div className="flex gap-3">
+          <div className="flex gap-3 shrink-0 ml-auto">
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
