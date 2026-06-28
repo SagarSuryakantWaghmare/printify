@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 820" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF7C53"/>
+      <stop offset="1" stop-color="#FF5A36"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#26B98A"/>
+      <stop offset="1" stop-color="#1D9E75"/>
+    </linearGradient>
+  </defs>
+
+  <!-- canvas -->
+  <rect x="0" y="0" width="1280" height="820" rx="24" fill="#F8FAFC"/>
+  <rect x="0.5" y="0.5" width="1279" height="819" rx="24" fill="none" stroke="#E2E8F0"/>
+
+  <!-- header -->
+  <rect x="40" y="34" width="44" height="44" rx="11" fill="url(#brand)"/>
+  <circle cx="62" cy="56" r="11" fill="none" stroke="#fff" stroke-width="3"/>
+  <text x="100" y="52" font-size="26" font-weight="700" fill="#0F172A">PrintfY — System Architecture</text>
+  <text x="100" y="74" font-size="15" fill="#64748B">Next.js 16 (App Router) - React 19 - Clerk Auth - Serverless Route Handlers on Vercel</text>
+
+  <!-- column labels -->
+  <text x="180" y="128" font-size="14" font-weight="700" letter-spacing="1.5" fill="#FF5A36">CLIENT — BROWSER</text>
+  <text x="592" y="128" font-size="14" font-weight="700" letter-spacing="1.5" fill="#6366F1">NEXT.JS SERVER (VERCEL)</text>
+  <text x="1000" y="128" font-size="14" font-weight="700" letter-spacing="1.5" fill="#1D9E75">EXTERNAL AI SERVICES</text>
+
+  <!-- ===== Client column ===== -->
+  <rect x="40" y="146" width="372" height="470" rx="18" fill="#FFFFFF" stroke="#FFC4AC"/>
+
+  <rect x="64" y="172" width="324" height="70" rx="12" fill="#FFF1ED" stroke="#FFC4AC"/>
+  <text x="84" y="200" font-size="16" font-weight="700" fill="#0F172A">Landing Page  /</text>
+  <text x="84" y="224" font-size="13" fill="#64748B">Hero - 3D background - Before/After</text>
+
+  <rect x="64" y="256" width="324" height="86" rx="12" fill="#FFF1ED" stroke="#FFC4AC"/>
+  <text x="84" y="284" font-size="16" font-weight="700" fill="#0F172A">Wizard  /app   (Clerk-protected)</text>
+  <text x="84" y="307" font-size="13" fill="#64748B">Capture - Processing - Crop - Preview</text>
+  <text x="84" y="327" font-size="13" fill="#64748B">React Context state machine</text>
+
+  <rect x="64" y="356" width="324" height="240" rx="12" fill="#F1F5F9" stroke="#E2E8F0"/>
+  <text x="84" y="384" font-size="14" font-weight="700" letter-spacing="0.5" fill="#0F172A">IN-BROWSER PROCESSING</text>
+  <text x="84" y="386" font-size="13" fill="#64748B"></text>
+  <g font-size="13.5" fill="#334155">
+    <circle cx="90" cy="408" r="3.5" fill="#FF5A36"/><text x="104" y="413">Canvas crop + rotate + zoom</text>
+    <circle cx="90" cy="436" r="3.5" fill="#FF5A36"/><text x="104" y="441">Smart-enhance (sharpen / contrast)</text>
+    <circle cx="90" cy="464" r="3.5" fill="#FF5A36"/><text x="104" y="469">Background colour compositing</text>
+    <circle cx="90" cy="492" r="3.5" fill="#FF5A36"/><text x="104" y="497">Print-sheet layout (6 / 8 / 12)</text>
+    <circle cx="90" cy="520" r="3.5" fill="#FF5A36"/><text x="104" y="525">JPG export + jsPDF / JSZip</text>
+    <circle cx="90" cy="548" r="3.5" fill="#FF5A36"/><text x="104" y="553">Batch queue + webcam capture</text>
+    <circle cx="90" cy="576" r="3.5" fill="#FF5A36"/><text x="104" y="581">Photo history (localStorage)</text>
+  </g>
+
+  <!-- ===== Server column ===== -->
+  <rect x="454" y="146" width="372" height="470" rx="18" fill="#FFFFFF" stroke="#C7D2FE"/>
+
+  <rect x="478" y="172" width="324" height="70" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="498" y="200" font-size="16" font-weight="700" fill="#0F172A">Clerk Middleware</text>
+  <text x="498" y="224" font-size="13" fill="#64748B">Session auth - route protection</text>
+
+  <rect x="478" y="262" width="324" height="68" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="498" y="290" font-size="15" font-weight="700" fill="#0F172A">POST /api/remove-bg</text>
+  <text x="498" y="312" font-size="13" fill="#64748B">Validate - sign - proxy - fallback</text>
+
+  <rect x="478" y="346" width="324" height="68" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="498" y="374" font-size="15" font-weight="700" fill="#0F172A">POST /api/enhance</text>
+  <text x="498" y="396" font-size="13" fill="#64748B">Signed Cloudinary transform</text>
+
+  <rect x="478" y="430" width="324" height="68" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="498" y="458" font-size="15" font-weight="700" fill="#0F172A">POST /api/enhance-ai</text>
+  <text x="498" y="480" font-size="13" fill="#64748B">Hugging Face super-resolution</text>
+
+  <rect x="478" y="514" width="324" height="82" rx="12" fill="#F1F5F9" stroke="#E2E8F0"/>
+  <text x="498" y="542" font-size="13.5" fill="#334155">Secrets stay server-side. Every route</text>
+  <text x="498" y="562" font-size="13.5" fill="#334155">degrades gracefully — on any error it</text>
+  <text x="498" y="582" font-size="13.5" fill="#334155">returns the original image, never blocks.</text>
+
+  <!-- ===== External column ===== -->
+  <rect x="868" y="146" width="372" height="470" rx="18" fill="#FFFFFF" stroke="#A7F3D0"/>
+
+  <rect x="892" y="262" width="324" height="68" rx="12" fill="#EDFAF5" stroke="#A7F3D0"/>
+  <text x="912" y="290" font-size="16" font-weight="700" fill="#0F172A">remove.bg API</text>
+  <text x="912" y="312" font-size="13" fill="#64748B">Person background removal -&gt; PNG</text>
+
+  <rect x="892" y="346" width="324" height="68" rx="12" fill="#EDFAF5" stroke="#A7F3D0"/>
+  <text x="912" y="374" font-size="16" font-weight="700" fill="#0F172A">Cloudinary</text>
+  <text x="912" y="396" font-size="13" fill="#64748B">Auto-improve - face crop 35:45</text>
+
+  <rect x="892" y="430" width="324" height="68" rx="12" fill="#EDFAF5" stroke="#A7F3D0"/>
+  <text x="912" y="458" font-size="16" font-weight="700" fill="#0F172A">Hugging Face</text>
+  <text x="912" y="480" font-size="13" fill="#64748B">LDM super-resolution 4x</text>
+
+  <!-- arrows client -> server -->
+  <g stroke="#94A3B8" stroke-width="2" fill="none">
+    <path d="M412 296 H 470" marker-end="url(#ah)"/>
+    <path d="M412 380 H 470" marker-end="url(#ah)"/>
+    <path d="M412 464 H 470" marker-end="url(#ah)"/>
+  </g>
+  <!-- arrows server -> external -->
+  <g stroke="#94A3B8" stroke-width="2" fill="none">
+    <path d="M802 296 H 884" marker-end="url(#ah)"/>
+    <path d="M802 380 H 884" marker-end="url(#ah)"/>
+    <path d="M802 464 H 884" marker-end="url(#ah)"/>
+  </g>
+
+  <defs>
+    <marker id="ah" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+  </defs>
+
+  <!-- footer band -->
+  <rect x="40" y="648" width="1200" height="132" rx="18" fill="#0F172A"/>
+  <text x="70" y="690" font-size="15" font-weight="700" letter-spacing="1" fill="#FF7C53">DATA FLOW</text>
+  <g font-size="14.5" fill="#E2E8F0" font-weight="600">
+    <text x="70" y="726">Upload / Webcam</text>
+    <text x="305" y="726">remove.bg</text>
+    <text x="500" y="726">Canvas crop</text>
+    <text x="700" y="726">Smart enhance</text>
+    <text x="918" y="726">Sheet layout</text>
+    <text x="1118" y="726">Download</text>
+  </g>
+  <g stroke="#FF7C53" stroke-width="2" fill="none">
+    <path d="M232 721 H 296" marker-end="url(#ah2)"/>
+    <path d="M408 721 H 490" marker-end="url(#ah2)"/>
+    <path d="M620 721 H 690" marker-end="url(#ah2)"/>
+    <path d="M838 721 H 908" marker-end="url(#ah2)"/>
+    <path d="M1028 721 H 1108" marker-end="url(#ah2)"/>
+  </g>
+  <text x="70" y="758" font-size="13" fill="#94A3B8">The photo touches an external API only for background removal; cropping, enhancement, layout and export all run locally in the browser.</text>
+  <defs>
+    <marker id="ah2" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#FF7C53"/>
+    </marker>
+  </defs>
+</svg>

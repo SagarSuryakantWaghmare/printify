@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="s" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0,0 L8,3.5 L0,7 Z" fill="#334155"/></marker>
+    <marker id="sg" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0,0 L8,3.5 L0,7 Z" fill="#1D9E75"/></marker>
+    <marker id="sr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0,0 L8,3.5 L0,7 Z" fill="#E63E1D"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="1280" height="800" rx="24" fill="#F8FAFC"/>
+  <rect x="0.5" y="0.5" width="1279" height="799" rx="24" fill="none" stroke="#E2E8F0"/>
+
+  <text x="40" y="54" font-size="25" font-weight="700" fill="#0F172A">API Request Lifecycle — POST /api/remove-bg</text>
+  <text x="40" y="80" font-size="14.5" fill="#64748B">Server-side route handler: validates input, keeps the API key secret, enforces a 25s timeout, and always degrades gracefully.</text>
+
+  <!-- lifeline headers -->
+  <rect x="120" y="104" width="220" height="50" rx="12" fill="#FFF1ED" stroke="#FFC4AC"/>
+  <text x="230" y="135" font-size="15" font-weight="700" fill="#0F172A" text-anchor="middle">Browser (Client)</text>
+
+  <rect x="560" y="104" width="240" height="50" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="680" y="128" font-size="15" font-weight="700" fill="#0F172A" text-anchor="middle">Next.js Route Handler</text>
+  <text x="680" y="146" font-size="12" fill="#6366F1" text-anchor="middle">app/api/remove-bg/route.ts</text>
+
+  <rect x="1010" y="104" width="200" height="50" rx="12" fill="#EDFAF5" stroke="#A7F3D0"/>
+  <text x="1110" y="135" font-size="15" font-weight="700" fill="#0F172A" text-anchor="middle">remove.bg API</text>
+
+  <!-- lifelines -->
+  <g stroke="#CBD5E1" stroke-width="2" stroke-dasharray="4 5">
+    <line x1="230" y1="154" x2="230" y2="720"/>
+    <line x1="680" y1="154" x2="680" y2="720"/>
+    <line x1="1110" y1="154" x2="1110" y2="720"/>
+  </g>
+
+  <!-- 1 request -->
+  <line x1="230" y1="196" x2="676" y2="196" stroke="#334155" stroke-width="2" marker-end="url(#s)"/>
+  <text x="250" y="188" font-size="13.5" fill="#0F172A" font-weight="600">1 - POST { imageDataUrl }  (base64 JPG/PNG/WebP)</text>
+
+  <!-- self note: validate -->
+  <rect x="560" y="216" width="240" height="58" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/>
+  <text x="576" y="240" font-size="12.5" fill="#334155" font-weight="700">2 - Validate data-URL regex</text>
+  <text x="576" y="260" font-size="12" fill="#E63E1D">reject -&gt; 400 Invalid image format</text>
+
+  <!-- self note: key check -->
+  <rect x="560" y="288" width="240" height="58" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/>
+  <text x="576" y="312" font-size="12.5" fill="#334155" font-weight="700">3 - Read REMOVE_BG_API_KEY</text>
+  <text x="576" y="332" font-size="12" fill="#1D9E75">missing -&gt; return original (fallback)</text>
+
+  <!-- 4 to remove.bg -->
+  <line x1="680" y1="378" x2="1106" y2="378" stroke="#334155" stroke-width="2" marker-end="url(#s)"/>
+  <text x="700" y="370" font-size="13.5" fill="#0F172A" font-weight="600">4 - multipart image_file, type=person</text>
+  <text x="700" y="396" font-size="12" fill="#64748B">X-Api-Key header - AbortSignal.timeout(25s)</text>
+
+  <!-- success return -->
+  <line x1="1110" y1="446" x2="684" y2="446" stroke="#1D9E75" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sg)"/>
+  <text x="724" y="438" font-size="13.5" fill="#178D67" font-weight="600">5a - 200 OK  transparent PNG</text>
+
+  <line x1="680" y1="486" x2="234" y2="486" stroke="#1D9E75" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sg)"/>
+  <text x="250" y="478" font-size="13.5" fill="#178D67" font-weight="600">{ resultDataUrl, fallback: false }  -&gt; advance to Crop</text>
+
+  <!-- error branch box -->
+  <rect x="120" y="520" width="1090" height="150" rx="14" fill="#FFFFFF" stroke="#FFD9CC"/>
+  <text x="140" y="548" font-size="13.5" font-weight="700" letter-spacing="0.5" fill="#E63E1D">FALLBACK / ERROR PATH  (so the user is never stuck)</text>
+
+  <line x1="1110" y1="582" x2="684" y2="582" stroke="#E63E1D" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sr)"/>
+  <text x="724" y="574" font-size="13" fill="#C84426" font-weight="600">5b - 401 / 402 / 429 / 5xx  or  timeout</text>
+
+  <rect x="560" y="598" width="240" height="40" rx="10" fill="#FFF7F4" stroke="#FFD9CC"/>
+  <text x="576" y="623" font-size="12" fill="#C84426">map status -&gt; clear client message</text>
+
+  <line x1="680" y1="654" x2="234" y2="654" stroke="#E63E1D" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sr)"/>
+  <text x="250" y="646" font-size="13" fill="#C84426" font-weight="600">original image returned with { fallback: true }  — pipeline continues</text>
+
+  <text x="40" y="712" font-size="13" fill="#64748B">The other AI routes — /api/enhance (signed Cloudinary upload) and /api/enhance-ai (Hugging Face super-resolution) — follow the same validate -&gt; call -&gt; graceful-fallback shape.</text>
+  <text x="40" y="734" font-size="13" fill="#64748B">Secrets are read only from server environment variables and never reach the client bundle.</text>
+</svg>
