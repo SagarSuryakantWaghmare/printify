@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 760" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF7C53"/><stop offset="1" stop-color="#FF5A36"/></linearGradient>
+    <marker id="a" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#FF5A36"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="1280" height="760" rx="24" fill="#F8FAFC"/>
+  <rect x="0.5" y="0.5" width="1279" height="759" rx="24" fill="none" stroke="#E2E8F0"/>
+
+  <text x="40" y="58" font-size="26" font-weight="700" fill="#0F172A">The 4-Step Wizard</text>
+  <text x="40" y="84" font-size="15" fill="#64748B">A guided state machine: upload once, download a print-ready sheet. Each step can move forward or back without losing state.</text>
+
+  <!-- auth gate -->
+  <rect x="40" y="108" width="1200" height="48" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <circle cx="68" cy="132" r="9" fill="#6366F1"/>
+  <text x="86" y="137" font-size="14" fill="#3730A3"><tspan font-weight="700">Clerk sign-in gate</tspan>  —  /app is protected; signed-out visitors are redirected to the landing page before the wizard loads.</text>
+
+  <!-- step cards -->
+  <!-- card 1 -->
+  <g>
+    <rect x="40" y="186" width="282" height="468" rx="18" fill="#FFFFFF" stroke="#FFC4AC"/>
+    <circle cx="76" cy="222" r="20" fill="url(#b)"/><text x="76" y="229" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">1</text>
+    <text x="110" y="219" font-size="19" font-weight="700" fill="#0F172A">Capture</text>
+    <text x="110" y="240" font-size="12.5" fill="#94A3B8">PhotoCaptureStep</text>
+    <line x1="64" y1="262" x2="298" y2="262" stroke="#F1F5F9" stroke-width="2"/>
+    <g font-size="13.5" fill="#334155">
+      <text x="64" y="292" font-weight="700" fill="#FF5A36">Pick photo type</text>
+      <text x="64" y="314">Passport 35x45 - Pro 51x51</text>
+      <text x="64" y="332">- Custom (mm)</text>
+      <text x="64" y="368" font-weight="700" fill="#FF5A36">Background + count</text>
+      <text x="64" y="390">White / Red / Black</text>
+      <text x="64" y="408">6, 8 or 12 per sheet</text>
+      <text x="64" y="444" font-weight="700" fill="#FF5A36">Add the photo</text>
+      <text x="64" y="466">Drag-drop / browse</text>
+      <text x="64" y="484">Webcam capture</text>
+      <text x="64" y="502">Batch (multi-file)</text>
+      <text x="64" y="520">Recent-photo history</text>
+      <text x="64" y="556" font-weight="700" fill="#FF5A36">Face check</text>
+      <text x="64" y="578">Validates 20MB / JPG</text>
+      <text x="64" y="596">PNG / WebP, then go</text>
+    </g>
+  </g>
+
+  <!-- card 2 -->
+  <g>
+    <rect x="346" y="186" width="282" height="468" rx="18" fill="#FFFFFF" stroke="#C7D2FE"/>
+    <circle cx="382" cy="222" r="20" fill="#6366F1"/><text x="382" y="229" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">2</text>
+    <text x="416" y="219" font-size="19" font-weight="700" fill="#0F172A">Process</text>
+    <text x="416" y="240" font-size="12.5" fill="#94A3B8">ProcessingStep</text>
+    <line x1="370" y1="262" x2="604" y2="262" stroke="#F1F5F9" stroke-width="2"/>
+    <g font-size="13.5" fill="#334155">
+      <text x="370" y="292" font-weight="700" fill="#6366F1">Analyse photo</text>
+      <text x="370" y="314">Quality + face position</text>
+      <text x="370" y="350" font-weight="700" fill="#6366F1">Remove background</text>
+      <text x="370" y="372">POST /api/remove-bg</text>
+      <text x="370" y="390">Returns transparent PNG</text>
+      <text x="370" y="426" font-weight="700" fill="#6366F1">Staged progress UI</text>
+      <text x="370" y="448">Animated stage list</text>
+      <text x="370" y="466">Live preview + tips</text>
+      <text x="370" y="502" font-weight="700" fill="#6366F1">Privacy</text>
+      <text x="370" y="524">HTTPS only, never</text>
+      <text x="370" y="542">stored. Auto-advances</text>
+      <text x="370" y="560">to the crop editor.</text>
+    </g>
+  </g>
+
+  <!-- card 3 -->
+  <g>
+    <rect x="652" y="186" width="282" height="468" rx="18" fill="#FFFFFF" stroke="#FFC4AC"/>
+    <circle cx="688" cy="222" r="20" fill="url(#b)"/><text x="688" y="229" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">3</text>
+    <text x="722" y="219" font-size="19" font-weight="700" fill="#0F172A">Crop</text>
+    <text x="722" y="240" font-size="12.5" fill="#94A3B8">CropStep</text>
+    <line x1="676" y1="262" x2="910" y2="262" stroke="#F1F5F9" stroke-width="2"/>
+    <g font-size="13.5" fill="#334155">
+      <text x="676" y="292" font-weight="700" fill="#FF5A36">Canvas editor</text>
+      <text x="676" y="314">Live spec frame overlay</text>
+      <text x="676" y="332">(35x45 / 51x51 / custom)</text>
+      <text x="676" y="368" font-weight="700" fill="#FF5A36">Adjust</text>
+      <text x="676" y="390">Drag to reposition</text>
+      <text x="676" y="408">Scroll / pinch zoom</text>
+      <text x="676" y="426">Rotate +/- degrees</text>
+      <text x="676" y="462" font-weight="700" fill="#FF5A36">Guides + history</text>
+      <text x="676" y="484">Thirds / grid / center</text>
+      <text x="676" y="502">Undo / redo, keyboard</text>
+      <text x="676" y="538" font-weight="700" fill="#FF5A36">Apply</text>
+      <text x="676" y="560">Renders 1050px crop</text>
+      <text x="676" y="578">with chosen background</text>
+    </g>
+  </g>
+
+  <!-- card 4 -->
+  <g>
+    <rect x="958" y="186" width="282" height="468" rx="18" fill="#FFFFFF" stroke="#A7F3D0"/>
+    <circle cx="994" cy="222" r="20" fill="#1D9E75"/><text x="994" y="229" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">4</text>
+    <text x="1028" y="219" font-size="19" font-weight="700" fill="#0F172A">Preview</text>
+    <text x="1028" y="240" font-size="12.5" fill="#94A3B8">PreviewStep</text>
+    <line x1="982" y1="262" x2="1216" y2="262" stroke="#F1F5F9" stroke-width="2"/>
+    <g font-size="13.5" fill="#334155">
+      <text x="982" y="292" font-weight="700" fill="#1D9E75">Smart enhance</text>
+      <text x="982" y="314">Sharpen + contrast on</text>
+      <text x="982" y="332">a canvas, auto on load</text>
+      <text x="982" y="368" font-weight="700" fill="#1D9E75">Verify</text>
+      <text x="982" y="390">6-point quality check</text>
+      <text x="982" y="408">AI vs original toggle</text>
+      <text x="982" y="426">Recolour background</text>
+      <text x="982" y="462" font-weight="700" fill="#1D9E75">Lay out the sheet</text>
+      <text x="982" y="484">4x6 or A4 - printer</text>
+      <text x="982" y="502">profiles - file naming</text>
+      <text x="982" y="538" font-weight="700" fill="#1D9E75">Export</text>
+      <text x="982" y="560">Download JPG / PDF</text>
+      <text x="982" y="578">or native share</text>
+    </g>
+  </g>
+
+  <!-- arrows between cards -->
+  <g stroke="#FF5A36" stroke-width="2.5" fill="none">
+    <path d="M322 420 H 344" marker-end="url(#a)"/>
+    <path d="M628 420 H 650" marker-end="url(#a)"/>
+    <path d="M934 420 H 956" marker-end="url(#a)"/>
+  </g>
+
+  <!-- footer -->
+  <text x="40" y="700" font-size="13.5" fill="#64748B">State lives in a single React Context (useWizard). Back/forward navigation is non-destructive — re-entering a step restores the photo, spec and edits.</text>
+  <text x="40" y="724" font-size="13.5" fill="#64748B">Every external call has a graceful fallback, so the user always reaches a downloadable result even if an AI service is unavailable.</text>
+</svg>
