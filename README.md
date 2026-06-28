@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="docs/diagrams/architecture.svg" alt="" width="0" height="0" />
-
 # 📸 PrintfY
 
 ### AI-Powered Passport &amp; ID Photos — in 60 Seconds, for Free
